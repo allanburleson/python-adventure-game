@@ -1,0 +1,118 @@
+* Basic usage
+** Items
+*** What are items?
+An item is a class with:
+
+	a description
+	a local description
+
+it is defined in objects.py
+*** Creating Items
+Creating items is simple.
+
+It uses the form:
+
+ITEM = Item("name")
+#+BEGIN_SRC python
+# example
+magicMirror = Item("magic mirror")
+#+END_SRC
+
+*** Adding Descriptions
+To add a description for the item you've created,
+
+edit the description field of the object
+
+ITEM.description = "description"
+
+#+BEGIN_SRC python
+magicMirror.description = "description"
+#+END_SRC
+
+*** Adding local descriptions
+To add a description that is shown when looking at the room,
+
+edit the locDescription field.
+
+ITEM.locDescription = "local description"
+
+#+BEGIN_SRC python
+magicMirror.locDescription = "local description"
+#+END_SRC
+
+***
+
+** Creatures
+*** What are creatures?
+A creature is a class with:
+
+	a description
+
+It is defined in objects.py
+*** Spawning creatures
+A creature can be spawned with the form
+
+CREATURE = Creature("name")
+
+#+BEGIN_SRC python
+#example of spawning
+orc = Creature("orc")
+#+END_SRC
+
+*** Adding descriptions
+A description can be added to a Creature with the form:
+
+CREATURE.description =  "description"
+
+#+BEGIN_SRC python
+orc.description = "description"
+#+END_SRC
+** Locations
+*** What is a location?
+A location is a class with the following:
+
+	A name
+	Various items (stored in an array)
+	Creatures (also stored in an array)
+	Any obvious exits (n, s, e, w); Default=None
+	And a description; Default=''
+
+It is defined in classes.py
+*** Creating locations
+A location is created with the form:
+
+LOC = Location('name',
+		[items],
+		[creatures],
+		[exit_north, exit_south, exit_east, exit_west, exit_up, exit_down],
+		'description')
+
+exit_north ... exit_down are other defined rooms.
+Exits and Descriptions are optional.
+
+#+BEGIN_SRC python
+home = Location('Home', [magicMirror], [orc], [test, 0, 0, 0, 0, 0], "")
+#+END_SRC
+
+*** Adding descriptions
+    A location's description is changed through the
+
+description field.
+
+LOC.description = "description"
+
+#+BEGIN_SRC python
+home.description = "description"
+#+END_SRC
+
+		
+** Starting the game
+Games are started by creating a variable which represents the player
+
+and spawning it in a room.
+
+PLAYER = Player(ROOM)
+
+#+BEGIN_SRC python
+player = Player(home)
+#+END_SRC
