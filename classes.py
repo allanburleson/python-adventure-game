@@ -44,12 +44,13 @@ class Player(object):
 
 class Location(object):
     def __init__(self, name, items, creatures, exits=None, description=''):
-        '''exit needs to be a list with [n,s,e,w,u,d]'''
+        # exit needs to be a dict with keys north, south, east, west, up, down
         assert type(items) == list
-        assert (type(exits) == list and len(exits) == 6) or exits is None
+        assert (type(exits) == dict or exits is None)
         if exits is not None:
             for i in exits:
-                assert isinstance(i, Location) or i is None
+                assert isinstance(exits[i], Location)
+                assert i == 'north' or i == 'south' or i == 'east' or i == 'west' or i == 'up' or i == 'down'
         self.name = name
         self.items = items
         self.creatures = creatures
@@ -60,11 +61,10 @@ class Location(object):
     def look(self):
         assert self.description != '', 'There must be a description.'
         print(self.description)
-        directions = ['north', 'south', 'east', 'west', 'up', 'down']
+        # directions = ['north', 'south', 'east', 'west', 'up', 'down']
         if self.exits is not None:
             for i in self.exits:
-                if i is not None:
-                    print('There is an exit to the {0}.'.format(directions[self.exits.index(i)]))
+                print('There is an exit {0}.'.format(i))
         else:
             print('There does not appear to be an exit.')
         print()
@@ -73,8 +73,10 @@ class Location(object):
                 creature.describe()
             print()
         for item in self.items:
-            assert item.locDescription != ''
-            print(item.locDescription)
+            if item.locDescription != '':
+                print(item.locDescription)
+            else:
+                print('There is a(n) {}'.format(item.name))
 
 
 class Creature(object):
