@@ -10,3 +10,4 @@ help:?
 break:smash
 quit:exit
 say:speak
+drop

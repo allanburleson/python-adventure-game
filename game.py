@@ -58,9 +58,11 @@ while True:
             if not hasNoun:
                 print('What do you want to take?')
             else:
-                item = getItemFromName(noun, items)
+                item = getItemFromName(noun, player.location.items)
                 if item:
                     player.take(item)
+                else:
+                    print('There is no {0} here.'.format(noun))
         elif action == 'help':
             print('I can only understand what you say if you first type an action and then a noun (if necessary). My vocabulary is limited.')
         elif action == 'xyzzy' or (action == 'say' and noun == 'xyzzy'):
@@ -74,6 +76,15 @@ while True:
                 player.score -= 1
         elif action == 'quit':
             player.die()
+        elif action == 'drop':
+            if not hasNoun:
+                print('Say what you want to drop.')
+            else:
+                item = getItemFromName(noun, player.inventory)
+                if item:
+                    player.drop(item)
+                else:
+                    print('You do not have a {} to drop.'.format(noun))
         else:
             print('You can\'t do that here.')
         if noun is not None:
