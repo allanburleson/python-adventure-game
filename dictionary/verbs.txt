@@ -1,0 +1,12 @@
+take:pick up,grab
+look:examine
+attack:fight,confront,battle,engage
+use
+drink
+eat
+jump:leap,hop
+xyzzy
+help:?
+break:smash
+quit:exit
+say:speak
