@@ -1,5 +1,5 @@
 take:pick up,grab
-look:examine
+look:examine,see
 attack:fight,confront,battle,engage
 use
 drink
