@@ -66,7 +66,7 @@ class Location(object):
         # directions = ['north', 'south', 'east', 'west', 'up', 'down']
         for i in self.exits:
             print('There is an exit {0}.'.format(i))
-        else:
+        if len(self.exits) == 0:
             print('There does not appear to be an exit.')
         print()
         if len(self.creatures) > 0:

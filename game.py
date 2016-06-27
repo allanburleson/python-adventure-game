@@ -85,6 +85,18 @@ while True:
                     player.drop(item)
                 else:
                     print('You do not have a {} to drop.'.format(noun))
+        elif action == 'go':
+            isDirection = False
+            for direction in ['north', 'south', 'east', 'west', 'up', 'down']:
+                if direction == noun:
+                    isDirection = True
+                    break
+            if not isDirection:
+                print('You must specify a valid direction.')
+            elif noun in player.location.exits:
+                    player.move(player.location.exits[noun])
+            else:
+                print('There is no exit in that direction.')
         else:
             print('You can\'t do that here.')
         if noun is not None:

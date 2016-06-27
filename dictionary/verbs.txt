@@ -11,3 +11,4 @@ break:smash
 quit:exit
 say:speak
 drop
+go:move,travel
