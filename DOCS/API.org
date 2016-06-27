@@ -71,21 +71,23 @@ orc.description = "description"
 *** What is a location?
 A location is a class with the following:
 
-	A name
-	Various items (stored in an array)
-	Creatures (also stored in an array)
-	Any obvious exits (n, s, e, w); Default=None
-	And a description; Default=''
+		A name
+		Various items (stored in an array)
+		Creatures (also stored in an array)
+		Any obvious exits (n, s, e, w); Default=None
+		And a description; Default=''
 
 It is defined in classes.py
 *** Creating locations
 A location is created with the form:
 
+#+BEGIN_SRC python
 LOC = Location('name',
 		[items],
 		[creatures],
 		[exit_north, exit_south, exit_east, exit_west, exit_up, exit_down],
 		'description')
+#+END_SRC
 
 exit_north ... exit_down are other defined rooms.
 Exits and Descriptions are optional.
@@ -95,11 +97,13 @@ home = Location('Home', [magicMirror], [orc], [test, 0, 0, 0, 0, 0], "")
 #+END_SRC
 
 *** Adding descriptions
-    A location's description is changed through the
+A location's description is changed through the
 
 description field.
 
+#+BEGIN_SRC python
 LOC.description = "description"
+#+END_SRC
 
 #+BEGIN_SRC python
 home.description = "description"
@@ -111,7 +115,9 @@ Games are started by creating a variable which represents the player
 
 and spawning it in a room.
 
+#+BEGIN_SRC python
 PLAYER = Player(ROOM)
+#+END_SRC
 
 #+BEGIN_SRC python
 player = Player(home)
