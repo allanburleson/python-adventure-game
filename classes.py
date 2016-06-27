@@ -16,13 +16,14 @@ class Player(object):
         self.move(location)
 
     def take(self, item):
-        assert isinstance(item, Item)
+        self.location.items.remove(item)
         self.inventory.append(item)
-        if item in self.location.items:
-            self.location.items.remove(item)
-        else:
-            print('There is no {0} here.'.format(item.name))
         print('{0} taken.'.format(item.name))
+
+    def drop(self, item):
+        self.inventory.remove(item)
+        self.location.items.append(item)
+        print('{} dropped.'.format(item.name))
 
     def sayLocation(self):
         print('You are in {0}.'.format(self.location.name))
@@ -63,7 +64,7 @@ class Location(object):
         # directions = ['north', 'south', 'east', 'west', 'up', 'down']
         for i in self.exits:
             print('There is an exit {0}.'.format(i))
-        else:
+        if len(self.exits) == 0:
             print('There does not appear to be an exit.')
         print()
         if len(self.creatures) > 0:
