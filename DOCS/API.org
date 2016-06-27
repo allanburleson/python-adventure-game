@@ -84,7 +84,8 @@ A location is a class with the following:
 
 		Creatures (also stored in an array)
 
-		Any obvious exits (n, s, e, w); Default=None
+		Dict of exits of the location: {north: value, south: value, east: value, west: value, up: value, down: value}; Default=None
+		The values must be other Location objects.
 
 		And a description; Default=''
 
