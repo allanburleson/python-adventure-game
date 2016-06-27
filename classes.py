@@ -43,14 +43,13 @@ class Player(object):
 
 
 class Location(object):
-    def __init__(self, name, items, creatures, exits=None, description=''):
+    def __init__(self, name, items, creatures, exits={}, description=''):
         # exit needs to be a dict with keys north, south, east, west, up, down
         assert type(items) == list
         assert (type(exits) == dict or exits is None)
-        if exits is not None:
-            for i in exits:
-                assert isinstance(exits[i], Location)
-                assert i == 'north' or i == 'south' or i == 'east' or i == 'west' or i == 'up' or i == 'down'
+        for i in exits:
+            assert isinstance(exits[i], Location)
+            assert i == 'north' or i == 'south' or i == 'east' or i == 'west' or i == 'up' or i == 'down'
         self.name = name
         self.items = items
         self.creatures = creatures
@@ -62,9 +61,8 @@ class Location(object):
         assert self.description != '', 'There must be a description.'
         print(self.description)
         # directions = ['north', 'south', 'east', 'west', 'up', 'down']
-        if self.exits is not None:
-            for i in self.exits:
-                print('There is an exit {0}.'.format(i))
+        for i in self.exits:
+            print('There is an exit {0}.'.format(i))
         else:
             print('There does not appear to be an exit.')
         print()
