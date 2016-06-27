@@ -18,3 +18,5 @@ magic mirror:mirror
 around
 xyzzy
 it
+inventory:items
+location:current location,position

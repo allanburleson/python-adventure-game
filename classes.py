@@ -25,8 +25,6 @@ class Player(object):
         self.location.items.append(item)
         print('{} dropped.'.format(item.name))
 
-
-
     def sayLocation(self):
         print('You are in {0}.'.format(self.location.name))
         

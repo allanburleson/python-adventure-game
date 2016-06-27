@@ -64,7 +64,8 @@ while True:
                 else:
                     print('There is no {0} here.'.format(noun))
         elif action == 'help':
-            print('I can only understand what you say if you first type an action and then a noun (if necessary). My vocabulary is limited.')
+            print('I can only understand what you say if you first type an action and then a noun (if necessary).', end='')
+            print(' My vocabulary is limited. If one word doesn\'t work, try a synonym. You can suggest commands to the developer if you need to.')
         elif action == 'xyzzy' or (action == 'say' and noun == 'xyzzy'):
             if magicMirror in player.inventory:
                 if player.location == start:
@@ -97,6 +98,18 @@ while True:
                     player.move(player.location.exits[noun])
             else:
                 print('There is no exit in that direction.')
+        elif action == 'show':
+            if noun == 'inventory':
+                if len(player.inventory) > 0:
+                    print('Inventory:')
+                    for item in player.inventory:
+                        print(item.name)
+                else:
+                    print('There are no items in your inventory.')
+            elif noun == 'location':
+                print('You are at ' + player.location.name)
+            else:
+                print('This isn\'t something I can show you.')
         else:
             print('You can\'t do that here.')
         if noun is not None:
