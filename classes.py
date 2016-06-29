@@ -250,3 +250,12 @@ class Mirror(Item):
                          ' is an inscription that says "XYZZY."',
                          locDescription='There is a small mirror lying'\
                                         ' on the ground.')
+                                        
+
+class ToiletPaper(Item):
+    def __init__(self):
+        super().__init__(name='toilet paper',
+                         description='The toilet paper is labeled "X-t'\
+                                     'raSoft.',
+                         locDescription='A roll of toilet paper is in '\
+                                        'the room.')
