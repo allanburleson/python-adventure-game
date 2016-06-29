@@ -167,7 +167,8 @@ class Player(object):
 
 
 class Location(object):
-    def __init__(self, name, items, creatures, exits={},description=''):
+    def __init__(self, name, items, creatures, exits={},
+                 description='', showNameWhenExit=False):
         # exit needs to be a dict with keys north, south, east, west,
         # up, down
         assert type(items) == list
@@ -181,13 +182,17 @@ class Location(object):
         self.description = description
         Location_Storage.append(self)
         self.exits = exits
+        self.showNameWhenExit = showNameWhenExit
 
     def giveInfo(self):
         assert self.description != '', 'There must be a description.'
         print(self.description)
         # directions = ['north', 'south', 'east', 'west', 'up', 'down']
         for i in self.exits:
-            print('There is an exit {0}.'.format(i))
+            if self.showNameWhenExit:
+                print('{} is to the {}.'.format(self.exits[i].name, i))
+            else:
+                print('There is an exit {0}.'.format(i))
         if len(self.exits) == 0:
             print('There does not appear to be an exit.')
         print()

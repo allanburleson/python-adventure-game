@@ -1,9 +1,9 @@
 from classes import *
 
-bathroom = Location('Bathroom', [ToiletPaper()], [])
+bathroom = Location('Bathroom', [ToiletPaper()], [], showNameWhenExit=True)
 bathroom.description = 'There is a toilet and a sink here. They seem'\
                        ' out of place since this is 600 B.C.'
-home = Location('Home', [], [])
+home = Location('Home', [], [], showNameWhenExit=True)
 home.description = 'You are in a familiar cabin made out of logs. '\
                    'There is a pleasantly warm fire in the fireplace '\
                    'and a comfortable-looking armchair beside it.'
