@@ -237,10 +237,3 @@ class Mirror(Item):
         super().__init__(name='magic mirror',
                          description='The mirror is round and you can see your reflection clearly. Under the glass is an inscription that says "XYZZY."',
                          locDescription='There is a small mirror lying on the ground.')
-
-
-class Fries(Item):
-    """Documentation for Fries"""
-    def __init__(self, diet):
-        super(Fries, self).__init__('fries', 'death', 'you\'ll still die')
-        self.diet = "nonexistant"
