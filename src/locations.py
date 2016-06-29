@@ -1,4 +1,4 @@
-from classes import *
+from src.classes import *
 
 bathroom = Location('Bathroom', [ToiletPaper()], [], showNameWhenExit=True)
 bathroom.description = 'There is a toilet and a sink here. They seem'\

@@ -22,6 +22,6 @@ def getWordList(filepath):
     return words
 
 
-verbs = getWordList('dictionary/verbs.txt')
-nouns = getWordList('dictionary/nouns.txt')
-extras = getWordList('dictionary/extras.txt')
+verbs = getWordList('src/dictionary/verbs.txt')
+nouns = getWordList('src/dictionary/nouns.txt')
+extras = getWordList('src/dictionary/extras.txt')

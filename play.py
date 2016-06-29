@@ -4,9 +4,9 @@ import random
 import shelve
 import sys
 
-import parser
-import locations
-import classes
+from src import parser
+from src import locations
+from src import classes
 
 player = classes.Player(locations, locations.start)
 previousNoun = ''

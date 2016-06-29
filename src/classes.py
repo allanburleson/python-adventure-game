@@ -1,6 +1,6 @@
 import sys
 
-import utils
+from src import utils
 
 Creatures = []
 Items = []

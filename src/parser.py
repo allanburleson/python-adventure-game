@@ -1,4 +1,4 @@
-from words import verbs, nouns, extras
+from src.words import verbs, nouns, extras
 
 
 def parseCommand(command):
