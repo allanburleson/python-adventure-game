@@ -133,7 +133,7 @@ class Player(object):
             
     def quit(self, action, noun, hasNoun):
         resp = input('Are you sure you want to quit? Your progress'\
-                     'will be deleted. [Y/n]')
+                     'will be deleted. [Y/n] ')
         if resp.lower.startswith('y'):
             self.die()
         else:
@@ -149,6 +149,8 @@ class Player(object):
                 print('There are no items in your inventory.')
         elif noun == 'location':
             print('You are at ' + self.location.name)
+        elif noun == 'score':
+            print('Your score is {}.'.format(self.score)
         else:
             print('This isn\'t something I can show you.')
             
