@@ -70,9 +70,8 @@ class Player(object):
         else:
             isDirection = False
             print('Action: ' + action)
-            # There can be an invis exit that does not show up unless...
-            # a secret is discovered
-            for direction in ['north', 'south', 'east', 'west', 'up', 'down']:
+            for direction in ['north', 'south', 'east', 'west', 'up', 
+                              'down']:
                 if direction == noun:
                     isDirection = True
                     break
@@ -87,15 +86,17 @@ class Player(object):
                         break
             elif noun in self.location.exits :
                 # Get right location from list called locations
+                loc = locations[locations.index(
+                        self.location.exits[noun])]
                 for i in locations:
-                    if i == locations[locations.index(self.location.exits[noun])]:
+                    if i == loc:
                         locToGoTo = i
                         break
             else:
                 print('There is no exit in that direction.')
                 return
             if locToGoTo is not None:
-                self.location = locToGoTo#locations[locations.index(self.location.exits[noun])]
+                self.location = locToGoTo
                 if not self.visitedPlaces[self.location]:
                     self.location.giveInfo()
                     self.visitedPlaces[self.location] = True
@@ -106,8 +107,11 @@ class Player(object):
             
         
     def help(self, action, noun, hasNoun):
-        print('I can only understand what you say if you first type an action and then a noun (if necessary).', end='')
-        print(' My vocabulary is limited. If one word doesn\'t work, try a synonym. If you get stuck, check the documentation.')
+        print('I can only understand what you say if you first type an'\
+              ' action and then a noun (if necessary).', end='')
+        print(' My vocabulary is limited. If one word doesn\'t work,'\
+              ' try a synonym. If you get stuck, check the documentati'\
+              'on.')
         
     def say(self, action, noun, hasNoun):
         if noun == 'xyzzy':
@@ -121,13 +125,15 @@ class Player(object):
                         self.go(location=location)
                         break
             else:
-                print('There was a flash of light...and your score was mysteriously lowered by one.')
+                print('There was a flash of light...and your score was'\
+                      ' mysteriously lowered by one.')
                 self.score -= 1
         else:
             print('You said "{}" but nothing happened.'.format(noun))
             
     def quit(self, action, noun, hasNoun):
-        resp = input('Are you sure you want to quit? Your progress will be deleted. [Y/n]')
+        resp = input('Are you sure you want to quit? Your progress'\
+                     'will be deleted. [Y/n]')
         if resp.lower.startswith('y'):
             self.die()
         else:
@@ -154,18 +160,20 @@ class Player(object):
                     hasMirror = True 
                     break
             if hasMirror:
-                print('The mirror exploded. A large shard of glass hit you in the face.')
+                print('The mirror exploded. A large shard of glass hit'\
+                      ' you in the face.')
                 self.die()
 
 
 class Location(object):
-    def __init__(self, name, items, creatures, exits={}, description=''):
-        # exit needs to be a dict with keys north, south, east, west, up, down
+    def __init__(self, name, items, creatures, exits={},description=''):
+        # exit needs to be a dict with keys north, south, east, west,
+        # up, down
         assert type(items) == list
         assert (type(exits) == dict or exits is None)
         for i in exits:
             assert isinstance(exits[i], Location)
-            assert i in ['north', 'south', 'east', 'west', 'up', 'down', 'invis']
+            assert i in ['north', 'south', 'east', 'west', 'up', 'down']
         self.name = name
         self.items = items
         self.creatures = creatures
@@ -215,7 +223,8 @@ class Orc(Baddie):
     def __init__(self):
         super().__init__(name='orc',
                          hp=100,
-                         description='There is a nasty-looking orc in the room.',
+                         description='There is a nasty-looking orc in '\
+                                     'the room.',
                          power=100)
                          
 
@@ -235,5 +244,8 @@ class Item(object):
 class Mirror(Item):
     def __init__(self):
         super().__init__(name='magic mirror',
-                         description='The mirror is round and you can see your reflection clearly. Under the glass is an inscription that says "XYZZY."',
-                         locDescription='There is a small mirror lying on the ground.')
+                         description='The mirror is round and you can '\
+                         'see your reflection clearly. Under the glass'\
+                         ' is an inscription that says "XYZZY."',
+                         locDescription='There is a small mirror lying'\
+                                        ' on the ground.')
