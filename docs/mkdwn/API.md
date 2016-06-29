@@ -10,11 +10,11 @@
 
 Items are a class which have:
 
-a name
+- a name
 
-a description that is shown when examining the item
+- a description that is shown when examining the item
 
-a local description that is shown when looking at the room.
+- a local description that is shown when looking at the room.
 
 Items also have a method ```examine``` used to print the description
 
@@ -40,11 +40,11 @@ class ITEM_NAME(Item):
 
 A Creature is a class which has:
 
-A name
+- A name
 
-A description
+- A description
 
-And an hp stat.
+- And an hp stat.
 
 It also has a method ```describe``` which allows its description to be printed.
 
@@ -82,15 +82,15 @@ A location is a class defined in classes.py
 
 A location has the following attributes:
 
-A name
+- A name
 
-Any items 
+- Any items 
 
-Any creatures
+- Any creatures
 
-Any exits
+- Any exits
 
-And a description
+- And a description
 
 Items and Creatures are kept in a list, and must be called instead of putting their descriptions.
 
