@@ -69,7 +69,6 @@ class Player(object):
                 self.visitedPlaces[self.location] = True
         else:
             isDirection = False
-            print('Action: ' + action)
             for direction in ['north', 'south', 'east', 'west', 'up', 
                               'down']:
                 if direction == noun:
