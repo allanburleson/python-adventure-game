@@ -1,0 +1,4 @@
+- [x] Create parser
+- [x] Create engine
+- [ ] Create story and add needed elements
+    - [ ] Implement combat
