@@ -1,5 +1,6 @@
 from words import verbs, nouns, extras
 
+
 def parseCommand(command):
     command = command.lower()
     # remove extra words
@@ -34,7 +35,6 @@ def parseCommand(command):
     else:
         print('What?')
         return
-    
     # next is a noun
     noun = ''
     restOfCommand = ''
@@ -53,5 +53,4 @@ def parseCommand(command):
             else:
                 print('I don\'t understand the noun "{0}."'.format(restOfCommand))
                 return
-    
     return parsedCommand

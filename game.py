@@ -2,13 +2,14 @@ import readline
 import random
 import shelve
 
-from parser import *
-from locations import *
+import parser
+import locations
+import classes
 
-player = Player(locations, start)
+player = classes.Player(locations, locations.start)
 previousNoun = ''
 while True:
-    command = parseCommand(input('> '))
+    command = parser.parseCommand(input('> '))
     if command is not None:
         hasNoun = True
         action = command[0]
