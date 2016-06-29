@@ -116,7 +116,7 @@ class Player(object):
     def say(self, action, noun, hasNoun):
         if noun == 'xyzzy':
             if inInventory(Mirror, self):
-                if self.location.name == 'start':
+                if self.location.name == 'Start':
                     self.score += 1
                 print('You vanished and reappeared in your house.\n')
                 self.go(action, noun, hasNoun)
@@ -150,7 +150,7 @@ class Player(object):
         elif noun == 'location':
             print('You are at ' + self.location.name)
         elif noun == 'score':
-            print('Your score is {}.'.format(self.score)
+            print('Your score is {}.'.format(self.score))
         else:
             print('This isn\'t something I can show you.')
             
