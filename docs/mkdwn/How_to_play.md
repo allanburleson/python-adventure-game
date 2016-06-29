@@ -14,7 +14,7 @@ Many words have synonyms that the parser treats as the same word, such as monste
 
 The look command prints information about the player's surroundings to the console. Adding a noun to the command will make it describe that item in the player's inventory (if it exists).
 
-Synonyms
+### Synonyms
 
 - examine
 
@@ -24,7 +24,7 @@ Synonyms
 
 The take command puts the specified item into the player's inventory if that item is in the player's current location.
 
-Synonyms
+### Synonyms
 
 - pick up
 
@@ -38,7 +38,7 @@ The drop command does the opposite of take, removing an item from the player's i
 
 The quit command ends the game.
 
-Synonyms
+### Synonyms
 
 - exit
 
@@ -46,7 +46,7 @@ Synonyms
 
 The help command prints a short help message.
 
-Synonyms
+### Synonyms
 
 - ?
 
@@ -54,12 +54,20 @@ Synonyms
 
 The go command, when supplied a direction, moves the player in that direction if there is an exit in that direction.
 
-Synonyms
+### Synonyms
 
 - move
 
 - travel
 
-# More?
+## show
+
+The show command needs a noun after it telling the command what information to give. Currently, you can `show inventory`, `show location`, or `show points`.
+
+### Synonyms
+
+- display
+
+## More?
 
 There are more commands, but the ones not documented are either hidden or incomplete.
