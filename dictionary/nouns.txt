@@ -21,3 +21,4 @@ it
 the
 inventory:items
 location:current location,position
+score:points

@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 import readline
 import random
 import shelve
@@ -21,7 +22,8 @@ while True:
         if previousNoun != '' and noun == 'it':
             noun = previousNoun
         try:
-            commandResult = getattr(player, action)(action, noun, hasNoun)
+            commandResult = getattr(player, action)(action, noun, 
+                                                    hasNoun)
         except AttributeError:
             print('You can\'t do that here.')
         if noun is not None:

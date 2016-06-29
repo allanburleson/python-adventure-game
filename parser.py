@@ -25,7 +25,8 @@ def parseCommand(command):
             noNoun = True
         else:
             for syn in verbs[i]:
-                if command.startswith(syn + ' ') or command.strip() == syn:
+                if command.startswith(syn + ' ') or (
+                   command.strip() == syn):
                     verb = i
                     typedVerb = syn
                 if command.strip() == syn:
@@ -51,6 +52,7 @@ def parseCommand(command):
             if noun != '':
                 parsedCommand.append(noun)
             else:
-                print('I don\'t understand the noun "{0}."'.format(restOfCommand))
+                print('I don\'t understand the noun "{0}."'.format(
+                                                         restOfCommand))
                 return
     return parsedCommand
