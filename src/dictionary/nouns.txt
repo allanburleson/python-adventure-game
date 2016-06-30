@@ -22,3 +22,4 @@ the
 inventory:items
 location:current location,position
 score:points
+toilet paper:toilet tissue,toilet paper roll
