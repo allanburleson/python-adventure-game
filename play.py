@@ -10,6 +10,7 @@ from src import classes
 
 player = classes.Player(locations, locations.start)
 previousNoun = ''
+turns = 0
 while True:
     try:
         command = parser.parseCommand(input('> '))
@@ -32,6 +33,6 @@ while True:
                 previousNoun = noun
             else:
                 previousNoun = ''
+            turns += 1
     except KeyboardInterrupt:
-        print('Bye!')
-        sys.exit(0)
+        player.die()

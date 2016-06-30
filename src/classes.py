@@ -130,13 +130,20 @@ class Player(object):
                 self.visitedPlaces[self.location] = True
         else:
             isDirection = False
+            isLoc = False
+            locToGoTo = None
             for direction in ['north', 'south', 'east', 'west', 'up', 
                               'down']:
                 if direction == noun:
                     isDirection = True
                     break
-            locToGoTo = None
-            if not isDirection and action != 'say':
+                elif direction in self.location.exits:                    
+                    if self.location.exits[direction].name.lower() == noun:
+                        isLoc = True
+                        locToGoTo = self.location.exits[direction]
+                        previousDir = direction
+                        break
+            if not isDirection and not isLoc and action != 'say':
                 print('You must specify a valid direction.')
             elif action == 'say':
                 # Get right Location from list called locations
@@ -152,11 +159,14 @@ class Player(object):
                     if i == loc:
                         locToGoTo = i
                         break
+            elif isLoc:
+                pass
             else:
                 print('There is no exit in that direction.')
                 return
             if locToGoTo is not None:
-                previousDir = noun
+                if not isLoc:
+                    previousDir = noun
                 self.location = locToGoTo
                 if not self.visitedPlaces[self.location]:
                     self.location.giveInfo()
@@ -182,6 +192,8 @@ class Player(object):
                                 reverseDir = 'down'
                             elif previousDir == 'down':
                                 reverseDir = 'up'
+                            else:
+                                assert False, 'Somehow non-direction "{}" got through to here.'.format(noun)
                             self.go('go', reverseDir, hasNoun = 'True')
                         else:
                             self.location.baddies.remove(self.location.baddies[i])
@@ -199,7 +211,7 @@ class Player(object):
     def say(self, action, noun, hasNoun):
         if noun == 'xyzzy':
             if utils.inInventory(Mirror, self):
-                if self.location.name == 'start':
+                if self.location.name == 'Start':
                     self.changeScore(1)
                 print('You vanished and reappeared in your house.\n')
                 self.go(action, noun, hasNoun)
