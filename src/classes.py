@@ -223,16 +223,17 @@ class Creature(object):
 class Baddie(Creature):
     def __init__(self, name, hp, description, power):
         super().__init__(name, hp, description)
+        assert type(power) == int
         self.power = power
 
 
 class Orc(Baddie):
     def __init__(self):
         super().__init__(name='orc',
-                         hp=100,
+                         hp=50,
                          description='There is a nasty-looking orc in '\
                                      'the room.',
-                         power=100)
+                         power=random.randint(20, 50))
 
 
 
