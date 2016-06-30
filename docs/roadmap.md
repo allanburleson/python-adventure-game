@@ -2,4 +2,4 @@
 - [x] Create engine
 - [x] refactor
 - [ ] Create story and add needed elements
-    - [ ] Implement combat
+    - [x] Implement combat
