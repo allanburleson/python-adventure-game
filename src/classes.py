@@ -1,3 +1,4 @@
+import random
 import sys
 
 from src import utils
@@ -236,15 +237,32 @@ class Orc(Baddie):
 
 
 class Item(object):
-    def __init__(self, name, description='', locDescription=''):
+    def __init__(self, name, description, locDescription):
         self.name = name
         self.description = description
         self.locDescription = locDescription
         Items.append(self)
 
     def examine(self):
-        assert self.description != '', 'There must be a description.'
         print(self.description)
+        
+        
+class Weapon(Item):
+    def __init__(self, name, description, locDescription, power):
+        super().__init__(name, description, locDescription)
+        assert type(power) == int
+        self.power = power
+        
+        
+class Sword(Weapon):
+    def __init__(self):
+        super().__init__(name='sword',
+                         description='The sword makes you want to '\
+                                     'cleave goblin-necks.',
+                         locDescription='There is an unsheathed sword '\
+                                        'that looks like it would be '\
+                                        'very useful in battle.',
+                         power=random.randint(90,150))
 
 
 class Mirror(Item):
