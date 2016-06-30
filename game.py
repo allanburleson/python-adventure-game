@@ -22,7 +22,7 @@ while True:
         if previousNoun != '' and noun == 'it':
             noun = previousNoun
         try:
-            commandResult = getattr(player, action)(action, noun, 
+            commandResult = getattr(player, action)(action, noun,
                                                     hasNoun)
         except AttributeError:
             print('You can\'t do that here.')
