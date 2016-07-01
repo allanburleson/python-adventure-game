@@ -9,6 +9,18 @@ Items = []
 Location_Storage = []
 
 
+class Splash(Mode):
+    """The Splash text that appears"""
+
+    def __init__(self, title):
+        self.title = title
+
+    def pStart(self):
+        print(self.title)
+        print("This is the story of a certain development process\n"
+              "It wasn't fun.\n")
+
+
 class Player(object):
 
     def __init__(self, location, startLoc):
