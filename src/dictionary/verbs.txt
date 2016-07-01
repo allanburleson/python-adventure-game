@@ -5,7 +5,6 @@ use
 drink
 eat
 jump:leap,hop
-xyzzy
 help:?
 break:smash
 quit:exit
