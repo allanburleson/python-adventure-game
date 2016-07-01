@@ -3,3 +3,4 @@
 - [x] refactor into better code
 - [ ] Create story and add needed elements
     - [x] Implement combat
+- [ ] Add save file
