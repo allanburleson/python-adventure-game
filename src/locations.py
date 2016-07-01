@@ -14,7 +14,11 @@ closet = Location('Closet', [], [], showNameWhenExit=True)
 closet.description = 'You are in a closet that is full of cobwebs.'
 yard = Location('Yard', [], [Snail()])
 yard.description = 'You are in the yard of your house.'
+creepyforest = Location('Creepy forest', [], [], showNameWhenExit=True)
+creepyforest.description = 'You are in a spooky forest. '\
+                           'How are you in the middle of a large fores'\
+                           't? Don\'t ask me!'
 home.exits = {'north': bathroom, 'south': closet, 'east': yard}
 bathroom.exits = {'south': home}
 closet.exits = {'north': home}
-yard.exits = {'west': home}
+yard.exits = {'west': home, 'east': creepyforest}

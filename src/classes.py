@@ -294,7 +294,7 @@ class Location(object):
         print()
         if len(self.creatures) > 0:
             for creature in self.creatures:
-                print('There is {0} {1} in the room!'.format(
+                print('There is {0} {1} here.'.format(
                        utils.getIndefArticle(creature.name), creature.name))
             print()
         for item in self.items:
