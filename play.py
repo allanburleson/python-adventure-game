@@ -7,6 +7,8 @@ import sys
 from src import parser
 from src import locations
 from src import classes
+from src import modes
+
 
 player = classes.Player(locations, locations.start)
 previousNoun = ''
@@ -24,7 +26,7 @@ while True:
             if previousNoun != '' and noun == 'it':
                 noun = previousNoun
             try:
-                commandResult = getattr(player, action)(action, noun, 
+                commandResult = getattr(player, action)(action, noun,
                                                         hasNoun)
             except AttributeError:
                 print('You can\'t do that here.')

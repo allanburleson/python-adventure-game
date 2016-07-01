@@ -1,6 +1,7 @@
 import sys
 
 from src import utils
+from src import modes
 
 Creatures = []
 Items = []
@@ -8,6 +9,7 @@ Location_Storage = []
 
 
 class Player(object):
+
     def __init__(self, location, startLoc):
         self.inventory = []
         self.score = 0
@@ -69,7 +71,7 @@ class Player(object):
                 self.visitedPlaces[self.location] = True
         else:
             isDirection = False
-            for direction in ['north', 'south', 'east', 'west', 'up', 
+            for direction in ['north', 'south', 'east', 'west', 'up',
                               'down']:
                 if direction == noun:
                     isDirection = True
@@ -83,10 +85,10 @@ class Player(object):
                     if i.name == 'Home':
                         locToGoTo = i
                         break
-            elif noun in self.location.exits :
+            elif noun in self.location.exits:
                 # Get right Location from list called locations
                 loc = Location_Storage[Location_Storage.index(
-                        self.location.exits[noun])]
+                    self.location.exits[noun])]
                 for i in Location_Storage:
                     if i == loc:
                         locToGoTo = i
@@ -104,14 +106,13 @@ class Player(object):
             else:
                 print('Something went wrong.')
 
-
     def help(self, action, noun, hasNoun):
-        print('I can only understand what you say if you first type an'\
+        print('I can only understand what you say if you first type an'
               ' action and then a noun (if necessary).', end='')
-        print(' My vocabulary is limited. If one word doesn\'t work,'\
-              ' try a synonym. If you get stuck, check the documentati'\
+        print(' My vocabulary is limited. If one word doesn\'t work,'
+              ' try a synonym. If you get stuck, check the documentati'
               'on.')
-        
+
     def say(self, action, noun, hasNoun):
         if noun == 'xyzzy':
             if utils.inInventory(Mirror, self):
@@ -124,14 +125,14 @@ class Player(object):
                         self.go(location=Location)
                         break
             else:
-                print('There was a flash of light...and your score was'\
+                print('There was a flash of light...and your score was'
                       ' mysteriously lowered by one.')
                 self.score -= 1
         else:
             print('You said "{}" but nothing happened.'.format(noun))
 
     def quit(self, action, noun, hasNoun):
-        resp = input('Are you sure you want to quit? Your progress'\
+        resp = input('Are you sure you want to quit? Your progress'
                      'will be deleted. [Y/n] ')
         if resp.lower.startswith('y'):
             self.die()
@@ -161,12 +162,13 @@ class Player(object):
                     hasMirror = True
                     break
             if hasMirror:
-                print('The mirror exploded. A large shard of glass hit'\
+                print('The mirror exploded. A large shard of glass hit'
                       ' you in the face.')
                 self.die()
 
 
 class Location(object):
+
     def __init__(self, name, items, creatures, exits={},
                  description='', showNameWhenExit=False):
         # exit needs to be a dict with keys north, south, east, west,
@@ -208,6 +210,7 @@ class Location(object):
 
 
 class Creature(object):
+
     def __init__(self, name, hp, description):
         self.name = name
         self.description = description
@@ -220,22 +223,24 @@ class Creature(object):
 
 
 class Baddie(Creature):
+
     def __init__(self, name, hp, description, power):
         super().__init__(name, hp, description)
         self.power = power
 
 
 class Orc(Baddie):
+
     def __init__(self):
         super().__init__(name='orc',
                          hp=100,
-                         description='There is a nasty-looking orc in '\
+                         description='There is a nasty-looking orc in '
                                      'the room.',
                          power=100)
 
 
-
 class Item(object):
+
     def __init__(self, name, description='', locDescription=''):
         self.name = name
         self.description = description
@@ -248,19 +253,21 @@ class Item(object):
 
 
 class Mirror(Item):
+
     def __init__(self):
         super().__init__(name='magic mirror',
-                         description='The mirror is round and you can '\
-                         'see your reflection clearly. Under the glass'\
+                         description='The mirror is round and you can '
+                         'see your reflection clearly. Under the glass'
                          ' is an inscription that says "XYZZY."',
-                         locDescription='There is a small mirror lying'\
+                         locDescription='There is a small mirror lying'
                                         ' on the ground.')
-                                        
+
 
 class ToiletPaper(Item):
+
     def __init__(self):
         super().__init__(name='toilet paper',
-                         description='The toilet paper is labeled "X-t'\
+                         description='The toilet paper is labeled "X-t'
                                      'raSoft.',
-                         locDescription='A roll of toilet paper is in '\
+                         locDescription='A roll of toilet paper is in '
                                         'the room.')
