@@ -32,3 +32,5 @@ stick
 snail
 ghost
 chest:treasure chest,box
+bread:loaf of bread
+health

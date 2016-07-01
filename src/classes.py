@@ -247,6 +247,8 @@ class Player(object):
             print('You are at ' + self.location.name)
         elif noun == 'score':
             print('Your score is {}.'.format(self.score))
+        elif noun == 'health':
+            print('You have {} health.'.format(self.health))
         else:
             print('This isn\'t something I can show you.')
 
@@ -291,7 +293,21 @@ class Player(object):
                 print('You have nothing to break the chest with.')
         else:
             print('Hitting doesn\'t help.')
-                
+            
+    def eat(self, action, noun, hasNoun):
+        item = None
+        for i in self.inventory:
+            if i.name == noun:
+                item = i
+        if item:
+            if isinstance(item, Food):
+                print('You ate the {0} and gained {1} health.'.format(item.name, item.health))
+                self.health += item.health
+                self.inventory.remove(item)
+            else:
+                print('Sorry, that isn\'t food.')
+        else:
+            print('You don\'t have that.')
             
 
 class Location(object):
@@ -319,23 +335,26 @@ class Location(object):
         # directions = ['north', 'south', 'east', 'west', 'up', 'down']
         for i in self.exits:
             if self.exits[i].showNameWhenExit:
-                print('{} is to the {}.'.format(self.exits[i].name, i))
+                if i == 'up' or i == 'down':
+                    print('{} is {}.'.format(self.exits[i].name, i))
+                else:
+                    print('{} is to the {}.'.format(self.exits[i].name, i))
             else:
                 print('There is an exit {0}.'.format(i))
         if len(self.exits) == 0:
             print('There does not appear to be an exit.')
         print()
-        if len(self.creatures) > 0:
-            for creature in self.creatures:
-                print('There is {0} {1} here.'.format(
-                       utils.getIndefArticle(creature.name), creature.name))
-            print()
         for item in self.items:
             if item.locDescription != '':
                 print(item.locDescription)
             else:
                 print('There is {0} {1}'.format(
                            utils.getIndefArticle(item.name) ,item.name))
+        print()
+        if len(self.creatures) > 0:
+            for creature in self.creatures:
+                print('There is {0} {1} here.'.format(
+                       utils.getIndefArticle(creature.name), creature.name))
 
 
 class Creature(object):
@@ -379,7 +398,14 @@ class Ghost(Baddie):
                          hp=99999999,
                          description='Wooooo',
                          power=0.01)
-
+                         
+                         
+class GiantSpider(Baddie):
+    def __init__(self):
+        super().__init__(name='giant spider',
+                         hp=500,
+                         description='The spider is large and ugly.',
+                         power=15)
 
 
 class Item(object):
@@ -474,3 +500,18 @@ class Stick(Item):
                                      'for bashing things with.',
                          locDescription='There is a random stick on '\
                                         'the ground.')
+
+
+class Food(Item):
+    def __init__(self, name, description, locDescription, health):
+        super().__init__(name, description, locDescription)
+        self.health = health
+        
+        
+class Bread(Food):
+    def __init__(self):
+        super().__init__(name='bread',
+                         description='The bread is slightly stale but '\
+                                     'looks wholesome.',
+                         locDescription='There is a loaf of bread.',
+                         health=30)

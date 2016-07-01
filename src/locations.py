@@ -12,18 +12,21 @@ start.description = 'You are in a small room with concrete walls and '\
                     'no windows.'
 closet = Location('Closet', [Stick()], [], showNameWhenExit=True)
 closet.description = 'You are in a closet that is full of cobwebs.'
+attic = Location('Attic', [Bread()], [GiantSpider()], showNameWhenExit=True)
+attic.description = 'The attic has been obviously unused for many year'\
+                    's. There are large spiderwebs everywhere.'
 backyard = Location('Backyard', [], [Snail()])
 backyard.description = 'You are in the backyard of your house.'
 frontyard = Location('Front Yard', [Chest([Sword()], True)], [])
 frontyard.description = 'You are in your front yard.'
 creepyforest = Location('Creepy forest', [], [Ghost()], showNameWhenExit=True)
-creepyforest.description = 'You are in a spooky forest. '\
-                           'How are you in the middle of a large fores'\
-                           't? Don\'t ask me!'
+creepyforest.description = 'You are in a spooky forest.'
                            
 home.exits = {'north': bathroom, 'south': closet, 'east': backyard,
-              'west': frontyard}
+              'west': frontyard, 'up': attic}
 bathroom.exits = {'south': home}
 closet.exits = {'north': home}
+attic.exits = {'down': home}
 backyard.exits = {'west': home, 'east': creepyforest}
+creepyforest.exits = {'west': backyard}
 frontyard.exits = {'east': home}
