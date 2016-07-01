@@ -34,3 +34,4 @@ ghost
 chest:treasure chest,box
 bread:loaf of bread
 health
+paper:notice,pamphlet,letter

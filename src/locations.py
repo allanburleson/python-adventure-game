@@ -3,7 +3,31 @@ from src.classes import *
 bathroom = Location('Bathroom', [ToiletPaper()], [], showNameWhenExit=True)
 bathroom.description = 'There is a toilet and a sink here. They seem'\
                        ' out of place since this is 600 B.C.'
-home = Location('Home', [], [], showNameWhenExit=True)
+home = Location('Home', [Paper()], [], showNameWhenExit=True)
+home.items[0].description = '''"NOTICE:
+All able-bodied individuals are asked to assist in capturing or
+destroying the Robots of Unusual Size. More commonly knows as ROUS, they
+have been terrorizing humankind for several weeks and already 3000 lives
+have been lost. Visit our headquarters to register and get free 
+ROUS-fighting supplies.
+
+Here is what popular media outlets have to say about this menace:
+'Robots of Unusual Size? I don't think they exist.'--DPR Daily
+
+'Well, since the population of the universe is zero, I'm not sure how
+this issue came about. (See Guide chapter 5) Hopefully this will be 
+resolved.'--Zarniwoop, HG2G
+
+'We extend condolences to all whose friends and family have been harmed
+in these attacks. Many thanks to the RRO which so dilligently protects
+our loved ones.'--Old York Times
+
+Please await further letters for updates.
+
+--RRO (ROUS Resistance Organization)"
+
+Written under this letter is a handwritten note that says:
+"RRO headquarters: sssessw"'''
 home.description = 'You are in a familiar cabin made out of logs. '\
                    'There is a pleasantly warm fire in the fireplace '\
                    'and a comfortable-looking armchair beside it.'

@@ -508,6 +508,14 @@ class Stick(Item):
                                      'for bashing things with.',
                          locDescription='There is a random stick on '\
                                         'the ground.')
+                                        
+                                        
+class Paper(Item):
+    def __init__(self, text=''):
+        super().__init__(name='paper',
+                         description=text,
+                         locDescription='On a table is a paper labeled'\
+                                        ' NOTICE.')
 
 
 class Food(Item):
