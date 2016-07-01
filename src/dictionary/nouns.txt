@@ -27,3 +27,4 @@ fist
 closet
 bathroom
 home
+yard

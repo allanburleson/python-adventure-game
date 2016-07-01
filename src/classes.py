@@ -173,30 +173,30 @@ class Player(object):
                     self.visitedPlaces[self.location] = True
                 else:
                     print('You are in {0}.'.format(self.location.name))
-                if len(self.location.baddies) > 0:
-                    for i in range(len(self.location.baddies)):
-                        result = self.fight(self.location.baddies[i])
-                        if result[0] == 'retreat':
-                            if len(result) > 1:
-                                # Issue here
-                                self.location.baddies[i].hp = result[1]
-                            if previousDir == 'north':
-                                reverseDir = 'south'
-                            elif previousDir == 'south':
-                                reverseDir = 'north'
-                            elif previousDir == 'west':
-                                reverseDir = 'east'
-                            elif previousDir == 'east':
-                                reverseDir = 'west'
-                            elif previousDir == 'up':
-                                reverseDir = 'down'
-                            elif previousDir == 'down':
-                                reverseDir = 'up'
+                if len(self.location.creatures) > 0:
+                    for i in self.location.creatures:
+                        if isinstance(i, Baddie):
+                            result = self.fight(i)
+                            if result[0] == 'retreat':
+                                if len(result) > 1:
+                                    i.hp = result[1]
+                                if previousDir == 'north':
+                                    reverseDir = 'south'
+                                elif previousDir == 'south':
+                                    reverseDir = 'north'
+                                elif previousDir == 'west':
+                                    reverseDir = 'east'
+                                elif previousDir == 'east':
+                                    reverseDir = 'west'
+                                elif previousDir == 'up':
+                                    reverseDir = 'down'
+                                elif previousDir == 'down':
+                                    reverseDir = 'up'
+                                else:
+                                    assert False, 'Somehow non-direction "{}" got through to here.'.format(noun)
+                                self.go('go', reverseDir, hasNoun = 'True')
                             else:
-                                assert False, 'Somehow non-direction "{}" got through to here.'.format(noun)
-                            self.go('go', reverseDir, hasNoun = 'True')
-                        else:
-                            self.location.baddies.remove(self.location.baddies[i])
+                                self.location.creatures.remove(i)
             else:
                 print('Something went wrong.')
 
@@ -263,8 +263,8 @@ class Player(object):
 
 
 class Location(object):
-    def __init__(self, name, items, baddies, exits={},
-                 description='', showNameWhenExit=False):
+    def __init__(self, name, items, creatures, exits={},
+            description='', showNameWhenExit=False):
         # exit needs to be a dict with keys north, south, east, west,
         # up, down
         assert type(items) == list
@@ -274,7 +274,7 @@ class Location(object):
             assert i in ['north', 'south', 'east', 'west', 'up', 'down']
         self.name = name
         self.items = items
-        self.baddies = baddies
+        self.creatures = creatures
         self.description = description
         Location_Storage.append(self)
         self.exits = exits
@@ -285,17 +285,17 @@ class Location(object):
         print(self.description)
         # directions = ['north', 'south', 'east', 'west', 'up', 'down']
         for i in self.exits:
-            if self.showNameWhenExit:
+            if self.exits[i].showNameWhenExit:
                 print('{} is to the {}.'.format(self.exits[i].name, i))
             else:
                 print('There is an exit {0}.'.format(i))
         if len(self.exits) == 0:
             print('There does not appear to be an exit.')
         print()
-        if len(self.baddies) > 0:
-            for baddie in self.baddies:
+        if len(self.creatures) > 0:
+            for creature in self.creatures:
                 print('There is {0} {1} in the room!'.format(
-                       utils.getIndefArticle(baddie.name), baddie.name))
+                       utils.getIndefArticle(creature.name), creature.name))
             print()
         for item in self.items:
             if item.locDescription != '':
@@ -315,6 +315,13 @@ class Creature(object):
     def describe(self):
         assert self.description != '', 'There must be a description.'
         print(self.description)
+        
+        
+class Snail(Creature):
+    def __init__(self):
+        super().__init__(name='snail',
+                         hp=2,
+                         description='There is a snail on the ground.')
 
 
 class Baddie(Creature):
