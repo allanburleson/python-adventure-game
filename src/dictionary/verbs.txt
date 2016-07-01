@@ -12,3 +12,5 @@ say:speak
 drop
 go:move,travel
 show:display
+open
+hit:strike
