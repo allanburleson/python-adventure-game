@@ -1,4 +1,5 @@
 from src import classes
+import random
 
 
 class Mode(object):
@@ -7,24 +8,22 @@ class Mode(object):
 
     def __init__(self, name):
         super(Mode, self).__init__()
+        self.name = name
 
 
-class Combat(Mode):
-    """Documentation for Combat"""
+class Rand_Num_Game():
+    """Documentation for Rand_Num_Game
 
-    def __init__(self, hp, creatures):
-        self.hp = hp
-        self.creatures = creatures
+    """
+
+    def __init__(self, sides):
+        self.sides = sides
 
     def pStart(self):
-        print("You encountered a {0}".format(self.creatures))
-
-
-a = Combat(5, "apple")
+        awk = random.randint(0, self.sides)
+        print(awk)
 
 
 def SwitchMode(mode):
     """Switch mode to 'mode'"""
     mode.pStart()
-
-SwitchMode(a)

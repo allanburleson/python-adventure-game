@@ -7,11 +7,13 @@ import sys
 from src import parser
 from src import locations
 from src import classes
-from src import modes
+from src import utils
 
 
+utils.clrscn()
 player = classes.Player(locations, locations.start)
 previousNoun = ''
+turns = 0
 while True:
     try:
         command = parser.parseCommand(input('> '))
@@ -34,6 +36,6 @@ while True:
                 previousNoun = noun
             else:
                 previousNoun = ''
+            turns += 1
     except KeyboardInterrupt:
-        print('Bye!')
-        sys.exit(0)
+        player.die()
