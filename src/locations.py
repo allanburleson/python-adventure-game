@@ -21,7 +21,10 @@ frontyard = Location('Front Yard', [Chest([Sword()], True)], [])
 frontyard.description = 'You are in your front yard.'
 creepyforest = Location('Creepy forest', [], [Ghost()], showNameWhenExit=True)
 creepyforest.description = 'You are in a spooky forest.'
-                           
+forest = Location('Forest', [], [Bear()], showNameWhenExit = True)
+forest.description = 'You are in a forest. There is a sign that says '\
+                     '"This is not the spooky forest of the East. Stay'\
+                     ' away from there!"'
 home.exits = {'north': bathroom, 'south': closet, 'east': backyard,
               'west': frontyard, 'up': attic}
 bathroom.exits = {'south': home}
@@ -29,4 +32,5 @@ closet.exits = {'north': home}
 attic.exits = {'down': home}
 backyard.exits = {'west': home, 'east': creepyforest}
 creepyforest.exits = {'west': backyard}
-frontyard.exits = {'east': home}
+frontyard.exits = {'east': home, 'west': forest}
+forest.exits = {'east': frontyard}

@@ -406,6 +406,14 @@ class GiantSpider(Baddie):
                          hp=500,
                          description='The spider is large and ugly.',
                          power=15)
+                         
+                         
+class Bear(Baddie):
+    def __init__(self):
+        super().__init__(name='bear',
+                         hp=200,
+                         description='The bear growls at you.',
+                         power = 30)
 
 
 class Item(object):
