@@ -327,7 +327,7 @@ class Snail(Creature):
 class Baddie(Creature):
     def __init__(self, name, hp, description, power):
         super().__init__(name, hp, description)
-        assert type(power) == int
+        assert type(power) == int or type(power) == float
         self.power = power
 
 
@@ -338,6 +338,14 @@ class Orc(Baddie):
                          description='There is an orc in '\
                                      'the room.',
                          power=random.randint(20, 50))
+                         
+                         
+class Ghost(Baddie):
+    def __init__(self):
+        super().__init__(name='ghost',
+                         hp=99999999,
+                         description='Wooooo',
+                         power=0.01)
 
 
 
