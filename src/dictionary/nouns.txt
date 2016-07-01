@@ -26,5 +26,9 @@ toilet paper:toilet tissue,toilet paper roll
 fist
 closet
 bathroom
-home
+home:house
 yard
+stick
+snail
+ghost
+chest:treasure chest,box

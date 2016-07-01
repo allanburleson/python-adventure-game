@@ -90,12 +90,12 @@ class Player(object):
             print('What do you want to take?')
         else:
             item = utils.getItemFromName(noun, self.location.items, self)
-            if item:
+            if item and not isinstance(item, InteractableItem):
                 self.location.items.remove(item)
                 self.inventory.append(item)
                 print('{0} taken.'.format(item.name))
             else:
-                print('There is no {0} here.'.format(noun))
+                print('There is no {0} here that you can pick up.'.format(noun))
 
     def drop(self, action, noun, hasNoun):
         if not hasNoun:
@@ -145,6 +145,7 @@ class Player(object):
                         break
             if not isDirection and not isLoc and action != 'say':
                 print('You must specify a valid direction.')
+                return
             elif action == 'say':
                 # Get right Location from list called locations
                 for i in Location_Storage:
@@ -260,7 +261,38 @@ class Player(object):
                 print('The mirror exploded. A large shard of glass hit'\
                       ' you in the face.')
                 self.die()
-
+                
+    def open(self, action, noun, hasNoun):
+        chest = None
+        for i in self.location.items:
+            if isinstance(i, Chest):
+                chest = i
+                break
+        if chest:
+            items = chest.open()
+            self.location.items += items
+            
+    def hit(self, action, noun, hasNoun):
+        chest = None
+        for i in self.location.items:
+            if isinstance(i, Chest):
+                chest = i
+                break
+        if chest:
+            for i in self.inventory:
+                stick = True
+                if isinstance(i, Stick):
+                    stick = True
+                    break
+            if stick:
+                print('You smashed the lock off the chest.')
+                chest.locked = False
+            else:
+                print('You have nothing to break the chest with.')
+        else:
+            print('Hitting doesn\'t help.')
+                
+            
 
 class Location(object):
     def __init__(self, name, items, creatures, exits={},
@@ -283,6 +315,7 @@ class Location(object):
     def giveInfo(self):
         assert self.description != '', 'There must be a description.'
         print(self.description)
+        print()
         # directions = ['north', 'south', 'east', 'west', 'up', 'down']
         for i in self.exits:
             if self.exits[i].showNameWhenExit:
@@ -360,6 +393,33 @@ class Item(object):
         print(self.description)
         
         
+class InteractableItem(Item):
+    def __init__(self, name, description, locDescription):
+        super().__init__(name, description, locDescription)
+            
+            
+class Chest(InteractableItem):
+    def __init__(self, items, locked):
+        super().__init__(name='chest',
+                         description='You shouldn\'t see this.',
+                         locDescription='A treasure chest is on the ground.')
+        assert type(items) == list
+        self.items = items
+        self.locked = locked
+    
+    def open(self):
+        if self.locked:
+            print('The chest cannot be opened because it it locked.')
+            return []
+        else:
+            print('Items in chest:')
+            for item in self.items:
+                print(item.name)
+            backupItems = self.items[:]
+            self.items = []
+            return backupItems
+        
+        
 class Weapon(Item):
     def __init__(self, name, description, locDescription, power):
         super().__init__(name, description, locDescription)
@@ -404,3 +464,13 @@ class ToiletPaper(Item):
                                      'raSoft.',
                          locDescription='A roll of toilet paper is in '\
                                         'the room.')
+                                        
+                                        
+class Stick(Item):
+    def __init__(self):
+        super().__init__(name='stick',
+                         description='The stick is long and thick. It '\
+                                     'looks like it would be perfect '\
+                                     'for bashing things with.',
+                         locDescription='There is a random stick on '\
+                                        'the ground.')
