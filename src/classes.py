@@ -98,7 +98,8 @@ class Player(object):
                 takeItem(item)
             elif noun == 'all':
                 for i in self.location.items[:]:
-                    takeItem(i)
+                    if not isinstance(i, InteractableItem):
+                        takeItem(i)
                 #if len(self.location.items) > 1:
                  #   takeItem(self.location.items[0])
             elif self.location.dark:
