@@ -16,7 +16,7 @@ class Player(object):
         for i in Location_Storage:
             self.visitedPlaces[i] = False
         self.location = startLoc
-        self.location.giveInfo()
+        self.location.giveInfo(True)
         self.health = 100
 
     def die(self):
@@ -114,7 +114,7 @@ class Player(object):
 
     def look(self, action, noun, hasNoun):
         if not hasNoun or noun == 'around':
-            self.location.giveInfo()
+            self.location.giveInfo(True)
         else:
             item = utils.getItemFromName(noun, self.inventory, self)
             if item:
@@ -170,10 +170,10 @@ class Player(object):
                     previousDir = noun
                 self.location = locToGoTo
                 if not self.visitedPlaces[self.location]:
-                    self.location.giveInfo()
+                    self.location.giveInfo(True)
                     self.visitedPlaces[self.location] = True
                 else:
-                    print('You are in {0}.'.format(self.location.name))
+                    self.location.giveInfo(False)
                 if len(self.location.creatures) > 0:
                     for i in self.location.creatures:
                         if isinstance(i, Baddie):
@@ -328,22 +328,26 @@ class Location(object):
         self.exits = exits
         self.showNameWhenExit = showNameWhenExit
 
-    def giveInfo(self):
+    def giveInfo(self, fullInfo):
         assert self.description != '', 'There must be a description.'
-        print(self.description)
-        print()
-        # directions = ['north', 'south', 'east', 'west', 'up', 'down']
-        for i in self.exits:
-            if self.exits[i].showNameWhenExit:
-                if i == 'up' or i == 'down':
-                    print('{} is {}.'.format(self.exits[i].name, i))
+        if fullInfo:
+            print(self.description)
+            print()
+            # directions = ['north', 'south', 'east', 'west', 'up', 'down']
+            for i in self.exits:
+                if self.exits[i].showNameWhenExit:
+                    if i == 'up' or i == 'down':
+                        print('{} is {}.'.format(self.exits[i].name, i))
+                    else:
+                        print('{} is to the {}.'.format(self.exits[i].name, i))
                 else:
-                    print('{} is to the {}.'.format(self.exits[i].name, i))
-            else:
-                print('There is an exit {0}.'.format(i))
-        if len(self.exits) == 0:
-            print('There does not appear to be an exit.')
+                    print('There is an exit {0}.'.format(i))
+            if len(self.exits) == 0:
+                print('There does not appear to be an exit.')
+        else:
+            print('You are in {}.'.format(self.name))
         print()
+
         for item in self.items:
             if item.locDescription != '':
                 print(item.locDescription)
