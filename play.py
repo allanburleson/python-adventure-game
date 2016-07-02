@@ -1,8 +1,11 @@
 #!/usr/bin/python3
+import os
 import readline
 import random
 import shelve
 import sys
+
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 from src import parser
 from src import locations
