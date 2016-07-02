@@ -3,7 +3,7 @@ from src.classes import *
 bathroom = Location('Bathroom', [ToiletPaper()], [], showNameWhenExit=True)
 bathroom.description = 'There is a toilet and a sink here. They seem'\
                        ' out of place since this is 600 B.C.'
-home = Location('Home', [Paper()], [], showNameWhenExit=True)
+home = Location('Home', [Paper(), Lantern()], [], showNameWhenExit=True)
 home.items[0].description = '''"NOTICE:
 All able-bodied individuals are asked to assist in capturing or
 destroying the Robots of Unusual Size. More commonly knows as ROUS, they
@@ -36,7 +36,8 @@ start.description = 'You are in a small room with concrete walls and '\
                     'no windows.'
 closet = Location('Closet', [Stick()], [], showNameWhenExit=True)
 closet.description = 'You are in a closet that is full of cobwebs.'
-attic = Location('Attic', [Bread()], [GiantSpider()], showNameWhenExit=True)
+attic = Location('Attic', [Bread()], [GiantSpider()],
+                 showNameWhenExit=True, dark=True)
 attic.description = 'The attic has been obviously unused for many year'\
                     's. There are large spiderwebs everywhere.'
 backyard = Location('Backyard', [], [Snail()])

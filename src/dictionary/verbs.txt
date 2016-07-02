@@ -15,3 +15,4 @@ show:display
 open
 hit:strike
 eat:consume
+light

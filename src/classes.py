@@ -90,10 +90,13 @@ class Player(object):
             print('What do you want to take?')
         else:
             item = utils.getItemFromName(noun, self.location.items, self)
-            if item and not isinstance(item, InteractableItem):
+            if item and not isinstance(item, InteractableItem) and not self.location.dark:
                 self.location.items.remove(item)
                 self.inventory.append(item)
                 print('{0} taken.'.format(item.name))
+            elif self.location.dark:
+                print('There\'s no way to tell if that is here because'\
+                      ' it is too dark.')
             else:
                 print('There is no {0} here that you can pick up.'.format(noun))
 
@@ -123,10 +126,36 @@ class Player(object):
                 print('You do not have {0}'.format(noun))
 
     def go(self, action, noun='', hasNoun=None, Location=None):
+        def fightCheck():
+            if len(self.location.creatures) > 0:
+                for i in self.location.creatures:
+                    if isinstance(i, Baddie):
+                        result = self.fight(i)
+                        if result[0] == 'retreat':
+                            if len(result) > 1:
+                                i.hp = result[1]
+                            if previousDir == 'north':
+                                reverseDir = 'south'
+                            elif previousDir == 'south':
+                                reverseDir = 'north'
+                            elif previousDir == 'west':
+                                reverseDir = 'east'
+                            elif previousDir == 'east':
+                                reverseDir = 'west'
+                            elif previousDir == 'up':
+                                reverseDir = 'down'
+                            elif previousDir == 'down':
+                                reverseDir = 'up'
+                            else:
+                                assert False, 'Somehow non-direction "{}" got through to here.'.format(noun)
+                            self.go('go', reverseDir, hasNoun = 'True')
+                        else:
+                            self.location.creatures.remove(i)
         if Location is not None:
-            self.location = Location
+            locToGoTo = Location
+            isLoc = True
             if not self.visitedPlaces[self.location]:
-                self.location.giveInfo()
+                self.location.giveInfo(True)
                 self.visitedPlaces[self.location] = True
         else:
             isDirection = False
@@ -165,41 +194,21 @@ class Player(object):
             else:
                 print('There is no exit in that direction.')
                 return
-            if locToGoTo is not None:
-                if not isLoc:
-                    previousDir = noun
-                self.location = locToGoTo
+        if locToGoTo is not None:
+            if not isLoc:
+                previousDir = noun
+            self.location = locToGoTo
+            if self.location.dark:
+                self.location.giveInfo(False)
+            else:
                 if not self.visitedPlaces[self.location]:
                     self.location.giveInfo(True)
                     self.visitedPlaces[self.location] = True
                 else:
                     self.location.giveInfo(False)
-                if len(self.location.creatures) > 0:
-                    for i in self.location.creatures:
-                        if isinstance(i, Baddie):
-                            result = self.fight(i)
-                            if result[0] == 'retreat':
-                                if len(result) > 1:
-                                    i.hp = result[1]
-                                if previousDir == 'north':
-                                    reverseDir = 'south'
-                                elif previousDir == 'south':
-                                    reverseDir = 'north'
-                                elif previousDir == 'west':
-                                    reverseDir = 'east'
-                                elif previousDir == 'east':
-                                    reverseDir = 'west'
-                                elif previousDir == 'up':
-                                    reverseDir = 'down'
-                                elif previousDir == 'down':
-                                    reverseDir = 'up'
-                                else:
-                                    assert False, 'Somehow non-direction "{}" got through to here.'.format(noun)
-                                self.go('go', reverseDir, hasNoun = 'True')
-                            else:
-                                self.location.creatures.remove(i)
-            else:
-                print('Something went wrong.')
+                fightCheck()
+        else:
+            print('Something went wrong.')
 
 
     def help(self, action, noun, hasNoun):
@@ -309,10 +318,22 @@ class Player(object):
         else:
             print('You don\'t have that.')
             
+            
+    def light(self, action, noun, hasNoun):
+        if utils.inInventory(Lantern, self) and self.location.dark:
+            self.location.dark = False
+            print('Your lantern bursts in green flame that illuminates'\
+                  ' the room.')
+            self.go('go', self.location.name, True, self.location)
+        elif utils.inInventory(Lantern, self):
+            print('The room is already light enough.')
+        else:
+            print('You need a light source!')
+            
 
 class Location(object):
     def __init__(self, name, items, creatures, exits={},
-            description='', showNameWhenExit=False):
+            description='', showNameWhenExit=False, dark=False):
         # exit needs to be a dict with keys north, south, east, west,
         # up, down
         assert type(items) == list
@@ -327,10 +348,16 @@ class Location(object):
         Location_Storage.append(self)
         self.exits = exits
         self.showNameWhenExit = showNameWhenExit
+        self.dark = dark
 
     def giveInfo(self, fullInfo):
         assert self.description != '', 'There must be a description.'
-        if fullInfo:
+        if self.dark:
+            print('It is too dark to see anything. However, you are '\
+                  'not likely to be eaten by a grue. What do you think'\
+                  ' this is, Zork?')
+            return
+        elif fullInfo:
             print(self.description)
             print()
             # directions = ['north', 'south', 'east', 'west', 'up', 'down']
@@ -520,6 +547,14 @@ class Paper(Item):
                          description=text,
                          locDescription='On a table is a paper labeled'\
                                         ' NOTICE.')
+                                        
+                                        
+class Lantern(Item):
+    def __init__(self):
+        super().__init__(name='lantern',
+                         description='The lantern is black and is powered'\
+                                     ' by an unknown source.',
+                         locDescription='There is a lantern here.')
 
 
 class Food(Item):
