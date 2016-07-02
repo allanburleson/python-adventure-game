@@ -125,7 +125,7 @@ class Player(object):
             else:
                 print('You do not have {0}'.format(noun))
 
-    def go(self, action, noun='', hasNoun=None, Location=None):
+    def go(self, action, noun='', hasNoun=None, Location=None, previousDir=None):
         def fightCheck():
             if len(self.location.creatures) > 0:
                 for i in self.location.creatures:
@@ -154,9 +154,6 @@ class Player(object):
         if Location is not None:
             locToGoTo = Location
             isLoc = True
-            if not self.visitedPlaces[self.location]:
-                self.location.giveInfo(True)
-                self.visitedPlaces[self.location] = True
         else:
             isDirection = False
             isLoc = False
@@ -249,7 +246,12 @@ class Player(object):
             if len(self.inventory) > 0:
                 print('Inventory:')
                 for item in self.inventory:
-                    print(item.name)
+                    if isinstance(item, Food):
+                        print('{0}: Restores {1} health.'.format(item.name, item.health))
+                    elif isinstance(item, Weapon):
+                        print('{0}: Deals {1} damage.'.format(item.name, item.power))
+                    else:
+                        print(item.name)
             else:
                 print('There are no items in your inventory.')
         elif noun == 'location':
@@ -324,7 +326,7 @@ class Player(object):
             self.location.dark = False
             print('Your lantern bursts in green flame that illuminates'\
                   ' the room.')
-            self.go('go', self.location.name, True, self.location)
+            self.go('go', self.location.name, True, self.location, 'up')
         elif utils.inInventory(Lantern, self):
             print('The room is already light enough.')
         else:
