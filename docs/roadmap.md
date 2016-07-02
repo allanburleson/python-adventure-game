@@ -8,5 +8,6 @@
 - [ ] Add save file
 - [ ] Change some locations to classes
 - [ ] Make `go _direction_` work without "go"
+ 
 ## Long-term
 - [ ] Add game achievements
