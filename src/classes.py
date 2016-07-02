@@ -86,14 +86,21 @@ class Player(object):
     # Command functions called in game.py
 
     def take(self, action, noun, hasNoun):
+        def takeItem(i):
+            self.location.items.remove(i)
+            self.inventory.append(i)
+            print('{0} taken.'.format(i.name))
         if not hasNoun:
             print('What do you want to take?')
         else:
             item = utils.getItemFromName(noun, self.location.items, self)
             if item and not isinstance(item, InteractableItem) and not self.location.dark:
-                self.location.items.remove(item)
-                self.inventory.append(item)
-                print('{0} taken.'.format(item.name))
+                takeItem(item)
+            elif noun == 'all':
+                for i in self.location.items[:]:
+                    takeItem(i)
+                #if len(self.location.items) > 1:
+                 #   takeItem(self.location.items[0])
             elif self.location.dark:
                 print('There\'s no way to tell if that is here because'\
                       ' it is too dark.')
@@ -101,6 +108,10 @@ class Player(object):
                 print('There is no {0} here that you can pick up.'.format(noun))
 
     def drop(self, action, noun, hasNoun):
+        def dropItem(i):
+            self.location.items.append(i)
+            self.inventory.remove(i)
+            print('{} dropped.'.format(i.name))
         if not hasNoun:
             print('Say what you want to drop.')
         else:
@@ -109,9 +120,11 @@ class Player(object):
                 return
             item = utils.getItemFromName(noun, self.inventory, self)
             if item:
-                self.inventory.remove(item)
-                self.location.items.append(item)
-                print('{} dropped.'.format(item.name))
+                dropItem(item)
+            elif noun == 'all':
+                for i in self.inventory[:]:
+                    if i.name != 'fist':
+                        dropItem(i)
             else:
                 print('You do not have a {} to drop.'.format(noun))
 
@@ -383,7 +396,8 @@ class Location(object):
             else:
                 print('There is {0} {1}'.format(
                            utils.getIndefArticle(item.name) ,item.name))
-        print()
+        if len(self.items) > 0:
+            print()
         if len(self.creatures) > 0:
             for creature in self.creatures:
                 print('There is {0} {1} here.'.format(
