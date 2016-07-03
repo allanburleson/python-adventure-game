@@ -149,7 +149,25 @@ class Player(object):
         else:
             item = utils.getItemFromName(noun, self.inventory, self)
             if item:
-                item.examine()
+                if item.name == 'sword':
+                    # Make sword glow if an enemy is in an adjacent room
+                    glowing = False
+                    for i in self.location.creatures:
+                        if isinstance(i, Baddie):
+                            item.examine(True)
+                            glowing = True
+                            break
+                    if not glowing:
+                        for exit in self.location.exits:
+                            for creature in self.location.exits[exit].creatures:
+                                if isinstance(creature, Baddie):
+                                    item.examine(True)
+                                    glowing = True
+                                    break
+                    if not glowing:
+                        item.examine(False)
+                else:
+                    item.examine()
             else:
                 print('You do not have {0}'.format(noun))
 
@@ -492,12 +510,16 @@ class Weapon(Item):
 class Sword(Weapon):
     def __init__(self):
         super().__init__(name='sword',
-                         description='The sword makes you want to '\
-                                     'cleave goblin-necks.',
-                         locDescription='There is an unsheathed sword '\
-                                        'that looks like it would be '\
-                                        'very useful in battle.',
+                         description='The sword is small and has an el'\
+                                     'vish look to it.',
+                         locDescription='There is a small sword here.',
                          power=random.randint(90,150))
+    def examine(self, glowing):
+        print(self.description, end='')
+        if glowing:
+            print(' It is glowing light blue.')
+        else:
+            print()
                          
                          
 class Fist(Weapon):
