@@ -16,3 +16,4 @@ open
 hit:strike
 eat:consume
 light
+restart:reset

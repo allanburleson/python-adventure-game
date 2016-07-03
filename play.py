@@ -47,4 +47,4 @@ while True:
                 previousNoun = ''
             turns += 1
     except KeyboardInterrupt:
-        player.die()
+        player.quit('', '', False)
