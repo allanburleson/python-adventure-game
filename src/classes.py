@@ -20,7 +20,6 @@ class Player(object):
         for i in self.locations:
             self.visitedPlaces[i] = False
         self.health = 100
-        self.load()
         self.location.giveInfo(True)
 
     def die(self):
@@ -86,16 +85,6 @@ class Player(object):
                 else:
                     print('Both you and the {0} died!'.format(baddie.name))
                     self.die()
-                    
-    def load(self):
-        #if os.path.isfile('save.db') or os.path.isfile('save.dat'):
-            #save = shelve.open('save')
-            #self = save['player']
-            #Location_Storage = save['Location_Storage']
-            #Items = save['Items']
-            #Creatures = save['Creatures']
-            #save.close()
-        return
 
     # Command functions called in game.py
 
