@@ -279,6 +279,16 @@ class Player(object):
             self.die()
         else:
             print('Cancelled.')
+            
+    def restart(self, action, noun, hasNoun):
+        resp = input('Are you sure you want to restart the game? [Y/n] ')
+        if resp.lower().startswith('y'):
+            try:
+                os.remove('save.db')
+            except:
+                print('Restart failed.')
+            print('Now run play.py again.')
+            sys.exit(0)
 
     def show(self, action, noun, hasNoun):
         if noun == 'inventory':
