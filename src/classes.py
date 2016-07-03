@@ -66,7 +66,7 @@ class Player(object):
                             break
                     if weapon is None:
                         typingError()
-                        return 'retreat'
+                        return 'retreat', baddie.hp
                 self.health -= baddie.power
                 baddie.hp -= weapon.power
                 if self.health > 0 and baddie.hp > 0:
