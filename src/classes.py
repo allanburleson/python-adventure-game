@@ -1,4 +1,6 @@
 import random
+import os
+import shelve
 import sys
 
 from src import utils
@@ -23,15 +25,17 @@ class Splash(Mode):
 
 class Player(object):
 
-    def __init__(self, location, startLoc):
+    def __init__(self, locations, startLoc):
         self.inventory = [Fist()]
         self.score = 0
         self.visitedPlaces = {}
-        for i in Location_Storage:
-            self.visitedPlaces[i] = False
         self.location = startLoc
-        self.location.giveInfo()
+        self.locations = locations
+        for i in self.locations:
+            self.visitedPlaces[i] = False
         self.health = 100
+        self.load()
+        self.location.giveInfo(True)
 
     def die(self):
         print('GAME OVER.')
@@ -81,7 +85,7 @@ class Player(object):
                             break
                     if weapon is None:
                         typingError()
-                        return 'retreat'
+                        return 'retreat', baddie.hp
                 self.health -= baddie.power
                 baddie.hp -= weapon.power
                 if self.health > 0 and baddie.hp > 0:
@@ -99,21 +103,47 @@ class Player(object):
                     print('Both you and the {0} died!'.format(baddie.name))
                     self.die()
 
+    def load(self):
+        # if os.path.isfile('save.db') or os.path.isfile('save.dat'):
+            # save = shelve.open('save')
+            # self = save['player']
+            # Location_Storage = save['Location_Storage']
+            # Items = save['Items']
+            # Creatures = save['Creatures']
+            # save.close()
+        return
+
     # Command functions called in game.py
 
     def take(self, action, noun, hasNoun):
+        def takeItem(i):
+            self.location.items.remove(i)
+            self.inventory.append(i)
+            print('{0} taken.'.format(i.name))
         if not hasNoun:
             print('What do you want to take?')
         else:
             item = utils.getItemFromName(noun, self.location.items, self)
-            if item and not isinstance(item, InteractableItem):
-                self.location.items.remove(item)
-                self.inventory.append(item)
-                print('{0} taken.'.format(item.name))
+            if item and not isinstance(item, InteractableItem) and not self.location.dark:
+                takeItem(item)
+            elif noun == 'all':
+                for i in self.location.items[:]:
+                    if not isinstance(i, InteractableItem):
+                        takeItem(i)
+                # if len(self.location.items) > 1:
+                 #   takeItem(self.location.items[0])
+            elif self.location.dark:
+                print('There\'s no way to tell if that is here because'
+                      ' it is too dark.')
             else:
-                print('There is no {0} here that you can pick up.'.format(noun))
+                print(
+                    'There is no {0} here that you can pick up.'.format(noun))
 
     def drop(self, action, noun, hasNoun):
+        def dropItem(i):
+            self.location.items.append(i)
+            self.inventory.remove(i)
+            print('{} dropped.'.format(i.name))
         if not hasNoun:
             print('Say what you want to drop.')
         else:
@@ -122,15 +152,17 @@ class Player(object):
                 return
             item = utils.getItemFromName(noun, self.inventory, self)
             if item:
-                self.inventory.remove(item)
-                self.location.items.append(item)
-                print('{} dropped.'.format(item.name))
+                dropItem(item)
+            elif noun == 'all':
+                for i in self.inventory[:]:
+                    if i.name != 'fist':
+                        dropItem(i)
             else:
                 print('You do not have a {} to drop.'.format(noun))
 
     def look(self, action, noun, hasNoun):
         if not hasNoun or noun == 'around':
-            self.location.giveInfo()
+            self.location.giveInfo(True)
         else:
             item = utils.getItemFromName(noun, self.inventory, self)
             if item:
@@ -138,12 +170,36 @@ class Player(object):
             else:
                 print('You do not have {0}'.format(noun))
 
-    def go(self, action, noun='', hasNoun=None, Location=None):
+    def go(self, action, noun='', hasNoun=None, Location=None, previousDir=None):
+        def fightCheck():
+            if len(self.location.creatures) > 0:
+                for i in self.location.creatures:
+                    if isinstance(i, Baddie):
+                        result = self.fight(i)
+                        if result[0] == 'retreat':
+                            if len(result) > 1:
+                                i.hp = result[1]
+                            if previousDir == 'north':
+                                reverseDir = 'south'
+                            elif previousDir == 'south':
+                                reverseDir = 'north'
+                            elif previousDir == 'west':
+                                reverseDir = 'east'
+                            elif previousDir == 'east':
+                                reverseDir = 'west'
+                            elif previousDir == 'up':
+                                reverseDir = 'down'
+                            elif previousDir == 'down':
+                                reverseDir = 'up'
+                            else:
+                                assert False, 'Somehow non-direction "{}" got through to here.'.format(
+                                    noun)
+                            self.go('go', reverseDir, hasNoun='True')
+                        else:
+                            self.location.creatures.remove(i)
         if Location is not None:
-            self.location = Location
-            if not self.visitedPlaces[self.location]:
-                self.location.giveInfo()
-                self.visitedPlaces[self.location] = True
+            locToGoTo = Location
+            isLoc = True
         else:
             isDirection = False
             isLoc = False
@@ -164,58 +220,52 @@ class Player(object):
                 return
             elif action == 'say':
                 # Get right Location from list called locations
-                for i in Location_Storage:
+                for i in self.locations:
                     if i.name == 'Home':
                         locToGoTo = i
                         break
             elif noun in self.location.exits:
                 # Get right Location from list called locations
+<< << << < HEAD
                 loc = Location_Storage[Location_Storage.index(
                     self.location.exits[noun])]
                 for i in Location_Storage:
                     if i == loc:
                         locToGoTo = i
                         break
+== == == =
+                loc = None
+                # loc = self.locations[self.locations.index(
+                        # self.location.exits[noun])]
+                for i in self.locations:
+                    if self.location.exits[noun].name == i.name:
+                        loc = i
+                if loc:
+                    for i in self.locations:
+                        if i == loc:
+                            locToGoTo = i
+                            break
+>>>>>> > d2ea47d381a595e7fc7cda8bdc9fc07819d2b3fd
             elif isLoc:
                 pass
             else:
                 print('There is no exit in that direction.')
                 return
-            if locToGoTo is not None:
-                if not isLoc:
-                    previousDir = noun
-                self.location = locToGoTo
+        if locToGoTo is not None:
+            if not isLoc:
+                previousDir = noun
+            self.location = locToGoTo
+            if self.location.dark:
+                self.location.giveInfo(False)
+            else:
                 if not self.visitedPlaces[self.location]:
-                    self.location.giveInfo()
+                    self.location.giveInfo(True)
                     self.visitedPlaces[self.location] = True
                 else:
-                    print('You are in {0}.'.format(self.location.name))
-                if len(self.location.creatures) > 0:
-                    for i in self.location.creatures:
-                        if isinstance(i, Baddie):
-                            result = self.fight(i)
-                            if result[0] == 'retreat':
-                                if len(result) > 1:
-                                    i.hp = result[1]
-                                if previousDir == 'north':
-                                    reverseDir = 'south'
-                                elif previousDir == 'south':
-                                    reverseDir = 'north'
-                                elif previousDir == 'west':
-                                    reverseDir = 'east'
-                                elif previousDir == 'east':
-                                    reverseDir = 'west'
-                                elif previousDir == 'up':
-                                    reverseDir = 'down'
-                                elif previousDir == 'down':
-                                    reverseDir = 'up'
-                                else:
-                                    assert False, 'Somehow non-direction "{}" got through to here.'.format(noun)
-                                self.go('go', reverseDir, hasNoun = 'True')
-                            else:
-                                self.location.creatures.remove(i)
-            else:
-                print('Something went wrong.')
+                    self.location.giveInfo(False)
+                fightCheck()
+        else:
+            print('Something went wrong.')
 
     def help(self, action, noun, hasNoun):
         print('I can only understand what you say if you first type an'
@@ -231,7 +281,7 @@ class Player(object):
                     self.changeScore(1)
                 print('You vanished and reappeared in your house.\n')
                 self.go(action, noun, hasNoun)
-                for Location in Location_Storage:
+                for Location in self.locations:
                     if Location.name == 'home':
                         self.go(location=Location)
                         break
@@ -243,25 +293,54 @@ class Player(object):
             print('You said "{}" but nothing happened.'.format(noun))
 
     def quit(self, action, noun, hasNoun):
+<<<<<<< HEAD
         resp = input('Are you sure you want to quit? Your progress'
                      'will be deleted. [Y/n] ')
         if resp.lower.startswith('y'):
+=======
+        resp = input('Are you sure you want to quit? Your progress '\
+                     'will be saved. [Y/n] ')
+        if resp.lower().startswith('y'):
+            save = shelve.open('save')
+            save['player'] = self
+            save['Creatures'] = Creatures
+            save['locations'] = self.locations
+            save['Items'] = Items
+            save.close()
+>>>>>>> d2ea47d381a595e7fc7cda8bdc9fc07819d2b3fd
             self.die()
         else:
             print('Cancelled.')
+
+    def restart(self, action, noun, hasNoun):
+        resp = input('Are you sure you want to restart the game? [Y/n] ')
+        if resp.lower().startswith('y'):
+            try:
+                os.remove('save.db')
+            except:
+                print('Restart failed.')
+            print('Now run play.py again.')
+            sys.exit(0)
 
     def show(self, action, noun, hasNoun):
         if noun == 'inventory':
             if len(self.inventory) > 0:
                 print('Inventory:')
                 for item in self.inventory:
-                    print(item.name)
+                    if isinstance(item, Food):
+                        print('{0}: Restores {1} health.'.format(item.name, item.health))
+                    elif isinstance(item, Weapon):
+                        print('{0}: Deals {1} damage.'.format(item.name, item.power))
+                    else:
+                        print(item.name)
             else:
                 print('There are no items in your inventory.')
         elif noun == 'location':
             print('You are at ' + self.location.name)
         elif noun == 'score':
             print('Your score is {}.'.format(self.score))
+        elif noun == 'health':
+            print('You have {} health.'.format(self.health))
         else:
             print('This isn\'t something I can show you.')
 
@@ -276,7 +355,7 @@ class Player(object):
                 print('The mirror exploded. A large shard of glass hit'
                       ' you in the face.')
                 self.die()
-                
+
     def open(self, action, noun, hasNoun):
         chest = None
         for i in self.location.items:
@@ -286,7 +365,7 @@ class Player(object):
         if chest:
             items = chest.open()
             self.location.items += items
-            
+
     def hit(self, action, noun, hasNoun):
         chest = None
         for i in self.location.items:
@@ -306,27 +385,37 @@ class Player(object):
                 print('You have nothing to break the chest with.')
         else:
             print('Hitting doesn\'t help.')
-                
-            
 
-class Location(object):
-    def __init__(self, name, items, creatures, exits={},
-            description='', showNameWhenExit=False):
-        # exit needs to be a dict with keys north, south, east, west,
-        # up, down
-        assert type(items) == list
-        assert (type(exits) == dict or exits is None)
-        for i in exits:
-            assert isinstance(exits[i], Location)
-            assert i in ['north', 'south', 'east', 'west', 'up', 'down']
-        self.name = name
-        self.items = items
-        self.creatures = creatures
-        self.description = description
-        Location_Storage.append(self)
-        self.exits = exits
-        self.showNameWhenExit = showNameWhenExit
+    def eat(self, action, noun, hasNoun):
+        item = None
+        for i in self.inventory:
+            if i.name == noun:
+                item = i
+        if item:
+            if isinstance(item, Food):
+                print('You ate the {0} and gained {1} health.'.format(item.name, item.health))
+                self.health += item.health
+                self.inventory.remove(item)
+            else:
+                print('Sorry, that isn\'t food.')
+        else:
+            print('You don\'t have that.')
 
+
+    def light(self, action, noun, hasNoun):
+        if utils.inInventory(Lantern, self) and self.location.dark:
+            self.location.dark = False
+            print('Your lantern bursts in green flame that illuminates'\
+                  ' the room.')
+            self.go('go', self.location.name, True, self.location, 'up')
+        elif utils.inInventory(Lantern, self):
+            print('The room is already light enough.')
+        else:
+            print('You need a light source!')
+
+
+
+<<<<<<< HEAD
     def giveInfo(self):
         assert self.description != '', 'There must be a description.'
         print(self.description)
@@ -351,6 +440,8 @@ class Location(object):
             else:
                 print('There is {0} {1}'.format(
                     utils.getIndefArticle(item.name), item.name))
+=======
+>>>>>>> d2ea47d381a595e7fc7cda8bdc9fc07819d2b3fd
 
 
 class Creature(object):
@@ -364,8 +455,8 @@ class Creature(object):
     def describe(self):
         assert self.description != '', 'There must be a description.'
         print(self.description)
-        
-        
+
+
 class Snail(Creature):
     def __init__(self):
         super().__init__(name='snail',
@@ -389,8 +480,8 @@ class Orc(Baddie):
                          description='There is an orc in '
                                      'the room.',
                          power=random.randint(20, 50))
-                         
-                         
+
+
 class Ghost(Baddie):
     def __init__(self):
         super().__init__(name='ghost',
@@ -398,6 +489,21 @@ class Ghost(Baddie):
                          description='Wooooo',
                          power=0.01)
 
+
+class GiantSpider(Baddie):
+    def __init__(self):
+        super().__init__(name='giant spider',
+                         hp=500,
+                         description='The spider is large and ugly.',
+                         power=15)
+
+
+class Bear(Baddie):
+    def __init__(self):
+        super().__init__(name='bear',
+                         hp=200,
+                         description='The bear growls at you.',
+                         power = 30)
 
 class Item(object):
 
@@ -414,8 +520,8 @@ class Item(object):
 class InteractableItem(Item):
     def __init__(self, name, description, locDescription):
         super().__init__(name, description, locDescription)
-            
-            
+
+
 class Chest(InteractableItem):
     def __init__(self, items, locked):
         super().__init__(name='chest',
@@ -424,7 +530,7 @@ class Chest(InteractableItem):
         assert type(items) == list
         self.items = items
         self.locked = locked
-    
+
     def open(self):
         if self.locked:
             print('The chest cannot be opened because it it locked.')
@@ -436,8 +542,8 @@ class Chest(InteractableItem):
             backupItems = self.items[:]
             self.items = []
             return backupItems
-        
-        
+
+
 class Weapon(Item):
 
     def __init__(self, name, description, locDescription, power):
@@ -488,8 +594,8 @@ class ToiletPaper(Item):
                                      'raSoft.',
                          locDescription='A roll of toilet paper is in '
                                         'the room.')
-                                        
-                                        
+
+
 class Stick(Item):
     def __init__(self):
         super().__init__(name='stick',
@@ -498,3 +604,34 @@ class Stick(Item):
                                      'for bashing things with.',
                          locDescription='There is a random stick on '\
                                         'the ground.')
+
+
+class Paper(Item):
+    def __init__(self, text=''):
+        super().__init__(name='paper',
+                         description=text,
+                         locDescription='On a table is a paper labeled'\
+                                        ' NOTICE.')
+
+
+class Lantern(Item):
+    def __init__(self):
+        super().__init__(name='lantern',
+                         description='The lantern is black and is powered'\
+                                     ' by an unknown source.',
+                         locDescription='There is a lantern here.')
+
+
+class Food(Item):
+    def __init__(self, name, description, locDescription, health):
+        super().__init__(name, description, locDescription)
+        self.health = health
+
+
+class Bread(Food):
+    def __init__(self):
+        super().__init__(name='bread',
+                         description='The bread is slightly stale but '\
+                                     'looks wholesome.',
+                         locDescription='There is a loaf of bread.',
+                         health=30)

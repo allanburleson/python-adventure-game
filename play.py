@@ -1,8 +1,10 @@
 #!/usr/bin/python3
+import os
 import readline
-import random
 import shelve
-import sys
+
+# Change directory to directory that includes play.py
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 from src import parser
 from src import locations
@@ -15,7 +17,17 @@ utils.clrscn()
 splash = classes.Splash("THE GAME")
 Callm(splash)
 
-player = classes.Player(locations, locations.start)
+try:
+    save = shelve.open('save')
+    player = save['player']
+    Locations = save['locations']
+    save.close()
+    player.locations = Locations
+    for i in Locations:
+        player.visitedPlaces[i] = False
+    player.location.giveInfo(True)
+except:
+    player = classes.Player(locations.Location_Storage, locations.start)
 previousNoun = ''
 turns = 0
 while True:
@@ -42,4 +54,4 @@ while True:
                 previousNoun = ''
             turns += 1
     except KeyboardInterrupt:
-        player.die()
+        player.quit('', '', False)
