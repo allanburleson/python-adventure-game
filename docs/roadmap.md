@@ -5,7 +5,7 @@
 - [x] refactor into better code
 - [ ] Create story and add needed elements
     - [x] Implement combat
-- [ ] Add save file
+- [x] Add save file
 - [ ] Change some locations to classes
 - [ ] Make `go _direction_` work without "go"
  
