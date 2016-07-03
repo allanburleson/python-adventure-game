@@ -248,9 +248,9 @@ class Player(object):
             print('You said "{}" but nothing happened.'.format(noun))
 
     def quit(self, action, noun, hasNoun):
-        resp = input('Are you sure you want to quit? Your progress'\
+        resp = input('Are you sure you want to quit? Your progress '\
                      'will be deleted. [Y/n] ')
-        if resp.lower.startswith('y'):
+        if resp.lower().startswith('y'):
             self.die()
         else:
             print('Cancelled.')
