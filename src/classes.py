@@ -1,4 +1,6 @@
 import random
+import os
+import shelve
 import sys
 
 from src import utils
@@ -9,15 +11,17 @@ Location_Storage = []
 
 
 class Player(object):
-    def __init__(self, location, startLoc):
+    def __init__(self, locations, startLoc):
         self.inventory = [Fist()]
         self.score = 0
         self.visitedPlaces = {}
-        for i in Location_Storage:
-            self.visitedPlaces[i] = False
         self.location = startLoc
-        self.location.giveInfo(True)
+        self.locations = locations
+        for i in self.locations:
+            self.visitedPlaces[i] = False
         self.health = 100
+        self.load()
+        self.location.giveInfo(True)
 
     def die(self):
         print('GAME OVER.')
@@ -82,6 +86,16 @@ class Player(object):
                 else:
                     print('Both you and the {0} died!'.format(baddie.name))
                     self.die()
+                    
+    def load(self):
+        #if os.path.isfile('save.db') or os.path.isfile('save.dat'):
+            #save = shelve.open('save')
+            #self = save['player']
+            #Location_Storage = save['Location_Storage']
+            #Items = save['Items']
+            #Creatures = save['Creatures']
+            #save.close()
+        return
 
     # Command functions called in game.py
 
@@ -188,18 +202,23 @@ class Player(object):
                 return
             elif action == 'say':
                 # Get right Location from list called locations
-                for i in Location_Storage:
+                for i in self.locations:
                     if i.name == 'Home':
                         locToGoTo = i
                         break
             elif noun in self.location.exits :
                 # Get right Location from list called locations
-                loc = Location_Storage[Location_Storage.index(
-                        self.location.exits[noun])]
-                for i in Location_Storage:
-                    if i == loc:
-                        locToGoTo = i
-                        break
+                loc = None
+                #loc = self.locations[self.locations.index(
+                        #self.location.exits[noun])]
+                for i in self.locations:
+                    if self.location.exits[noun].name == i.name:
+                        loc = i
+                if loc:
+                    for i in self.locations:
+                        if i == loc:
+                            locToGoTo = i
+                            break
             elif isLoc:
                 pass
             else:
@@ -236,7 +255,7 @@ class Player(object):
                     self.changeScore(1)
                 print('You vanished and reappeared in your house.\n')
                 self.go(action, noun, hasNoun)
-                for Location in Location_Storage:
+                for Location in self.locations:
                     if Location.name == 'home':
                         self.go(location=Location)
                         break
@@ -249,8 +268,14 @@ class Player(object):
 
     def quit(self, action, noun, hasNoun):
         resp = input('Are you sure you want to quit? Your progress '\
-                     'will be deleted. [Y/n] ')
+                     'will be saved. [Y/n] ')
         if resp.lower().startswith('y'):
+            save = shelve.open('save')
+            save['player'] = self
+            save['Creatures'] = Creatures
+            save['locations'] = self.locations
+            save['Items'] = Items
+            save.close()
             self.die()
         else:
             print('Cancelled.')
@@ -347,62 +372,7 @@ class Player(object):
             print('You need a light source!')
             
 
-class Location(object):
-    def __init__(self, name, items, creatures, exits={},
-            description='', showNameWhenExit=False, dark=False):
-        # exit needs to be a dict with keys north, south, east, west,
-        # up, down
-        assert type(items) == list
-        assert (type(exits) == dict or exits is None)
-        for i in exits:
-            assert isinstance(exits[i], Location)
-            assert i in ['north', 'south', 'east', 'west', 'up', 'down']
-        self.name = name
-        self.items = items
-        self.creatures = creatures
-        self.description = description
-        Location_Storage.append(self)
-        self.exits = exits
-        self.showNameWhenExit = showNameWhenExit
-        self.dark = dark
 
-    def giveInfo(self, fullInfo):
-        assert self.description != '', 'There must be a description.'
-        if self.dark:
-            print('It is too dark to see anything. However, you are '\
-                  'not likely to be eaten by a grue. What do you think'\
-                  ' this is, Zork?')
-            return
-        elif fullInfo:
-            print(self.description)
-            print()
-            # directions = ['north', 'south', 'east', 'west', 'up', 'down']
-            for i in self.exits:
-                if self.exits[i].showNameWhenExit:
-                    if i == 'up' or i == 'down':
-                        print('{} is {}.'.format(self.exits[i].name, i))
-                    else:
-                        print('{} is to the {}.'.format(self.exits[i].name, i))
-                else:
-                    print('There is an exit {0}.'.format(i))
-            if len(self.exits) == 0:
-                print('There does not appear to be an exit.')
-        else:
-            print('You are in {}.'.format(self.name))
-        print()
-
-        for item in self.items:
-            if item.locDescription != '':
-                print(item.locDescription)
-            else:
-                print('There is {0} {1}'.format(
-                           utils.getIndefArticle(item.name) ,item.name))
-        if len(self.items) > 0:
-            print()
-        if len(self.creatures) > 0:
-            for creature in self.creatures:
-                print('There is {0} {1} here.'.format(
-                       utils.getIndefArticle(creature.name), creature.name))
 
 
 class Creature(object):
