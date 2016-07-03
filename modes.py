@@ -1,3 +1,4 @@
+# Note: this currently does nothing.
 class Mode(object):
     """Documentation for Mode
 
