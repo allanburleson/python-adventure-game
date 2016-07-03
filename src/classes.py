@@ -226,17 +226,9 @@ class Player(object):
                         break
             elif noun in self.location.exits:
                 # Get right Location from list called locations
-<< << << < HEAD
-                loc = Location_Storage[Location_Storage.index(
-                    self.location.exits[noun])]
-                for i in Location_Storage:
-                    if i == loc:
-                        locToGoTo = i
-                        break
-== == == =
                 loc = None
                 # loc = self.locations[self.locations.index(
-                        # self.location.exits[noun])]
+                # self.location.exits[noun])]
                 for i in self.locations:
                     if self.location.exits[noun].name == i.name:
                         loc = i
@@ -245,7 +237,6 @@ class Player(object):
                         if i == loc:
                             locToGoTo = i
                             break
->>>>>> > d2ea47d381a595e7fc7cda8bdc9fc07819d2b3fd
             elif isLoc:
                 pass
             else:
@@ -293,12 +284,7 @@ class Player(object):
             print('You said "{}" but nothing happened.'.format(noun))
 
     def quit(self, action, noun, hasNoun):
-<<<<<<< HEAD
-        resp = input('Are you sure you want to quit? Your progress'
-                     'will be deleted. [Y/n] ')
-        if resp.lower.startswith('y'):
-=======
-        resp = input('Are you sure you want to quit? Your progress '\
+        resp = input('Are you sure you want to quit? Your progress '
                      'will be saved. [Y/n] ')
         if resp.lower().startswith('y'):
             save = shelve.open('save')
@@ -307,7 +293,6 @@ class Player(object):
             save['locations'] = self.locations
             save['Items'] = Items
             save.close()
->>>>>>> d2ea47d381a595e7fc7cda8bdc9fc07819d2b3fd
             self.die()
         else:
             print('Cancelled.')
@@ -328,9 +313,11 @@ class Player(object):
                 print('Inventory:')
                 for item in self.inventory:
                     if isinstance(item, Food):
-                        print('{0}: Restores {1} health.'.format(item.name, item.health))
+                        print('{0}: Restores {1} health.'.format(
+                            item.name, item.health))
                     elif isinstance(item, Weapon):
-                        print('{0}: Deals {1} damage.'.format(item.name, item.power))
+                        print('{0}: Deals {1} damage.'.format(
+                            item.name, item.power))
                     else:
                         print(item.name)
             else:
@@ -393,7 +380,8 @@ class Player(object):
                 item = i
         if item:
             if isinstance(item, Food):
-                print('You ate the {0} and gained {1} health.'.format(item.name, item.health))
+                print('You ate the {0} and gained {1} health.'.format(
+                    item.name, item.health))
                 self.health += item.health
                 self.inventory.remove(item)
             else:
@@ -401,47 +389,16 @@ class Player(object):
         else:
             print('You don\'t have that.')
 
-
     def light(self, action, noun, hasNoun):
         if utils.inInventory(Lantern, self) and self.location.dark:
             self.location.dark = False
-            print('Your lantern bursts in green flame that illuminates'\
+            print('Your lantern bursts in green flame that illuminates'
                   ' the room.')
             self.go('go', self.location.name, True, self.location, 'up')
         elif utils.inInventory(Lantern, self):
             print('The room is already light enough.')
         else:
             print('You need a light source!')
-
-
-
-<<<<<<< HEAD
-    def giveInfo(self):
-        assert self.description != '', 'There must be a description.'
-        print(self.description)
-        print()
-        # directions = ['north', 'south', 'east', 'west', 'up', 'down']
-        for i in self.exits:
-            if self.exits[i].showNameWhenExit:
-                print('{} is to the {}.'.format(self.exits[i].name, i))
-            else:
-                print('There is an exit {0}.'.format(i))
-        if len(self.exits) == 0:
-            print('There does not appear to be an exit.')
-        print()
-        if len(self.creatures) > 0:
-            for creature in self.creatures:
-                print('There is {0} {1} here.'.format(
-                       utils.getIndefArticle(creature.name), creature.name))
-            print()
-        for item in self.items:
-            if item.locDescription != '':
-                print(item.locDescription)
-            else:
-                print('There is {0} {1}'.format(
-                    utils.getIndefArticle(item.name), item.name))
-=======
->>>>>>> d2ea47d381a595e7fc7cda8bdc9fc07819d2b3fd
 
 
 class Creature(object):
@@ -458,6 +415,7 @@ class Creature(object):
 
 
 class Snail(Creature):
+
     def __init__(self):
         super().__init__(name='snail',
                          hp=2,
@@ -483,6 +441,7 @@ class Orc(Baddie):
 
 
 class Ghost(Baddie):
+
     def __init__(self):
         super().__init__(name='ghost',
                          hp=99999999,
@@ -491,6 +450,7 @@ class Ghost(Baddie):
 
 
 class GiantSpider(Baddie):
+
     def __init__(self):
         super().__init__(name='giant spider',
                          hp=500,
@@ -499,11 +459,13 @@ class GiantSpider(Baddie):
 
 
 class Bear(Baddie):
+
     def __init__(self):
         super().__init__(name='bear',
                          hp=200,
                          description='The bear growls at you.',
-                         power = 30)
+                         power=30)
+
 
 class Item(object):
 
@@ -518,11 +480,13 @@ class Item(object):
 
 
 class InteractableItem(Item):
+
     def __init__(self, name, description, locDescription):
         super().__init__(name, description, locDescription)
 
 
 class Chest(InteractableItem):
+
     def __init__(self, items, locked):
         super().__init__(name='chest',
                          description='You shouldn\'t see this.',
@@ -597,41 +561,46 @@ class ToiletPaper(Item):
 
 
 class Stick(Item):
+
     def __init__(self):
         super().__init__(name='stick',
-                         description='The stick is long and thick. It '\
-                                     'looks like it would be perfect '\
+                         description='The stick is long and thick. It '
+                                     'looks like it would be perfect '
                                      'for bashing things with.',
-                         locDescription='There is a random stick on '\
+                         locDescription='There is a random stick on '
                                         'the ground.')
 
 
 class Paper(Item):
+
     def __init__(self, text=''):
         super().__init__(name='paper',
                          description=text,
-                         locDescription='On a table is a paper labeled'\
+                         locDescription='On a table is a paper labeled'
                                         ' NOTICE.')
 
 
 class Lantern(Item):
+
     def __init__(self):
         super().__init__(name='lantern',
-                         description='The lantern is black and is powered'\
+                         description='The lantern is black and is powered'
                                      ' by an unknown source.',
                          locDescription='There is a lantern here.')
 
 
 class Food(Item):
+
     def __init__(self, name, description, locDescription, health):
         super().__init__(name, description, locDescription)
         self.health = health
 
 
 class Bread(Food):
+
     def __init__(self):
         super().__init__(name='bread',
-                         description='The bread is slightly stale but '\
+                         description='The bread is slightly stale but '
                                      'looks wholesome.',
                          locDescription='There is a loaf of bread.',
                          health=30)
