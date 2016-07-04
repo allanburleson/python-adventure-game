@@ -181,6 +181,14 @@ class Player(object):
                                 reverseDir = 'down'
                             elif previousDir == 'down':
                                 reverseDir = 'up'
+                            elif previousDir == 'northwest':
+                                reverseDir = 'southeast'
+                            elif previousDir == 'northeast':
+                                reverseDir = 'southwest'
+                            elif previousDir == 'southwest':
+                                reverseDir = 'northeast'
+                            elif previousDir == 'southeast':
+                                reverseDir = 'northwest'
                             else:
                                 assert False, 'Somehow non-direction "{}" got through to here.'.format(noun)
                             self.go('go', reverseDir, hasNoun = 'True')
@@ -194,13 +202,13 @@ class Player(object):
             isLoc = False
             locToGoTo = None
             for direction in ['north', 'south', 'east', 'west', 'up', 
-                              'down']:
+                              'down', 'northwest', 'northeast',
+                              'southwest', 'southeast']:
                 if direction == noun:
                     isDirection = True
                     break
                 elif direction in self.location.exits:                    
                     if self.location.exits[direction].name.lower() == noun:
-                        isLoc = True
                         locToGoTo = self.location.exits[direction]
                         previousDir = direction
                         break
@@ -213,7 +221,7 @@ class Player(object):
                     if i.name == 'Home':
                         locToGoTo = i
                         break
-            elif noun in self.location.exits :
+            elif noun in self.location.exits:
                 # Get right Location from list called locations
                 loc = None
                 #loc = self.locations[self.locations.index(

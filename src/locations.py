@@ -11,7 +11,8 @@ class Location(object):
         assert (type(exits) == dict or exits is None)
         for i in exits:
             assert isinstance(exits[i], Location)
-            assert i in ['north', 'south', 'east', 'west', 'up', 'down']
+            assert i in ['north', 'south', 'east', 'west', 'up', 'down',
+                         'northwest', 'northeast', 'southwest', 'southeast']
         self.name = name
         self.items = items
         self.creatures = creatures
@@ -58,6 +59,33 @@ class Location(object):
             for creature in self.creatures:
                 print('There is {0} {1} here.'.format(
                        utils.getIndefArticle(creature.name), creature.name))
+                       
+                       
+class BlackPit(Location):
+    def __init__(self):
+        super().__init__(name='A mountain of gold and jewels',
+                         items=[],
+                         creatures=[],
+                         exits={},
+                         description='You are in a dank, dirty pit. Yo'\
+                                     'u don\'t know why you are here i'\
+                                     'nstead of being on a mountain of'\
+                                     ' gold and jewels.',
+                         showNameWhenExit=True,
+                         dark=True)
+        self.firstTime = True
+    def giveInfo(self, fullInfo):
+        if self.firstTime:
+            print('You run towards the amazing riches...without notici'\
+                  'ng the giant hole at your feet.')
+            print()
+            self.name = 'Black Pit'
+            self.firstTime = False
+            super().giveInfo(True)
+        else:
+            super().giveInfo(fullInfo)
+            
+                         
         
         
 bathroom = Location('Bathroom', [ToiletPaper()], [], showNameWhenExit=True)
@@ -101,21 +129,31 @@ attic = Location('Attic', [Bread()], [GiantSpider()],
 attic.description = 'The attic has been obviously unused for many year'\
                     's. There are large spiderwebs everywhere.'
 backyard = Location('Backyard', [], [Snail()])
-backyard.description = 'You are in the backyard of your house.'
+backyard.description = 'You are in the back yard of your house.'
 frontyard = Location('Front Yard', [Chest([Sword()], True)], [])
 frontyard.description = 'You are in your front yard.'
+homenorth = Location('North of Home', [], [], showNameWhenExit=False)
+homenorth.description = 'You are at the side of your house.'
+homesouth = Location('South of Home', [], [], showNameWhenExit=False)
+homesouth.description = 'You are at a side of your house with a window visible.'
 creepyforest = Location('Creepy forest', [], [Ghost()], showNameWhenExit=True)
 creepyforest.description = 'You are in a spooky forest.'
-forest = Location('Forest', [], [Bear()], showNameWhenExit = True)
+forest = Location('Forest', [], [Bear()], showNameWhenExit=True)
 forest.description = 'You are in a forest. There is a sign that says '\
                      '"This is not the spooky forest of the East. Stay'\
                      ' away from there!"'
+blackpit = BlackPit()
 home.exits = {'north': bathroom, 'south': closet, 'east': backyard,
               'west': frontyard, 'up': attic}
 bathroom.exits = {'south': home}
 closet.exits = {'north': home}
 attic.exits = {'down': home}
-backyard.exits = {'west': home, 'east': creepyforest}
+backyard.exits = {'west': home, 'east': creepyforest,
+                  'northwest': homenorth, 'southwest': homesouth}
 creepyforest.exits = {'west': backyard}
-frontyard.exits = {'east': home, 'west': forest}
+frontyard.exits = {'east': home, 'west': forest, 'northeast': homesouth,
+                   'southeast': homesouth}
 forest.exits = {'east': frontyard}
+homenorth.exits = {'southwest': frontyard, 'southeast': backyard}
+homesouth.exits = {'northwest': frontyard, 'northeast': backyard,
+                   'south': blackpit}

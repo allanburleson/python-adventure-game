@@ -26,6 +26,7 @@ except:
     player = classes.Player(locations.Location_Storage, locations.start)
 previousNoun = ''
 turns = 0
+darkTurn = 0
 while True:
     try:
         command = parser.parseCommand(input('> '))
@@ -50,6 +51,17 @@ while True:
                 previousNoun = noun
             else:
                 previousNoun = ''
+            if player.location.dark:
+                if darkTurn < turns:
+                    print('A grue magically appeared. However, since '\
+                          'this isn\'t Zork, the grue didn\'t eat you;'\
+                          ' it just killed you instead. So that\'s alr'\
+                          'ight.')
+                    player.die()
+                else:
+                    darkTurn = turns
             turns += 1
+            if not player.location.dark:
+                darkTurn = turns
     except KeyboardInterrupt:
         player.quit('', '', False)
