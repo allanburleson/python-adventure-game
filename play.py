@@ -31,27 +31,24 @@ while True:
     try:
         command = parser.parseCommand(input('> '))
         if command is not None:
-            hasNoun = True
             action = command[0]
             if len(command) >= 2:
                 noun = command[1]
             else:
-                hasNoun = False
-                noun = None
-            if action is None and noun is not None:
+                noun = ''
+            if action is None and noun != '':
                 action = 'go'
             if previousNoun != '' and noun == 'it':
                 noun = previousNoun
             try:
-                commandResult = getattr(player, action)(action, noun, 
-                                                        hasNoun)
+                commandResult = getattr(player, action)(action, noun)
             except AttributeError:
                 print('You can\'t do that here.')
-            if noun is not None:
+            if noun != '':
                 previousNoun = noun
             else:
                 previousNoun = ''
-            if player.location.dark:
+            if player.location.dark and not player.light:
                 if darkTurn < turns:
                     print('A grue magically appeared. However, since '\
                           'this isn\'t Zork, the grue didn\'t eat you;'\
@@ -61,7 +58,7 @@ while True:
                 else:
                     darkTurn = turns
             turns += 1
-            if not player.location.dark:
+            if not player.location.dark or player.light:
                 darkTurn = turns
     except KeyboardInterrupt:
-        player.quit('', '', False)
+        player.quit('', '')

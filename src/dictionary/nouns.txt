@@ -24,3 +24,4 @@ health
 paper:notice,pamphlet,letter
 lantern:lamp
 all:everything
+health potion:health pot,potion

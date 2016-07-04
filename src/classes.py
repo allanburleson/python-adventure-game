@@ -20,7 +20,9 @@ class Player(object):
         for i in self.locations:
             self.visitedPlaces[i] = False
         self.health = 100
-        self.location.giveInfo(True)
+        self.hasLight = False
+        self.previousDir = None
+        self.location.giveInfo(True, self.hasLight)
 
     def die(self):
         print('GAME OVER.')
@@ -88,16 +90,17 @@ class Player(object):
 
     # Command functions called in game.py
 
-    def take(self, action, noun, hasNoun):
+    def take(self, action, noun):
         def takeItem(i):
             self.location.items.remove(i)
             self.inventory.append(i)
             print('{0} taken.'.format(i.name))
-        if not hasNoun:
+        if noun == '':
             print('What do you want to take?')
         else:
             item = utils.getItemFromName(noun, self.location.items, self)
-            if item and not isinstance(item, InteractableItem) and not self.location.dark:
+            if item and not isinstance(item, InteractableItem) and \
+                (not self.location.dark or self.hasLight):
                 takeItem(item)
             elif noun == 'all':
                 for i in self.location.items[:]:
@@ -105,18 +108,18 @@ class Player(object):
                         takeItem(i)
                 #if len(self.location.items) > 1:
                  #   takeItem(self.location.items[0])
-            elif self.location.dark:
+            elif self.location.dark and not self.hasLight:
                 print('There\'s no way to tell if that is here because'\
                       ' it is too dark.')
             else:
                 print('You can\'t pick up {0} {1}.'.format(utils.getIndefArticle(noun), noun))
 
-    def drop(self, action, noun, hasNoun):
+    def drop(self, action, noun):
         def dropItem(i):
             self.location.items.append(i)
             self.inventory.remove(i)
             print('{} dropped.'.format(i.name))
-        if not hasNoun:
+        if noun == '':
             print('Say what you want to drop.')
         else:
             if noun == 'fist':
@@ -132,9 +135,11 @@ class Player(object):
             else:
                 print('You do not have a {} to drop.'.format(noun))
 
-    def look(self, action, noun, hasNoun):
-        if not hasNoun or noun == 'around':
-            self.location.giveInfo(True)
+    def look(self, action, noun):
+        if self.hasLight and not utils.inInventory(Lantern, self):
+            self.hasLight = False
+        if noun == '' or noun == 'around':
+            self.location.giveInfo(True, self.hasLight)
         else:
             item = utils.getItemFromName(noun, self.inventory, self)
             if item:
@@ -144,15 +149,13 @@ class Player(object):
                     for i in self.location.creatures:
                         if isinstance(i, Baddie):
                             item.examine(True)
-                            glowing = True
-                            break
+                            return
                     if not glowing:
                         for exit in self.location.exits:
                             for creature in self.location.exits[exit].creatures:
                                 if isinstance(creature, Baddie):
                                     item.examine(True)
-                                    glowing = True
-                                    break
+                                    return
                     if not glowing:
                         item.examine(False)
                 else:
@@ -160,40 +163,42 @@ class Player(object):
             else:
                 print('You do not have {0}'.format(noun))
 
-    def go(self, action, noun='', hasNoun=None, Location=None, previousDir=None):
+    def go(self, action, noun='', Location=None, previousDir=None):
         def fightCheck():
             if len(self.location.creatures) > 0:
-                for i in self.location.creatures:
+                for i in self.location.creatures[:]:
                     if isinstance(i, Baddie):
                         result = self.fight(i)
                         if result[0] == 'retreat':
                             if len(result) > 1:
                                 i.hp = result[1]
-                            if previousDir == 'north':
+                            if self.previousDir == 'north':
                                 reverseDir = 'south'
-                            elif previousDir == 'south':
+                            elif self.previousDir == 'south':
                                 reverseDir = 'north'
-                            elif previousDir == 'west':
+                            elif self.previousDir == 'west':
                                 reverseDir = 'east'
-                            elif previousDir == 'east':
+                            elif self.previousDir == 'east':
                                 reverseDir = 'west'
-                            elif previousDir == 'up':
+                            elif self.previousDir == 'up':
                                 reverseDir = 'down'
-                            elif previousDir == 'down':
+                            elif self.previousDir == 'down':
                                 reverseDir = 'up'
-                            elif previousDir == 'northwest':
+                            elif self.previousDir == 'northwest':
                                 reverseDir = 'southeast'
-                            elif previousDir == 'northeast':
+                            elif self.previousDir == 'northeast':
                                 reverseDir = 'southwest'
-                            elif previousDir == 'southwest':
+                            elif self.previousDir == 'southwest':
                                 reverseDir = 'northeast'
-                            elif previousDir == 'southeast':
+                            elif self.previousDir == 'southeast':
                                 reverseDir = 'northwest'
                             else:
                                 assert False, 'Somehow non-direction "{}" got through to here.'.format(noun)
-                            self.go('go', reverseDir, hasNoun = 'True')
+                            self.go('go', reverseDir)
                         else:
                             self.location.creatures.remove(i)
+        if self.hasLight and not utils.inInventory(Lantern, self):
+            self.hasLight = False
         if Location is not None:
             locToGoTo = Location
             isLoc = True
@@ -206,11 +211,12 @@ class Player(object):
                               'southwest', 'southeast']:
                 if direction == noun:
                     isDirection = True
+                    self.previousDir = noun
                     break
                 elif direction in self.location.exits:                    
                     if self.location.exits[direction].name.lower() == noun:
                         locToGoTo = self.location.exits[direction]
-                        previousDir = direction
+                        self.previousDir = direction
                         break
             if not isDirection and not isLoc and action != 'say':
                 print('You must specify a valid direction.')
@@ -227,7 +233,7 @@ class Player(object):
                 #loc = self.locations[self.locations.index(
                         #self.location.exits[noun])]
                 for i in self.locations:
-                    if self.location.exits[noun].name == i.name:
+                    if self.location.exits[noun] == i:
                         loc = i
                 if loc:
                     for i in self.locations:
@@ -241,35 +247,33 @@ class Player(object):
                 return
         if locToGoTo is not None:
             if not isLoc:
-                previousDir = noun
+                self.previousDir = noun
             self.location = locToGoTo
-            if self.location.dark:
-                self.location.giveInfo(False)
+            if not self.visitedPlaces[self.location]:
+                self.location.giveInfo(True, self.hasLight)
+                self.visitedPlaces[self.location] = True
             else:
-                if not self.visitedPlaces[self.location]:
-                    self.location.giveInfo(True)
-                    self.visitedPlaces[self.location] = True
-                else:
-                    self.location.giveInfo(False)
+                self.location.giveInfo(False, self.hasLight)
+            if (not self.location.dark) or (self.hasLight):
                 fightCheck()
         else:
             print('Something went wrong.')
 
 
-    def help(self, action, noun, hasNoun):
+    def help(self, action, noun):
         print('I can only understand what you say if you first type an'\
               ' action and then a noun (if necessary).', end='')
         print(' My vocabulary is limited. If one word doesn\'t work,'\
               ' try a synonym. If you get stuck, check the documentati'\
               'on.')
         
-    def say(self, action, noun, hasNoun):
+    def say(self, action, noun):
         if noun == 'xyzzy':
             if utils.inInventory(Mirror, self):
                 if self.location.name == 'Start':
                     self.changeScore(1)
                 print('You vanished and reappeared in your house.\n')
-                self.go(action, noun, hasNoun)
+                self.go(action, noun)
                 for Location in self.locations:
                     if Location.name == 'home':
                         self.go(location=Location)
@@ -281,7 +285,7 @@ class Player(object):
         else:
             print('You said "{}" but nothing happened.'.format(noun))
 
-    def quit(self, action, noun, hasNoun):
+    def quit(self, action, noun):
         resp = input('Are you sure you want to quit? Your progress '\
                      'will be saved. [Y/n] ')
         if resp.lower().startswith('y'):
@@ -295,7 +299,7 @@ class Player(object):
         else:
             print('Cancelled.')
             
-    def restart(self, action, noun, hasNoun):
+    def restart(self, action, noun):
         resp = input('Are you sure you want to restart the game? [Y/n] ')
         if resp.lower().startswith('y'):
             try:
@@ -306,7 +310,7 @@ class Player(object):
             print('Now run play.py again.')
             sys.exit(0)
 
-    def show(self, action, noun, hasNoun):
+    def show(self, action, noun):
         if noun == 'inventory':
             if len(self.inventory) > 0:
                 print('Inventory:')
@@ -328,7 +332,7 @@ class Player(object):
         else:
             print('This isn\'t something I can show you.')
 
-    def use(self, action, noun, hasNoun):
+    def use(self, action, noun):
         if noun == 'magic mirror':
             hasMirror = False
             for item in self.inventory:
@@ -340,7 +344,7 @@ class Player(object):
                       ' you in the face.')
                 self.die()
                 
-    def open(self, action, noun, hasNoun):
+    def open(self, action, noun):
         chest = None
         for i in self.location.items:
             if isinstance(i, Chest):
@@ -350,7 +354,7 @@ class Player(object):
             items = chest.open()
             self.location.items += items
             
-    def hit(self, action, noun, hasNoun):
+    def hit(self, action, noun):
         chest = None
         for i in self.location.items:
             if isinstance(i, Chest):
@@ -370,7 +374,7 @@ class Player(object):
         else:
             print('Hitting doesn\'t help.')
             
-    def eat(self, action, noun, hasNoun):
+    def eat(self, action, noun):
         item = None
         for i in self.inventory:
             if i.name == noun:
@@ -386,20 +390,18 @@ class Player(object):
             print('You don\'t have that.')
             
             
-    def light(self, action, noun, hasNoun):
-        if utils.inInventory(Lantern, self) and self.location.dark:
-            self.location.dark = False
+    def light(self, action, noun):
+        if utils.inInventory(Lantern, self) and not self.hasLight:
             print('Your lantern bursts in green flame that illuminates'\
                   ' the room.')
-            self.go('go', self.location.name, True, self.location, 'up')
+            self.hasLight = True
+            if self.location.dark:
+                self.go('go', Location=self.location)
         elif utils.inInventory(Lantern, self):
-            print('The room is already light enough.')
+            print('Your light is already lit.')
         else:
             print('You need a light source!')
             
-
-
-
 
 class Creature(object):
     def __init__(self, name, hp, description):
@@ -578,6 +580,15 @@ class Food(Item):
     def __init__(self, name, description, locDescription, health):
         super().__init__(name, description, locDescription)
         self.health = health
+        
+        
+class HealthPot(Food):
+    def __init__(self):
+        super().__init__(name='health potion',
+                         description='The potion looks disgusting but '\
+                                     'is probably good for you.',
+                         locDescription='There is a health potion here.',
+                         health=100)
         
         
 class Bread(Food):

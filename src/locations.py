@@ -22,9 +22,9 @@ class Location(object):
         self.showNameWhenExit = showNameWhenExit
         self.dark = dark
 
-    def giveInfo(self, fullInfo):
+    def giveInfo(self, fullInfo, light):
         assert self.description != '', 'There must be a description.'
-        if self.dark:
+        if self.dark and not light:
             print('It is too dark to see anything. However, you are '\
                   'not likely to be eaten by a grue. What do you think'\
                   ' this is, Zork?')
@@ -70,24 +70,36 @@ class BlackPit(Location):
                          description='You are in a dank, dirty pit. Yo'\
                                      'u don\'t know why you are here i'\
                                      'nstead of being on a mountain of'\
-                                     ' gold and jewels.',
+                                     ' gold and jewels.\nThere is a si'\
+                                     'gn on the wall that says "MORIA '\
+                                     '(in the Common Tongue, the \'Bl'\
+                                     'ack Pit\')."',
                          showNameWhenExit=True,
                          dark=True)
         self.firstTime = True
-    def giveInfo(self, fullInfo):
+    def giveInfo(self, fullInfo, light):
         if self.firstTime:
             print('You run towards the amazing riches...without notici'\
                   'ng the giant hole at your feet.')
             print()
             self.name = 'Black Pit'
             self.firstTime = False
-            super().giveInfo(True)
+            super().giveInfo(True, light)
         else:
-            super().giveInfo(fullInfo)
+            super().giveInfo(fullInfo, light)
             
+            
+class DarkTunnel(Location):
+    def __init__(self):
+        super().__init__(name='Dark Tunnel',
+                         items=[],
+                         creatures=[Orc(), Orc(), Orc(), Orc()],
+                         exits={},
+                         description='You are in a featureless dark tunnel.',
+                         showNameWhenExit=False,
+                         dark=True)
                          
-        
-        
+            
 bathroom = Location('Bathroom', [ToiletPaper()], [], showNameWhenExit=True)
 bathroom.description = 'There is a toilet and a sink here. They seem'\
                        ' out of place since this is 600 B.C.'
@@ -124,7 +136,7 @@ start.description = 'You are in a small room with concrete walls and '\
                     'no windows.'
 closet = Location('Closet', [Stick()], [], showNameWhenExit=True)
 closet.description = 'You are in a closet that is full of cobwebs.'
-attic = Location('Attic', [Bread()], [GiantSpider()],
+attic = Location('Attic', [Bread(), HealthPot()], [GiantSpider()],
                  showNameWhenExit=True, dark=True)
 attic.description = 'The attic has been obviously unused for many year'\
                     's. There are large spiderwebs everywhere.'
@@ -143,6 +155,8 @@ forest.description = 'You are in a forest. There is a sign that says '\
                      '"This is not the spooky forest of the East. Stay'\
                      ' away from there!"'
 blackpit = BlackPit()
+dtn = DarkTunnel()
+dts = DarkTunnel()
 home.exits = {'north': bathroom, 'south': closet, 'east': backyard,
               'west': frontyard, 'up': attic}
 bathroom.exits = {'south': home}
@@ -157,3 +171,6 @@ forest.exits = {'east': frontyard}
 homenorth.exits = {'southwest': frontyard, 'southeast': backyard}
 homesouth.exits = {'northwest': frontyard, 'northeast': backyard,
                    'south': blackpit}
+blackpit.exits = {'north': dtn, 'south': dts}
+dtn.exits = {'south': blackpit}
+dts.exits = {'north': blackpit}
