@@ -25,3 +25,4 @@ def getWordList(filepath):
 verbs = getWordList('src/dictionary/verbs.txt')
 nouns = getWordList('src/dictionary/nouns.txt')
 extras = getWordList('src/dictionary/extras.txt')
+directions = getWordList('src/dictionary/directions.txt')

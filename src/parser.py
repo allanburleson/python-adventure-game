@@ -1,4 +1,4 @@
-from src.words import verbs, nouns, extras
+from src.words import verbs, nouns, extras, directions
 
 
 def parseCommand(command):
@@ -34,6 +34,14 @@ def parseCommand(command):
     if verb != '':
         parsedCommand.append(verb)
     else:
+        # See if command is only a direction
+        for i in directions:
+            if command.strip() == i:
+                return [None, i]
+            else:
+                for syn in directions[i]:
+                    if command.strip() == syn:
+                        return [None, i]
         print('What?')
         return
     # next is a noun
@@ -42,11 +50,11 @@ def parseCommand(command):
     if not noNoun:
         if len(command) > len(typedVerb) + 1:
             restOfCommand = command.split(typedVerb + ' ')[1]
-            for i in nouns:
+            for i in {**nouns, **directions}:
                 if restOfCommand == i:
                     noun = i
                 else:
-                    for syn in nouns[i]:
+                    for syn in {**nouns, **directions}[i]:
                         if restOfCommand == syn:
                             noun = i
             if noun != '':

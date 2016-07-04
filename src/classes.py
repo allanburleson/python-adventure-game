@@ -34,7 +34,6 @@ class Player(object):
         for i in self.locations:
             self.visitedPlaces[i] = False
         self.health = 100
-        self.load()
         self.location.giveInfo(True)
 
     def die(self):
@@ -103,16 +102,6 @@ class Player(object):
                     print('Both you and the {0} died!'.format(baddie.name))
                     self.die()
 
-    def load(self):
-        # if os.path.isfile('save.db') or os.path.isfile('save.dat'):
-            # save = shelve.open('save')
-            # self = save['player']
-            # Location_Storage = save['Location_Storage']
-            # Items = save['Items']
-            # Creatures = save['Creatures']
-            # save.close()
-        return
-
     # Command functions called in game.py
 
     def take(self, action, noun, hasNoun):
@@ -166,7 +155,25 @@ class Player(object):
         else:
             item = utils.getItemFromName(noun, self.inventory, self)
             if item:
-                item.examine()
+                if item.name == 'sword':
+                    # Make sword glow if an enemy is in an adjacent room
+                    glowing = False
+                    for i in self.location.creatures:
+                        if isinstance(i, Baddie):
+                            item.examine(True)
+                            glowing = True
+                            break
+                    if not glowing:
+                        for exit in self.location.exits:
+                            for creature in self.location.exits[exit].creatures:
+                                if isinstance(creature, Baddie):
+                                    item.examine(True)
+                                    glowing = True
+                                    break
+                    if not glowing:
+                        item.examine(False)
+                else:
+                    item.examine()
             else:
                 print('You do not have {0}'.format(noun))
 
@@ -500,9 +507,9 @@ class Chest(InteractableItem):
             print('The chest cannot be opened because it it locked.')
             return []
         else:
-            print('Items in chest:')
+            print('The chest is empty now.')
             for item in self.items:
-                print(item.name)
+                print(item.locDescription)
             backupItems = self.items[:]
             self.items = []
             return backupItems
@@ -520,6 +527,7 @@ class Sword(Weapon):
 
     def __init__(self):
         super().__init__(name='sword',
+<< << << < HEAD
                          description='The sword makes you want to '
                                      'cleave goblin-necks.',
                          locDescription='There is an unsheathed sword '
@@ -528,79 +536,93 @@ class Sword(Weapon):
                          power=random.randint(90, 150))
 
 
+== == == =
+                         description = 'The sword is small and has an el'\
+                                     'vish look to it.',
+                         locDescription = 'There is a small sword here.',
+                         power = random.randint(90, 150))
+    def examine(self, glowing):
+        print(self.description, end = '')
+        if glowing:
+            print(' It is glowing light blue.')
+        else:
+            print()
+
+
+>> >>>> > 0ccafceb2c76f4e104d01626f87de192a4cb7503
 class Fist(Weapon):
 
     def __init__(self):
-        super().__init__(name='fist',
-                         description='Your fist looks puny, but it\'s'
+        super().__init__(name = 'fist',
+                         description = 'Your fist looks puny, but it\'s'
                                      ' better than no weapon.',
-                         locDescription='There is a bug if you are '
+                         locDescription = 'There is a bug if you are '
                                         'reading this.',
-                         power=10)
+                         power = 10)
 
 
 class Mirror(Item):
 
     def __init__(self):
-        super().__init__(name='magic mirror',
-                         description='The mirror is round and you can '
+        super().__init__(name = 'magic mirror',
+                         description = 'The mirror is round and you can '
                          'see your reflection clearly. Under the glass'
                          ' is an inscription that says "XYZZY."',
-                         locDescription='There is a small mirror lying'
+                         locDescription = 'There is a small mirror lying'
                                         ' on the ground.')
 
 
 class ToiletPaper(Item):
 
     def __init__(self):
-        super().__init__(name='toilet paper',
-                         description='The toilet paper is labeled "X-t'
+        super().__init__(name = 'toilet paper',
+                         description = 'The toilet paper is labeled "X-t'
                                      'raSoft.',
-                         locDescription='A roll of toilet paper is in '
+                         locDescription = 'A roll of toilet paper is in '
                                         'the room.')
 
 
 class Stick(Item):
 
     def __init__(self):
-        super().__init__(name='stick',
-                         description='The stick is long and thick. It '
+        super().__init__(name = 'stick',
+                         description = 'The stick is long and thick. It '
                                      'looks like it would be perfect '
                                      'for bashing things with.',
-                         locDescription='There is a random stick on '
+                         locDescription = 'There is a random stick on '
                                         'the ground.')
 
 
 class Paper(Item):
 
-    def __init__(self, text=''):
-        super().__init__(name='paper',
-                         description=text,
-                         locDescription='On a table is a paper labeled'
+    def __init__(self, text = ''):
+        super().__init__(name = 'paper',
+                         description = text,
+                         locDescription = 'On a table is a paper labeled'
                                         ' NOTICE.')
 
 
 class Lantern(Item):
 
     def __init__(self):
-        super().__init__(name='lantern',
-                         description='The lantern is black and is powered'
+        super().__init__(name = 'lantern',
+                         description = 'The lantern is black and is powered'
                                      ' by an unknown source.',
-                         locDescription='There is a lantern here.')
+                         locDescription = 'There is a lantern here.')
 
 
 class Food(Item):
 
     def __init__(self, name, description, locDescription, health):
         super().__init__(name, description, locDescription)
-        self.health = health
+        self.health=health
 
 
 class Bread(Food):
 
     def __init__(self):
-        super().__init__(name='bread',
-                         description='The bread is slightly stale but '
+        super().__init__(name = 'bread',
+                         description = 'The bread is slightly stale but '
                                      'looks wholesome.',
-                         locDescription='There is a loaf of bread.',
-                         health=30)
+                         locDescription = 'There is a loaf of bread.',
+                         health = 30)
