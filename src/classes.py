@@ -109,7 +109,7 @@ class Player(object):
                 print('There\'s no way to tell if that is here because'\
                       ' it is too dark.')
             else:
-                print('There is no {0} here that you can pick up.'.format(noun))
+                print('You can\'t pick up {0} {1}.'.format(utils.getIndefArticle(noun), noun))
 
     def drop(self, action, noun, hasNoun):
         def dropItem(i):
@@ -294,6 +294,7 @@ class Player(object):
                 os.remove('save.db')
             except:
                 print('Restart failed.')
+                return
             print('Now run play.py again.')
             sys.exit(0)
 
