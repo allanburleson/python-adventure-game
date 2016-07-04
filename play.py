@@ -2,6 +2,9 @@
 import os
 import readline
 import shelve
+import sys
+
+assert sys.version_info >= (3,5), 'You must use at least Python 3.5.'
 
 # Change directory to directory that includes play.py
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
@@ -34,6 +37,8 @@ while True:
             else:
                 hasNoun = False
                 noun = None
+            if action is None and noun is not None:
+                action = 'go'
             if previousNoun != '' and noun == 'it':
                 noun = previousNoun
             try:

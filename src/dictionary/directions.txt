@@ -1,0 +1,10 @@
+up:u
+down:d
+west:w
+north:n
+south:s
+east:e
+southwest:sw
+southeast:se
+northwest:nw
+northeast:ne

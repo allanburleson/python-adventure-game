@@ -1,19 +1,6 @@
 wand:staff,rod
 sword:blade
 monster:beast
-orc:goblin
-left:l
-right:r
-up:u
-down:d
-west:w
-north:n
-south:s
-east:e
-southwest:sw
-southeast:se
-northwest:nw
-northeast:ne
 magic mirror:mirror
 around
 xyzzy
