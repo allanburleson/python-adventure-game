@@ -1,4 +1,6 @@
 import threading
+import time
+
 
 # Note: this may do something later in life.
 threads = []
@@ -30,15 +32,16 @@ class Timer(Mode):
 
     """
 
-    def __init__(self, time):
+    def __init__(self, amount):
         super(Timer, self).__init__("timer", 1)
-        self.time = time
+        self.amount = amount
 
     def timer(self):
-        time = self.time
-        while time != -1:
+        amount = self.amount
+        while amount != -1:
             print("FOOBAR")
-            time = time - 1
+            amount = amount - 1
+            time.sleep(10)
 
     def pStart(self):
         t = threading.Thread(target=self.timer)
