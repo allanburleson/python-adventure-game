@@ -481,9 +481,9 @@ class Chest(InteractableItem):
             print('The chest cannot be opened because it it locked.')
             return []
         else:
-            print('Items in chest:')
+            print('The chest is empty now.')
             for item in self.items:
-                print(item.name)
+                print(item.locDescription)
             backupItems = self.items[:]
             self.items = []
             return backupItems
