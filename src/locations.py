@@ -103,31 +103,47 @@ class DarkTunnel(Location):
 bathroom = Location('Bathroom', [ToiletPaper()], [], showNameWhenExit=True)
 bathroom.description = 'There is a toilet and a sink here. They seem'\
                        ' out of place since this is 600 B.C.'
-home = Location('Home', [Paper(), Lantern()], [], showNameWhenExit=True)
-home.items[0].description = '''"NOTICE:
-All able-bodied individuals are asked to assist in capturing or
-destroying the Robots of Unusual Size. More commonly knows as ROUS, they
-have been terrorizing humankind for several weeks and already 3000 lives
-have been lost. Visit our headquarters to register and get free 
-ROUS-fighting supplies.
+home = Location('Home', [Paper(), Lantern(), Coconuts()], [], 
+                showNameWhenExit=True)
+home.items[0].description = '''NOTICE:
+Dear bloody pea--I mean subject,
+This area has been troubled with all sorts of monsters lately--orcs,
+large spiders, ghosts, and other foul creatures. If you would be so kind
+as to assist in their destruction, you could be handsomely rewarded. Of
+significant note is the robbery of the beloved and most holy Grail. If
+you were to recover it, I, Arthur, King of the Britons, would give you
+full command of the land of Camelot and all resources within it,
+including all of the ham, jam, and spam that is so dear to the knights
+that reside there. I will be excited to be rid of that ridi--I mean,
+I hope this incentive will help motivate you peasants to follow my
+orders. Oh--yes, did I mention that any person found not hunting these
+abominations will be executed? I am your King, you see.
+King Arthur of the Britons
+PS: I have included with this letter a worthy steed.'''
+#'''"NOTICE:
+#All able-bodied individuals are asked to assist in capturing or
+#destroying the Robots of Unusual Size. More commonly knows as ROUS, they
+#have been terrorizing humankind for several weeks and already 3000 lives
+#have been lost. Visit our headquarters to register and get free 
+#ROUS-fighting supplies.
 
-Here is what popular media outlets have to say about this menace:
-'Robots of Unusual Size? I don't think they exist.'--DPR Daily
+#Here is what popular media outlets have to say about this menace:
+#'Robots of Unusual Size? I don't think they exist.'--DPR Daily
 
-'Well, since the population of the universe is zero, I'm not sure how
-this issue came about. (See Guide chapter 5) Hopefully this will be 
-resolved.'--Zarniwoop, HG2G
+#'Well, since the population of the universe is zero, I'm not sure how
+#this issue came about. (See Guide chapter 5) Hopefully this will be 
+#resolved.'--Zarniwoop, HG2G
 
-'We extend condolences to all whose friends and family have been harmed
-in these attacks. Many thanks to the RRO which so dilligently protects
-our loved ones.'--Old York Times
+#'We extend condolences to all whose friends and family have been harmed
+#in these attacks. Many thanks to the RRO which so dilligently protects
+#our loved ones.'--Old York Times
 
-Please await further letters for updates.
+#Please await further letters for updates.
 
---RRO (ROUS Resistance Organization)"
+#--RRO (ROUS Resistance Organization)"
 
-Written under this letter is a handwritten note that says:
-"RRO headquarters: sssessw"'''
+#Written under this letter is a handwritten note that says:
+#"RRO headquarters: sssessw"'''
 home.description = 'You are in a familiar cabin made out of logs. '\
                    'There is a pleasantly warm fire in the fireplace '\
                    'and a comfortable-looking armchair beside it.'

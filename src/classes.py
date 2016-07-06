@@ -568,6 +568,17 @@ class Paper(Item):
                                         ' NOTICE.')
                                         
                                         
+class Coconuts(Item):
+    def __init__(self):
+        super().__init__(name='coconut halves',
+                         description='The coconuts make a noise like '\
+                                     'horse hooves when banged together.',
+                         locDescription='Also on the table are two coc'\
+                                     'onut halves that look like they '\
+                                     'probably were carried here by a '\
+                                     'swallow.')
+                                        
+                                        
 class Lantern(Item):
     def __init__(self):
         super().__init__(name='lantern',
