@@ -302,11 +302,9 @@ class Player(object):
     def restart(self, action, noun):
         resp = input('Are you sure you want to restart the game? [Y/n] ')
         if resp.lower().startswith('y'):
-            try:
-                os.remove('save.db')
-            except:
-                print('Restart failed.')
-                return
+            for i in os.listdir():
+                if i.startswith('save'):
+                    os.remove(i)
             print('Now run play.py again.')
             sys.exit(0)
 

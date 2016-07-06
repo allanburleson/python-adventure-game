@@ -13,7 +13,13 @@ from src import parser
 from src import locations
 from src import classes
 
-try:
+
+sfExists = False
+for i in os.listdir():
+    if i.startswith('save'):
+        sfExists = True
+        break
+if sfExists:
     save = shelve.open('save')
     player = save['player']
     Locations = save['locations']
@@ -21,8 +27,8 @@ try:
     player.locations = Locations
     for i in Locations:
         player.visitedPlaces[i] = False
-    player.location.giveInfo(True)
-except:
+    player.location.giveInfo(True, player.light)
+else:
     player = classes.Player(locations.Location_Storage, locations.start)
 previousNoun = ''
 turns = 0
