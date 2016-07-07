@@ -527,102 +527,92 @@ class Sword(Weapon):
 
     def __init__(self):
         super().__init__(name='sword',
-<< << << < HEAD
-                         description='The sword makes you want to '
-                                     'cleave goblin-necks.',
-                         locDescription='There is an unsheathed sword '
-                                        'that looks like it would be '
-                                        'very useful in battle.',
+                         description='The sword is small and has an el'
+                         'vish look to it.',
+                         locDescription='There is a small sword here.',
                          power=random.randint(90, 150))
 
-
-== == == =
-                         description = 'The sword is small and has an el'\
-                                     'vish look to it.',
-                         locDescription = 'There is a small sword here.',
-                         power = random.randint(90, 150))
     def examine(self, glowing):
-        print(self.description, end = '')
+        print(self.description, end='')
         if glowing:
             print(' It is glowing light blue.')
         else:
             print()
 
 
->> >>>> > 0ccafceb2c76f4e104d01626f87de192a4cb7503
 class Fist(Weapon):
 
     def __init__(self):
-        super().__init__(name = 'fist',
-                         description = 'Your fist looks puny, but it\'s'
-                                     ' better than no weapon.',
-                         locDescription = 'There is a bug if you are '
-                                        'reading this.',
-                         power = 10)
+        super().__init__(name='fist',
+                         description='Your fist looks puny, but it\'s'
+                         ' better than no weapon.',
+                         locDescription='There is a bug if you are '
+                         'reading this.',
+                         power=10)
 
 
 class Mirror(Item):
 
     def __init__(self):
-        super().__init__(name = 'magic mirror',
-                         description = 'The mirror is round and you can '
+        super().__init__(name='magic mirror',
+                         description='The mirror is round and you can '
                          'see your reflection clearly. Under the glass'
                          ' is an inscription that says "XYZZY."',
-                         locDescription = 'There is a small mirror lying'
-                                        ' on the ground.')
+                         locDescription='There is a small mirror lying'
+                         ' on the ground.')
 
 
 class ToiletPaper(Item):
 
     def __init__(self):
-        super().__init__(name = 'toilet paper',
-                         description = 'The toilet paper is labeled "X-t'
-                                     'raSoft.',
-                         locDescription = 'A roll of toilet paper is in '
-                                        'the room.')
+        super().__init__(name='toilet paper',
+                         description='The toilet paper is labeled "X-t'
+                         'raSoft.',
+                         locDescription='A roll of toilet paper is in '
+                         'the room.')
 
 
 class Stick(Item):
 
     def __init__(self):
-        super().__init__(name = 'stick',
-                         description = 'The stick is long and thick. It '
-                                     'looks like it would be perfect '
-                                     'for bashing things with.',
-                         locDescription = 'There is a random stick on '
-                                        'the ground.')
+        super().__init__(name='stick',
+                         description='The stick is long and thick. It '
+                         'looks like it would be perfect '
+                         'for bashing things with.',
+                         locDescription='There is a random stick on '
+                         'the ground.')
 
 
 class Paper(Item):
 
-    def __init__(self, text = ''):
-        super().__init__(name = 'paper',
-                         description = text,
-                         locDescription = 'On a table is a paper labeled'
-                                        ' NOTICE.')
+    def __init__(self, text=''):
+        super().__init__(name='paper',
+                         description=text,
+                         locDescription='On a table is a paper labeled'
+                         ' NOTICE.')
 
 
 class Lantern(Item):
 
     def __init__(self):
-        super().__init__(name = 'lantern',
-                         description = 'The lantern is black and is powered'
-                                     ' by an unknown source.',
-                         locDescription = 'There is a lantern here.')
+        super().__init__(name='lantern',
+                         description='The lantern is black and is powered'
+                         ' by an unknown source.',
+                         locDescription='There is a lantern here.')
 
 
 class Food(Item):
 
     def __init__(self, name, description, locDescription, health):
         super().__init__(name, description, locDescription)
-        self.health=health
+        self.health = health
 
 
 class Bread(Food):
 
     def __init__(self):
-        super().__init__(name = 'bread',
-                         description = 'The bread is slightly stale but '
-                                     'looks wholesome.',
-                         locDescription = 'There is a loaf of bread.',
-                         health = 30)
+        super().__init__(name='bread',
+                         description='The bread is slightly stale but '
+                         'looks wholesome.',
+                         locDescription='There is a loaf of bread.',
+                         health=30)
