@@ -4,7 +4,7 @@ import readline
 import shelve
 import sys
 
-assert sys.version_info >= (3,5), 'You must use at least Python 3.5.'
+assert sys.version_info >= (3, 5), 'You must use at least Python 3.5.'
 
 # Change directory to directory that includes play.py
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
@@ -12,6 +12,11 @@ os.chdir(os.path.dirname(os.path.abspath(__file__)))
 from src import parser
 from src import locations
 from src import classes
+from src import utils
+
+
+utils.clrscn()
+splash = classes.Splash("THE GAME")
 
 
 sfExists = False
@@ -56,9 +61,9 @@ while True:
                 previousNoun = ''
             if player.location.dark and not player.light:
                 if darkTurn < turns:
-                    print('A grue magically appeared. However, since '\
-                          'this isn\'t Zork, the grue didn\'t eat you;'\
-                          ' it just killed you instead. So that\'s alr'\
+                    print('A grue magically appeared. However, since '
+                          'this isn\'t Zork, the grue didn\'t eat you;'
+                          ' it just killed you instead. So that\'s alr'
                           'ight.')
                     player.die()
                 else:
