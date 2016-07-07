@@ -116,7 +116,7 @@ class Player(object):
         else:
             item = utils.getItemFromName(noun, self.location.items, self)
             if item and not isinstance(item, InteractableItem) and \
-                (not self.location.dark or self.hasLight):
+                    (not self.location.dark or self.hasLight):
                 takeItem(item)
             elif noun == 'all':
                 for i in self.location.items[:]:
@@ -277,25 +277,14 @@ class Player(object):
         else:
             print('Something went wrong.')
 
-<< << << < HEAD
-    def help(self, action, noun, hasNoun):
-        print('I can only understand what you say if you first type an'
-== == == =
-
     def help(self, action, noun):
         print('I can only understand what you say if you first type an'
->> >>>> > 28e2c848e90ff3ecc1cb225cd42f39971bccf6c1
               ' action and then a noun (if necessary).', end='')
         print(' My vocabulary is limited. If one word doesn\'t work,'
               ' try a synonym. If you get stuck, check the documentati'
               'on.')
-<< << << < HEAD
-
-    def say(self, action, noun, hasNoun):
-== == == =
 
     def say(self, action, noun):
->>>>>> > 28e2c848e90ff3ecc1cb225cd42f39971bccf6c1
         if noun == 'xyzzy':
             if utils.inInventory(Mirror, self):
                 if self.location.name == 'Start':
@@ -313,32 +302,22 @@ class Player(object):
         else:
             print('You said "{}" but nothing happened.'.format(noun))
 
-<< << << < HEAD
-    def quit(self, action, noun, hasNoun):
-        resp=input('Are you sure you want to quit? Your progress '
-== == == =
     def quit(self, action, noun):
-        resp=input('Are you sure you want to quit? Your progress '
->> >>>> > 28e2c848e90ff3ecc1cb225cd42f39971bccf6c1
+        resp = input('Are you sure you want to quit? Your progress '
                      'will be saved. [Y/n] ')
         if resp.lower().startswith('y'):
-            save=shelve.open('save')
-            save['player']=self
-            save['Creatures']=Creatures
-            save['locations']=self.locations
-            save['Items']=Items
+            save = shelve.open('save')
+            save['player'] = self
+            save['Creatures'] = Creatures
+            save['locations'] = self.locations
+            save['Items'] = Items
             save.close()
             self.die()
         else:
             print('Cancelled.')
-<< << << < HEAD
-
-    def restart(self, action, noun, hasNoun):
-== == == =
 
     def restart(self, action, noun):
->>>>>> > 28e2c848e90ff3ecc1cb225cd42f39971bccf6c1
-        resp=input('Are you sure you want to restart the game? [Y/n] ')
+        resp = input('Are you sure you want to restart the game? [Y/n] ')
         if resp.lower().startswith('y'):
             for i in os.listdir():
                 if i.startswith('save'):
@@ -372,66 +351,51 @@ class Player(object):
 
     def use(self, action, noun):
         if noun == 'magic mirror':
-            hasMirror=False
+            hasMirror = False
             for item in self.inventory:
                 if isinstance(item, Mirror):
-                    hasMirror=True
+                    hasMirror = True
                     break
             if hasMirror:
                 print('The mirror exploded. A large shard of glass hit'
                       ' you in the face.')
                 self.die()
-<< << << < HEAD
-
-    def open(self, action, noun, hasNoun):
-== == == =
 
     def open(self, action, noun):
->>>>>> > 28e2c848e90ff3ecc1cb225cd42f39971bccf6c1
-        chest=None
+        chest = None
         for i in self.location.items:
             if isinstance(i, Chest):
-                chest=i
+                chest = i
                 break
         if chest:
-            items=chest.open()
+            items = chest.open()
             self.location.items += items
-<< << << < HEAD
-
-    def hit(self, action, noun, hasNoun):
-== == == =
 
     def hit(self, action, noun):
->>>>>> > 28e2c848e90ff3ecc1cb225cd42f39971bccf6c1
-        chest=None
+        chest = None
         for i in self.location.items:
             if isinstance(i, Chest):
-                chest=i
+                chest = i
                 break
         if chest:
             for i in self.inventory:
-                stick=True
+                stick = True
                 if isinstance(i, Stick):
-                    stick=True
+                    stick = True
                     break
             if stick:
                 print('You smashed the lock off the chest.')
-                chest.locked=False
+                chest.locked = False
             else:
                 print('You have nothing to break the chest with.')
         else:
             print('Hitting doesn\'t help.')
-<< << << < HEAD
-
-    def eat(self, action, noun, hasNoun):
-== == == =
 
     def eat(self, action, noun):
->>>>>> > 28e2c848e90ff3ecc1cb225cd42f39971bccf6c1
-        item=None
+        item = None
         for i in self.inventory:
             if i.name == noun:
-                item=i
+                item = i
         if item:
             if isinstance(item, Food):
                 print('You ate the {0} and gained {1} health.'.format(
@@ -442,39 +406,26 @@ class Player(object):
                 print('Sorry, that isn\'t food.')
         else:
             print('You don\'t have that.')
-<< << << < HEAD
-
-    def light(self, action, noun, hasNoun):
-        if utils.inInventory(Lantern, self) and self.location.dark:
-            self.location.dark=False
-            print('Your lantern bursts in green flame that illuminates'
-== == == =
-
 
     def light(self, action, noun):
         if utils.inInventory(Lantern, self) and not self.hasLight:
             print('Your lantern bursts in green flame that illuminates'
->> >>>> > 28e2c848e90ff3ecc1cb225cd42f39971bccf6c1
                   ' the room.')
-            self.hasLight=True
+            self.hasLight = True
             if self.location.dark:
                 self.go('go', Location=self.location)
         elif utils.inInventory(Lantern, self):
             print('Your light is already lit.')
         else:
             print('You need a light source!')
-<< << << < HEAD
 
-== == == =
-
->>>>>> > 28e2c848e90ff3ecc1cb225cd42f39971bccf6c1
 
 class Creature(object):
 
     def __init__(self, name, hp, description):
-        self.name=name
-        self.description=description
-        self.hp=hp
+        self.name = name
+        self.description = description
+        self.hp = hp
         Creatures.append(self)
 
     def describe(self):
@@ -495,7 +446,7 @@ class Baddie(Creature):
     def __init__(self, name, hp, description, power):
         super().__init__(name, hp, description)
         assert type(power) == int or type(power) == float
-        self.power=power
+        self.power = power
 
 
 class Orc(Baddie):
@@ -538,9 +489,9 @@ class Bear(Baddie):
 class Item(object):
 
     def __init__(self, name, description, locDescription):
-        self.name=name
-        self.description=description
-        self.locDescription=locDescription
+        self.name = name
+        self.description = description
+        self.locDescription = locDescription
         Items.append(self)
 
     def examine(self):
@@ -560,8 +511,8 @@ class Chest(InteractableItem):
                          description='You shouldn\'t see this.',
                          locDescription='A treasure chest is on the ground.')
         assert type(items) == list
-        self.items=items
-        self.locked=locked
+        self.items = items
+        self.locked = locked
 
     def open(self):
         if self.locked:
@@ -571,8 +522,8 @@ class Chest(InteractableItem):
             print('The chest is empty now.')
             for item in self.items:
                 print(item.locDescription)
-            backupItems=self.items[:]
-            self.items=[]
+            backupItems = self.items[:]
+            self.items = []
             return backupItems
 
 
@@ -581,7 +532,7 @@ class Weapon(Item):
     def __init__(self, name, description, locDescription, power):
         super().__init__(name, description, locDescription)
         assert type(power) == int
-        self.power=power
+        self.power = power
 
 
 class Sword(Weapon):
@@ -654,6 +605,7 @@ class Paper(Item):
 
 
 class Coconuts(Item):
+
     def __init__(self):
         super().__init__(name='coconut halves',
                          description='The coconuts make a noise like '
@@ -677,14 +629,11 @@ class Food(Item):
 
     def __init__(self, name, description, locDescription, health):
         super().__init__(name, description, locDescription)
-        self.health=health
-<< << << < HEAD
-
-
-== == == =
+        self.health = health
 
 
 class HealthPot(Food):
+
     def __init__(self):
         super().__init__(name='health potion',
                          description='The potion looks disgusting but '
@@ -693,7 +642,6 @@ class HealthPot(Food):
                          health=100)
 
 
->> >>>> > 28e2c848e90ff3ecc1cb225cd42f39971bccf6c1
 class Bread(Food):
 
     def __init__(self):

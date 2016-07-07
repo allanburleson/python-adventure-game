@@ -13,12 +13,10 @@ from src import parser
 from src import locations
 from src import classes
 from src import utils
-from src.modes import Callm
 
 
 utils.clrscn()
 splash = classes.Splash("THE GAME")
-Callm(splash)
 
 
 sfExists = False
