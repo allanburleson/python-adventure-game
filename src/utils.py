@@ -1,8 +1,8 @@
 import os
 
-vowels = ['a e i o u']
-constanents = ['b c d f g h j k l m n p q r s t v w x y z 1 2 3 4 \
-                5 6 7 8 9 0']
+vowels = ['a e i o u'].split(' ')
+consonants = ['b c d f g h j k l m n p q r s t v w x y z 1 2 3 4 \
+                5 6 7 8 9 0'].split(' ')
 
 
 def inInventory(itemClass, player):
@@ -21,9 +21,9 @@ def getItemFromName(itemName, itemList, player):
 
 
 def getIndefArticle(noun):
-    if noun[0] in vowels.split(' '):
+    if noun[0] in vowels:
         return 'an'
-    elif noun[0] in constanents.split(' '):
+    elif noun[0] in consonants:
         return 'a'
 
 
