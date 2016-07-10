@@ -173,6 +173,14 @@ forest.description = 'You are in a forest. There is a sign that says '\
 blackpit = BlackPit()
 dtn = DarkTunnel()
 dts = DarkTunnel()
+tunnelwinscription = Location('Inscription Room', [], [], showNameWhenExit=True)
+tunnelwinscription.description = 'You are at a dead end. This is inscr'\
+                                 'ibed on the wall:\n"Here are the las'\
+                                 't words of Joseph of Aramithea: The '\
+                                 'last resting place of the most holy '\
+                                 'Grail is in the den of the dra--aauu'\
+                                 'gh!"\nPoor Joseph must have been kil'\
+                                 'ed while writing this.'
 home.exits = {'north': bathroom, 'south': closet, 'east': backyard,
               'west': frontyard, 'up': attic}
 bathroom.exits = {'south': home}
@@ -189,4 +197,5 @@ homesouth.exits = {'northwest': frontyard, 'northeast': backyard,
                    'south': blackpit}
 blackpit.exits = {'north': dtn, 'south': dts}
 dtn.exits = {'south': blackpit}
-dts.exits = {'north': blackpit}
+dts.exits = {'north': blackpit, 'south': tunnelwinscription}
+tunnelwinscription.exits = {'north': dts}

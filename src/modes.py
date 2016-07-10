@@ -64,7 +64,3 @@ class Cutscene(Mode):
                 print(self.description[i])
                 input(">>")
                 i += 1
-
-cool_cutscene = Cutscene(["OMG", "ZOMG"], 1)
-
-cool_cutscene.cutscene()
