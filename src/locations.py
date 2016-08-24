@@ -1,10 +1,12 @@
 from src.classes import *
 
-Location_Storage = []
+Locatin_Storage = []
+
 
 class Location(object):
+
     def __init__(self, name, items, creatures, exits={},
-            description='', showNameWhenExit=False, dark=False):
+                 description='', showNameWhenExit=False, dark=False):
         # exit needs to be a dict with keys north, south, east, west,
         # up, down
         assert type(items) == list
@@ -25,8 +27,8 @@ class Location(object):
     def giveInfo(self, fullInfo, light):
         assert self.description != '', 'There must be a description.'
         if self.dark and not light:
-            print('It is too dark to see anything. However, you are '\
-                  'not likely to be eaten by a grue. What do you think'\
+            print('It is too dark to see anything. However, you are '
+                  'not likely to be eaten by a grue. What do you think'
                   ' this is, Zork?')
             return
         elif fullInfo:
@@ -52,34 +54,36 @@ class Location(object):
                 print(item.locDescription)
             else:
                 print('There is {0} {1}'.format(
-                           utils.getIndefArticle(item.name) ,item.name))
+                    utils.getIndefArticle(item.name), item.name))
         if len(self.items) > 0:
             print()
         if len(self.creatures) > 0:
             for creature in self.creatures:
                 print('There is {0} {1} here.'.format(
-                       utils.getIndefArticle(creature.name), creature.name))
-                       
-                       
+                    utils.getIndefArticle(creature.name), creature.name))
+
+
 class BlackPit(Location):
+
     def __init__(self):
         super().__init__(name='A mountain of gold and jewels',
                          items=[],
                          creatures=[],
                          exits={},
-                         description='You are in a dank, dirty pit. Yo'\
-                                     'u don\'t know why you are here i'\
-                                     'nstead of being on a mountain of'\
-                                     ' gold and jewels.\nThere is a si'\
-                                     'gn on the wall that says "MORIA '\
-                                     '(in the Common Tongue, the \'Bl'\
+                         description='You are in a dank, dirty pit. Yo'
+                                     'u don\'t know why you are here i'
+                                     'nstead of being on a mountain of'
+                                     ' gold and jewels.\nThere is a si'
+                                     'gn on the wall that says "MORIA '
+                                     '(in the Common Tongue, the \'Bl'
                                      'ack Pit\')."',
                          showNameWhenExit=True,
                          dark=True)
         self.firstTime = True
+
     def giveInfo(self, fullInfo, light):
         if self.firstTime:
-            print('You run towards the amazing riches...without notici'\
+            print('You run towards the amazing riches...without notici'
                   'ng the giant hole at your feet.')
             print()
             self.name = 'Black Pit'
@@ -87,9 +91,10 @@ class BlackPit(Location):
             super().giveInfo(True, light)
         else:
             super().giveInfo(fullInfo, light)
-            
-            
+
+
 class DarkTunnel(Location):
+
     def __init__(self):
         super().__init__(name='Dark Tunnel',
                          items=[],
@@ -98,12 +103,12 @@ class DarkTunnel(Location):
                          description='You are in a featureless dark tunnel.',
                          showNameWhenExit=False,
                          dark=True)
-                         
-            
+
+
 bathroom = Location('Bathroom', [ToiletPaper()], [], showNameWhenExit=True)
 bathroom.description = 'There is a toilet and a sink here. They seem'\
                        ' out of place since this is 600 B.C.'
-home = Location('Home', [Paper(), Lantern(), Coconuts()], [], 
+home = Location('Home', [Paper(), Lantern(), Coconuts()], [],
                 showNameWhenExit=True)
 home.items[0].description = '''NOTICE:
 Dear bloody pea--I mean subject,
@@ -121,28 +126,28 @@ abominations will be executed? I am your King, you see.
 King Arthur of the Britons
 PS: I have included with this letter a worthy steed.'''
 #'''"NOTICE:
-#All able-bodied individuals are asked to assist in capturing or
-#destroying the Robots of Unusual Size. More commonly knows as ROUS, they
-#have been terrorizing humankind for several weeks and already 3000 lives
-#have been lost. Visit our headquarters to register and get free 
-#ROUS-fighting supplies.
+# All able-bodied individuals are asked to assist in capturing or
+# destroying the Robots of Unusual Size. More commonly knows as ROUS, they
+# have been terrorizing humankind for several weeks and already 3000 lives
+# have been lost. Visit our headquarters to register and get free
+# ROUS-fighting supplies.
 
-#Here is what popular media outlets have to say about this menace:
+# Here is what popular media outlets have to say about this menace:
 #'Robots of Unusual Size? I don't think they exist.'--DPR Daily
 
 #'Well, since the population of the universe is zero, I'm not sure how
-#this issue came about. (See Guide chapter 5) Hopefully this will be 
-#resolved.'--Zarniwoop, HG2G
+# this issue came about. (See Guide chapter 5) Hopefully this will be
+# resolved.'--Zarniwoop, HG2G
 
 #'We extend condolences to all whose friends and family have been harmed
-#in these attacks. Many thanks to the RRO which so dilligently protects
-#our loved ones.'--Old York Times
+# in these attacks. Many thanks to the RRO which so dilligently protects
+# our loved ones.'--Old York Times
 
-#Please await further letters for updates.
+# Please await further letters for updates.
 
 #--RRO (ROUS Resistance Organization)"
 
-#Written under this letter is a handwritten note that says:
+# Written under this letter is a handwritten note that says:
 #"RRO headquarters: sssessw"'''
 home.description = 'You are in a familiar cabin made out of logs. '\
                    'There is a pleasantly warm fire in the fireplace '\
@@ -173,7 +178,8 @@ forest.description = 'You are in a forest. There is a sign that says '\
 blackpit = BlackPit()
 dtn = DarkTunnel()
 dts = DarkTunnel()
-tunnelwinscription = Location('Inscription Room', [], [], showNameWhenExit=True)
+tunnelwinscription = Location(
+    'Inscription Room', [], [], showNameWhenExit=True)
 tunnelwinscription.description = 'You are at a dead end. This is inscr'\
                                  'ibed on the wall:\n"Here are the las'\
                                  't words of Joseph of Aramithea: The '\

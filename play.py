@@ -59,6 +59,7 @@ while True:
                 previousNoun = noun
             else:
                 previousNoun = ''
+            # Why is this here?
             if player.location.dark and not player.light:
                 if darkTurn < turns:
                     print('A grue magically appeared. However, since '
