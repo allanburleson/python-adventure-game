@@ -1,19 +1,6 @@
 wand:staff,rod
 sword:blade
 monster:beast
-orc:goblin
-left:l
-right:r
-up:u
-down:d
-west:w
-north:n
-south:s
-east:e
-southwest:sw
-southeast:se
-northwest:nw
-northeast:ne
 magic mirror:mirror
 around
 xyzzy
@@ -26,4 +13,16 @@ toilet paper:toilet tissue,toilet paper roll
 fist
 closet
 bathroom
-home
+home:house
+yard
+stick
+snail
+ghost
+chest:treasure chest,box
+bread:loaf of bread
+health
+paper:notice,pamphlet,letter
+lantern:lamp
+all:everything
+health potion:health pot,potion
+coconut halves:coconuts
