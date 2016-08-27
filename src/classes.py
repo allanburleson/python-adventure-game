@@ -104,6 +104,13 @@ class Player(object):
                     print('Both you and the {0} died!'.format(baddie.name))
                     self.die()
 
+    def canCarry(self, itemToTake):
+        weight = itemToTake.weight
+        for item in self.inventory:
+            weight += item.weight
+        # return True if player can carry item
+        return weight <= 100
+
     # Command functions called in game.py
 
     def take(self, action, noun):
@@ -117,11 +124,17 @@ class Player(object):
             item = utils.getItemFromName(noun, self.location.items, self)
             if item and not isinstance(item, InteractableItem) and \
                     (not self.location.dark or self.hasLight):
-                takeItem(item)
+                if self.canCarry(item):
+                    takeItem(item)
+                else:
+                    print('You are carrying too much weight already.')
             elif noun == 'all':
                 for i in self.location.items[:]:
                     if not isinstance(i, InteractableItem):
-                        takeItem(i)
+                        if self.canCarry(i):
+                            takeItem(i)
+                        else:
+                            print('You are carrying too much weight already.')
                 # if len(self.location.items) > 1:
                  #   takeItem(self.location.items[0])
             elif self.location.dark and not self.hasLight:
@@ -488,10 +501,11 @@ class Bear(Baddie):
 
 class Item(object):
 
-    def __init__(self, name, description, locDescription):
+    def __init__(self, name, description, locDescription, weight):
         self.name = name
         self.description = description
         self.locDescription = locDescription
+        self.weight = weight
         Items.append(self)
 
     def examine(self):
@@ -500,8 +514,8 @@ class Item(object):
 
 class InteractableItem(Item):
 
-    def __init__(self, name, description, locDescription):
-        super().__init__(name, description, locDescription)
+    def __init__(self, name, description, locDescription, weight):
+        super().__init__(name, description, locDescription, weight)
 
 
 class Chest(InteractableItem):
@@ -509,7 +523,8 @@ class Chest(InteractableItem):
     def __init__(self, items, locked):
         super().__init__(name='chest',
                          description='You shouldn\'t see this.',
-                         locDescription='A treasure chest is on the ground.')
+                         locDescription='A treasure chest is on the ground.',
+                         weight=100)
         assert type(items) == list
         self.items = items
         self.locked = locked
@@ -529,8 +544,8 @@ class Chest(InteractableItem):
 
 class Weapon(Item):
 
-    def __init__(self, name, description, locDescription, power):
-        super().__init__(name, description, locDescription)
+    def __init__(self, name, description, locDescription, weight, power):
+        super().__init__(name, description, locDescription, weight)
         assert type(power) == int
         self.power = power
 
@@ -542,6 +557,7 @@ class Sword(Weapon):
                          description='The sword is small and has an el'
                          'vish look to it.',
                          locDescription='There is a small sword here.',
+                         weight=75,
                          power=random.randint(90, 150))
 
     def examine(self, glowing):
@@ -560,6 +576,7 @@ class Fist(Weapon):
                          ' better than no weapon.',
                          locDescription='There is a bug if you are '
                          'reading this.',
+                         weight=0,
                          power=10)
 
 
@@ -571,7 +588,8 @@ class Mirror(Item):
                          'see your reflection clearly. Under the glass'
                          ' is an inscription that says "XYZZY."',
                          locDescription='There is a small mirror lying'
-                         ' on the ground.')
+                         ' on the ground.',
+                         weight=2)
 
 
 class ToiletPaper(Item):
@@ -581,7 +599,8 @@ class ToiletPaper(Item):
                          description='The toilet paper is labeled "X-t'
                          'raSoft.',
                          locDescription='A roll of toilet paper is in '
-                         'the room.')
+                         'the room.',
+                         weight=1)
 
 
 class Stick(Item):
@@ -592,7 +611,8 @@ class Stick(Item):
                          'looks like it would be perfect '
                          'for bashing things with.',
                          locDescription='There is a random stick on '
-                         'the ground.')
+                         'the ground.',
+                         weight=3)
 
 
 class Paper(Item):
@@ -601,7 +621,8 @@ class Paper(Item):
         super().__init__(name='paper',
                          description=text,
                          locDescription='On a table is a paper labeled'
-                                        ' NOTICE.')
+                                        ' NOTICE.',
+                         weight=1)
 
 
 class Coconuts(Item):
@@ -613,7 +634,8 @@ class Coconuts(Item):
                          locDescription='Also on the table are two coc'
                                      'onut halves that look like they '
                                      'probably were carried here by a '
-                                     'swallow.')
+                                     'swallow.',
+                         weight=2)
 
 
 class Lantern(Item):
@@ -622,13 +644,14 @@ class Lantern(Item):
         super().__init__(name='lantern',
                          description='The lantern is black and is powered'
                          ' by an unknown source.',
-                         locDescription='There is a lantern here.')
+                         locDescription='There is a lantern here.',
+                         weight=5)
 
 
 class Food(Item):
 
-    def __init__(self, name, description, locDescription, health):
-        super().__init__(name, description, locDescription)
+    def __init__(self, name, description, locDescription, weight, health):
+        super().__init__(name, description, locDescription, weight)
         self.health = health
 
 
@@ -639,6 +662,7 @@ class HealthPot(Food):
                          description='The potion looks disgusting but '
                                      'is probably good for you.',
                          locDescription='There is a health potion here.',
+                         weight=2,
                          health=100)
 
 
@@ -649,4 +673,5 @@ class Bread(Food):
                          description='The bread is slightly stale but '
                          'looks wholesome.',
                          locDescription='There is a loaf of bread.',
+                         weight=1,
                          health=30)
