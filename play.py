@@ -17,7 +17,6 @@ from src import utils
 
 def main():
     utils.clrscn()
-    splash = classes.Splash("THE GAME")
 
     sfExists = False
     for i in os.listdir():
