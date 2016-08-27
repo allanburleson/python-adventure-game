@@ -9,7 +9,6 @@ def inInventory(itemClass, player):
     for item in player.inventory:
         if isinstance(item, itemClass):
             return True
-            break
     return False
 
 
