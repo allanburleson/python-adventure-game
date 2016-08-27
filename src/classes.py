@@ -318,7 +318,7 @@ class Player(object):
     def quit(self, action, noun):
         resp = input('Are you sure you want to quit? Your progress '
                      'will be saved. [Y/n] ')
-        if resp.lower().startswith('y'):
+        if resp.lower().startswith('y') or resp.strip() == '':
             save = shelve.open('save')
             save['player'] = self
             save['Creatures'] = Creatures
@@ -330,7 +330,7 @@ class Player(object):
             print('Cancelled.')
 
     def restart(self, action, noun):
-        resp = input('Are you sure you want to restart the game? [Y/n] ')
+        resp = input('Are you sure you want to restart the game? [y/N] ')
         if resp.lower().startswith('y'):
             for i in os.listdir():
                 if i.startswith('save'):
