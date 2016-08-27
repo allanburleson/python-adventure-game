@@ -1,6 +1,6 @@
 from src.classes import *
 
-Locatin_Storage = []
+Location_Storage = []
 
 
 class Location(object):
