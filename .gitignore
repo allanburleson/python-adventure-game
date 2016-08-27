@@ -90,3 +90,6 @@ ENV/
 
 # PyCharm
 .idea
+
+# Personal, auto generated files
+save.db

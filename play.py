@@ -8,6 +8,8 @@ assert sys.version_info >= (3, 5), 'You must use at least Python 3.5.'
 
 # Change directory to directory that includes play.py
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
+# Below removes the save file for devel purposes
+os.system("rm save.db")
 
 from src import parser
 from src import locations
@@ -16,7 +18,6 @@ from src import utils
 
 
 utils.clrscn()
-splash = classes.Splash("THE GAME")
 
 
 sfExists = False
@@ -38,9 +39,11 @@ else:
 previousNoun = ''
 turns = 0
 darkTurn = 0
+# Main Game Loop
 while True:
     try:
         command = parser.parseCommand(input('> '))
+        # Test for command type
         if command is not None:
             action = command[0]
             if len(command) >= 2:
@@ -51,10 +54,13 @@ while True:
                 action = 'go'
             if previousNoun != '' and noun == 'it':
                 noun = previousNoun
+
+            # Where the magic happens
             try:
                 commandResult = getattr(player, action)(action, noun)
             except AttributeError:
                 print('You can\'t do that here.')
+
             if noun != '':
                 previousNoun = noun
             else:
