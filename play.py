@@ -18,6 +18,7 @@ from src import utils
 
 
 def main():
+    """ Main Game Loop. """
     utils.clrscn()
 
     sfExists = False
@@ -45,7 +46,7 @@ def main():
             command = parser.parseCommand(input('> '))
             if command is not None:
                 action = command[0]
-                if len(command) >= 2: 
+                if len(command) >= 2:
                     noun = command[1]
                 else:
                     noun = ''
@@ -60,7 +61,7 @@ def main():
                     commandResult = getattr(player, action)(action, noun)
                 except AttributeError:
                     print('You can\'t do that here.')
-                
+
                 if noun != '':
                     previousNoun = noun
                 else:

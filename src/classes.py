@@ -124,7 +124,7 @@ class Player(object):
                         else:
                             print('You are carrying too much weight already.')
                 # if len(self.location.items) > 1:
-                 #   takeItem(self.location.items[0])
+                #   takeItem(self.location.items[0])
             elif self.location.dark and not self.hasLight:
                 print('There\'s no way to tell if that is here because'
                       ' it is too dark.')
@@ -265,7 +265,8 @@ class Player(object):
                 print('There is no exit in that direction.')
                 return
         if locToGoTo is not None:
-            self.locationStack.append(self.location)
+            if locToGoTo.history is True:
+                self.locationStack.append(self.location)
             if not isLoc:
                 self.previousDir = noun
             self.location = locToGoTo
@@ -281,8 +282,9 @@ class Player(object):
 
     def prev(self, action, noun):
         try:
-            self.location = selfg.locationStack[-1]
+            self.location = self.locationStack[-1]
             self.look(action, noun)
+            self.locationStack.pop()
         except IndexError:
             print("There is no previous location...")
                 
