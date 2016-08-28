@@ -281,7 +281,7 @@ class Player(object):
 
     def prev(self, action, noun):
         try:
-            self.location = selfg.locationStack[-1]
+            self.location = self.locationStack[-1]
             self.look(action, noun)
         except IndexError:
             print("There is no previous location...")
