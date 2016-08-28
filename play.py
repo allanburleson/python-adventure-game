@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3.5
 import os
 import readline
 import shelve
@@ -18,7 +18,8 @@ from src import utils
 
 
 def main():
-    utils.clrscn()
+    stdscn = classes.Screen()
+    stdscn.clrscn()
 
     sfExists = False
     for i in os.listdir():
@@ -57,7 +58,17 @@ def main():
                 try:
                     commandResult = getattr(player, action)(action, noun)
                 except AttributeError:
-                    print('You can\'t do that here.')
+                    # Section used for things other than the player.
+                    
+                    # I'm a bit worried bc this in an AttributeError
+                    #  try/except clause and might be nested and
+                    #  then this will be a big amalgation and then
+                    #  the whole `main`function will be super un-
+                    #  portable.
+                    try:
+                        commandResult = getattr(stdscn, action)()
+                    except:
+                        print("You can\'t do that here.")
                 
                 if noun != '':
                     previousNoun = noun

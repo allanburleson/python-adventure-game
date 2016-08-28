@@ -17,3 +17,5 @@ hit:strike,break
 eat:consume
 light
 restart:reset
+
+clrscn:clear
