@@ -16,6 +16,7 @@ class Player(object):
         self.inventory = [Fist()]
         self.score = 0
         self.visitedPlaces = {}
+        self.locationStack = []
         self.location = startLoc
         self.locations = locations
         for i in self.locations:
@@ -264,6 +265,7 @@ class Player(object):
                 print('There is no exit in that direction.')
                 return
         if locToGoTo is not None:
+            self.locationStack.append(self.location)
             if not isLoc:
                 self.previousDir = noun
             self.location = locToGoTo
@@ -277,6 +279,13 @@ class Player(object):
         else:
             print('Something went wrong.')
 
+    def prev(self, action, noun):
+        try:
+            self.location = selfg.locationStack[-1]
+            self.look(action, noun)
+        except IndexError:
+            print("There is no previous location...")
+                
     def help(self, action, noun):
         print('I can only understand what you say if you first type an'
               ' action and then a noun (if necessary).', end='')

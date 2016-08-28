@@ -45,7 +45,7 @@ def main():
             command = parser.parseCommand(input('> '))
             if command is not None:
                 action = command[0]
-                if len(command) >= 2:
+                if len(command) >= 2: 
                     noun = command[1]
                 else:
                     noun = ''
@@ -53,8 +53,10 @@ def main():
                     action = 'go'
                 if previousNoun != '' and noun == 'it':
                     noun = previousNoun
-                # Where game executes(?) result.
+                # Where game executes result.
                 try:
+                    # Player stuff happens here
+                    # Ex: getattr(player, "go")(action, noun) -> player.go(action, noun)
                     commandResult = getattr(player, action)(action, noun)
                 except AttributeError:
                     print('You can\'t do that here.')
