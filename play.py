@@ -9,7 +9,7 @@ assert sys.version_info >= (3, 5), 'You must use at least Python 3.5.'
 # Change directory to directory that includes play.py
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 # Below removes the save file for devel purposes
-os.system("rm save.db")
+# os.system("rm save.db")
 
 from src import parser
 from src import locations
