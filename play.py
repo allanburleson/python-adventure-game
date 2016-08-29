@@ -55,12 +55,12 @@ def main():
                 if previousNoun != '' and noun == 'it':
                     noun = previousNoun
                 # Where game executes result.
-                #try:
+                try:
                     # Player stuff happens here
                     # Ex: getattr(player, "go")(action, noun) -> player.go(action, noun)
-                commandResult = getattr(player, action)(action, noun)
-                #except AttributeError:
-                #    print('You can\'t do that here.')
+					commandResult = getattr(player, action)(action, noun)
+                except AttributeError:
+                    print('You can\'t do that here.')
 
                 if noun != '':
                     previousNoun = noun
