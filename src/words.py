@@ -1,6 +1,8 @@
 import os
 
 
+# Input: File Name
+# Output: Dict of type {Word: [Synonym, Synonym]}
 def getWordList(filepath):
     assert os.path.isfile(filepath), 'Must be a file'
     txt = open(filepath).read().strip().split('\n')

@@ -18,7 +18,11 @@ from src import utils
 
 
 def main():
+<<<<<<< HEAD
 """ Main Game Loop. """
+=======
+    """ Main Game Loop. """
+>>>>>>> stack
     utils.clrscn()
 
     sfExists = False
@@ -34,7 +38,7 @@ def main():
         player.locations = Locations
         for i in Locations:
             player.visitedPlaces[i] = False
-        player.location.giveInfo(True, player.light)
+        player.location.giveInfo(True, player.hasLight)
     else:
         player = classes.Player(locations.Location_Storage, locations.start)
     previousNoun = ''
@@ -61,12 +65,12 @@ def main():
                     commandResult = getattr(player, action)(action, noun)
                 except AttributeError:
                     print('You can\'t do that here.')
-                
+
                 if noun != '':
                     previousNoun = noun
                 else:
                     previousNoun = ''
-                if player.location.dark and not player.light:
+                if player.location.dark and not player.hasLight:
                     if darkTurn < turns:
                         print('A grue magically appeared. However, since '
                               'this isn\'t Zork, the grue didn\'t eat you;'
@@ -76,7 +80,7 @@ def main():
                     else:
                         darkTurn = turns
                 turns += 1
-                if not player.location.dark or player.light:
+                if not player.location.dark or player.hasLight:
                     darkTurn = turns
         except KeyboardInterrupt:
             player.quit('', '')

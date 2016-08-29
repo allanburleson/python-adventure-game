@@ -16,13 +16,13 @@ class Player(object):
         self.inventory = [Fist()]
         self.score = 0
         self.visitedPlaces = {}
+        self.locationStack = []
         self.location = startLoc
         self.locations = locations
         for i in self.locations:
             self.visitedPlaces[i] = False
         self.health = 100
         self.hasLight = False
-        self.previousDir = None
         self.location.giveInfo(True, self.hasLight)
 
     def die(self):
@@ -123,7 +123,7 @@ class Player(object):
                         else:
                             print('You are carrying too much weight already.')
                 # if len(self.location.items) > 1:
-                 #   takeItem(self.location.items[0])
+                #   takeItem(self.location.items[0])
             elif self.location.dark and not self.hasLight:
                 print('There\'s no way to tell if that is here because'
                       ' it is too dark.')
@@ -180,7 +180,7 @@ class Player(object):
             else:
                 print('You do not have {0}'.format(noun))
 
-    def go(self, action, noun='', Location=None, previousDir=None):
+    def go(self, action, noun='', Location=None, history=True):
         def fightCheck():
             if len(self.location.creatures) > 0:
                 for i in self.location.creatures[:]:
@@ -189,30 +189,7 @@ class Player(object):
                         if result[0] == 'retreat':
                             if len(result) > 1:
                                 i.hp = result[1]
-                            if self.previousDir == 'north':
-                                reverseDir = 'south'
-                            elif self.previousDir == 'south':
-                                reverseDir = 'north'
-                            elif self.previousDir == 'west':
-                                reverseDir = 'east'
-                            elif self.previousDir == 'east':
-                                reverseDir = 'west'
-                            elif self.previousDir == 'up':
-                                reverseDir = 'down'
-                            elif self.previousDir == 'down':
-                                reverseDir = 'up'
-                            elif self.previousDir == 'northwest':
-                                reverseDir = 'southeast'
-                            elif self.previousDir == 'northeast':
-                                reverseDir = 'southwest'
-                            elif self.previousDir == 'southwest':
-                                reverseDir = 'northeast'
-                            elif self.previousDir == 'southeast':
-                                reverseDir = 'northwest'
-                            else:
-                                assert False, 'Somehow non-direction "{}" got through to here.'.format(
-                                    noun)
-                            self.go('go', reverseDir)
+                            self.back('', '')
                         else:
                             self.location.creatures.remove(i)
         if self.hasLight and not utils.inInventory(Lantern, self):
@@ -229,12 +206,10 @@ class Player(object):
                               'southwest', 'southeast']:
                 if direction == noun:
                     isDirection = True
-                    self.previousDir = noun
                     break
                 elif direction in self.location.exits:
                     if self.location.exits[direction].name.lower() == noun:
                         locToGoTo = self.location.exits[direction]
-                        self.previousDir = direction
                         break
             if not isDirection and not isLoc and action != 'say':
                 print('You must specify a valid direction.')
@@ -264,8 +239,8 @@ class Player(object):
                 print('There is no exit in that direction.')
                 return
         if locToGoTo is not None:
-            if not isLoc:
-                self.previousDir = noun
+            if self.location.history and history:
+                self.locationStack.append(self.location)
             self.location = locToGoTo
             if not self.visitedPlaces[self.location]:
                 self.location.giveInfo(True, self.hasLight)
@@ -277,6 +252,13 @@ class Player(object):
         else:
             print('Something went wrong.')
 
+    def back(self, action, noun):
+        try:
+            self.go('', '', Location=self.locationStack[-1])
+            self.locationStack.pop()
+        except IndexError:
+            print("There is not a previous location you can go to.")
+                
     def help(self, action, noun):
         print('I can only understand what you say if you first type an'
               ' action and then a noun (if necessary).', end='')
@@ -413,7 +395,8 @@ class Player(object):
                   ' the room.')
             self.hasLight = True
             if self.location.dark:
-                self.go('go', Location=self.location)
+                # history=False so the same location isn't saved back into self.locationStack
+                self.go('go', Location=self.location, history=False)
         elif utils.inInventory(Lantern, self):
             print('Your light is already lit.')
         else:

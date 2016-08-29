@@ -6,7 +6,8 @@ Location_Storage = []
 class Location(object):
 
     def __init__(self, name, items, creatures, exits={},
-                 description='', showNameWhenExit=False, dark=False):
+                 description='', history=True, showNameWhenExit=False,
+                 dark=False):
         # exit needs to be a dict with keys north, south, east, west,
         # up, down
         assert type(items) == list
@@ -21,6 +22,7 @@ class Location(object):
         self.description = description
         Location_Storage.append(self)
         self.exits = exits
+        self.history = history
         self.showNameWhenExit = showNameWhenExit
         self.dark = dark
 
@@ -152,7 +154,7 @@ PS: I have included with this letter a worthy steed.'''
 home.description = 'You are in a familiar cabin made out of logs. '\
                    'There is a pleasantly warm fire in the fireplace '\
                    'and a comfortable-looking armchair beside it.'
-start = Location('Start', [Mirror()], [])
+start = Location('Start', [Mirror()], [], history=False)
 start.description = 'You are in a small room with concrete walls and '\
                     'no windows.'
 closet = Location('Closet', [Stick()], [], showNameWhenExit=True)
