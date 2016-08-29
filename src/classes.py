@@ -254,10 +254,7 @@ class Player(object):
 
     def back(self, action, noun):
         try:
-            print([i.name for i in self.locationStack])
             self.go('', '', Location=self.locationStack[-1])
-            # self.location = self.locationStack[-1]
-            # self.look(action, noun)
             self.locationStack.pop()
         except IndexError:
             print("There is not a previous location you can go to.")
