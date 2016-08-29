@@ -11,7 +11,7 @@ quit:exit
 say:speak
 drop
 go:move,travel
-prev:back
+back:previous,prev,b
 show:display
 open
 hit:strike,break
