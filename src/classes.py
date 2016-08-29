@@ -10,15 +10,6 @@ Items = []
 Location_Storage = []
 
 
-class Screen(object):
-
-    def __init__(self):
-        pass
-
-    def clrscn(self):
-        print("Entered.")
-        os.system("clear")
-
 class Player(object):
 
     def __init__(self, locations, startLoc):

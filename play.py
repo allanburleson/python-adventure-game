@@ -18,8 +18,8 @@ from src import utils
 
 
 def main():
-    stdscn = classes.Screen()
-    stdscn.clrscn()
+""" Main Game Loop. """
+    utils.clrscn()
 
     sfExists = False
     for i in os.listdir():
@@ -54,21 +54,13 @@ def main():
                     action = 'go'
                 if previousNoun != '' and noun == 'it':
                     noun = previousNoun
-                # Where game executes(?) result.
+                # Where game executes result.
                 try:
+                    # Player stuff happens here
+                    # Ex: getattr(player, "go")(action, noun) -> player.go(action, noun)
                     commandResult = getattr(player, action)(action, noun)
                 except AttributeError:
-                    # Section used for things other than the player.
-                    
-                    # I'm a bit worried bc this in an AttributeError
-                    #  try/except clause and might be nested and
-                    #  then this will be a big amalgation and then
-                    #  the whole `main`function will be super un-
-                    #  portable.
-                    try:
-                        commandResult = getattr(stdscn, action)()
-                    except:
-                        print("You can\'t do that here.")
+                    print('You can\'t do that here.')
                 
                 if noun != '':
                     previousNoun = noun
