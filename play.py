@@ -18,11 +18,7 @@ from src import utils
 
 
 def main():
-<<<<<<< HEAD
-""" Main Game Loop. """
-=======
     """ Main Game Loop. """
->>>>>>> stack
     utils.clrscn()
 
     sfExists = False

@@ -99,6 +99,9 @@ class Player(object):
         return weight <= 100
 
     # Command functions called in game.py
+    
+    def clrscn(self, action, noun):
+        utils.clrscn()
 
     def take(self, action, noun):
         def takeItem(i):
