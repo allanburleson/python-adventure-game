@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3.5
 import os
 import readline
 import shelve
@@ -9,7 +9,7 @@ assert sys.version_info >= (3, 5), 'You must use at least Python 3.5.'
 # Change directory to directory that includes play.py
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 # Below removes the save file for devel purposes
-os.system("rm save.db")
+# os.system("rm save.db")
 
 from src import parser
 from src import locations
@@ -58,7 +58,7 @@ def main():
                 try:
                     # Player stuff happens here
                     # Ex: getattr(player, "go")(action, noun) -> player.go(action, noun)
-					commandResult = getattr(player, action)(action, noun)
+                    commandResult = getattr(player, action)(action, noun)
                 except AttributeError:
                     print('You can\'t do that here.')
 
