@@ -48,16 +48,7 @@ class Location(object):
             print(self.description)
             print()
             # directions = ['north', 'south', 'east', 'west', 'up', 'down']
-            for i in self.exits:
-                if self.exits[i].showNameWhenExit:
-                    if i == 'up' or i == 'down':
-                        print('{} is {}.'.format(self.exits[i].name, i))
-                    else:
-                        print('{} is to the {}.'.format(self.exits[i].name, i))
-                else:
-                    print('There is an exit {0}.'.format(i))
-            if len(self.exits) == 0:
-                print('There does not appear to be an exit.')
+            self.displayExits()
         else:
             print('You are in {}.'.format(self.name))
         print()
@@ -84,8 +75,8 @@ class Location(object):
                     print('{} is to the {}.'.format(self.exits[i].name, i))
             else:
                 print('There is an exit {0}.'.format(i))
-            if len(self.exits) == 0:
-                print('There does not appear to be an exit.')
+        if len(self.exits) == 0:
+            print('There does not appear to be an exit.')
 
 
 class BlackPit(Location):
