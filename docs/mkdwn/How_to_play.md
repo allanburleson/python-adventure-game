@@ -60,6 +60,15 @@ The go command, when supplied a direction, moves the player in that direction if
 
 - travel
 
+## back
+
+The back coomand takes the player to the last room they went.
+However, this doesn't work with every room.
+
+### Synonyms
+
+- b
+
 ## show
 
 The show command needs a noun after it telling the command what information to give. Currently, you can `show inventory`, `show location`, or `show points`.

@@ -4,7 +4,18 @@ Location_Storage = []
 
 
 class Location(object):
+    """ Class used to instantinate objects
 
+        Attributes Include:
+         - A name (String)
+         - Any items (List)
+         - Any creatures (List)
+         - Any exits (Dict)
+         - A description (String)
+         - If the player can use 'back' to return (Bool)
+         - If room name should be shown when exiting (Bool)
+         - And if it's dark (Bool)
+    """
     def __init__(self, name, items, creatures, exits={},
                  description='', history=True, showNameWhenExit=False,
                  dark=False):
@@ -63,6 +74,18 @@ class Location(object):
             for creature in self.creatures:
                 print('There is {0} {1} here.'.format(
                     utils.getIndefArticle(creature.name), creature.name))
+
+    def displayExits(self):
+        for i in self.exits:
+            if self.exits[i].showNameWhenExit:
+                if i == 'up' or i == 'down':
+                    print('{} is {}.'.format(self.exits[i].name, i))
+                else:
+                    print('{} is to the {}.'.format(self.exits[i].name, i))
+            else:
+                print('There is an exit {0}.'.format(i))
+            if len(self.exits) == 0:
+                print('There does not appear to be an exit.')
 
 
 class BlackPit(Location):

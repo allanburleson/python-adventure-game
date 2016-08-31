@@ -26,3 +26,4 @@ lantern:lamp
 all:everything
 health potion:health pot,potion
 coconut halves:coconuts
+exits

@@ -28,3 +28,11 @@ def getIndefArticle(noun):
 
 def clrscn():
     os.system("cls" if os.name == "nt" else "clear")
+
+
+def numberStrings(*strings):
+    for number, string in enumerate(strings):
+        number += 1
+        print(number, string)
+    return
+

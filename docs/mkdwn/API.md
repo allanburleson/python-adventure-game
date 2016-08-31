@@ -90,6 +90,12 @@ A location has the following attributes:
 
 - Any exits
 
+- If the player can use 'back' to return to that room
+
+- If it's dark or not
+
+- If the room name should be shown when exiting
+
 - And a description
 
 Items and Creatures are kept in a list, and must be called instead of putting their descriptions.

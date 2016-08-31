@@ -47,8 +47,8 @@ class Player(object):
         weapon = None
         while True:
             print('What do you want to do?')
-            print('1. Attack')
-            print('2. Retreat')
+            # Enumerate strings
+            utils.numberStrings("Attack", "Retreat")
             choice = input('#')
             if choice not in ['1', '2']:
                 typingError()
@@ -99,7 +99,7 @@ class Player(object):
         return weight <= 100
 
     # Command functions called in game.py
-    
+
     def clrscn(self, action, noun):
         utils.clrscn()
 
@@ -261,7 +261,7 @@ class Player(object):
             self.locationStack.pop()
         except IndexError:
             print("There is not a previous location you can go to.")
-                
+
     def help(self, action, noun):
         print('I can only understand what you say if you first type an'
               ' action and then a noun (if necessary).', end='')
@@ -311,6 +311,7 @@ class Player(object):
             sys.exit(0)
 
     def show(self, action, noun):
+        # TODO: Remove reduntant ifs
         if noun == 'inventory':
             if len(self.inventory) > 0:
                 print('Inventory:')
@@ -331,6 +332,9 @@ class Player(object):
             print('Your score is {}.'.format(self.score))
         elif noun == 'health':
             print('You have {} health.'.format(self.health))
+        elif noun == 'exits':
+            # TODO: Refactor into function
+            self.location.displayExits()
         else:
             print('This isn\'t something I can show you.')
 
@@ -473,6 +477,22 @@ class Bear(Baddie):
 
 
 class Item(object):
+    """ Class used to instantinate Items
+        It is the parent class of:
+        - InteractableItem
+        - Weapon
+
+        Attributes Include:
+        - A name (String)
+        - A description (String)
+        - A local description (String)
+          - Used when 'look'ing
+        - And a weight
+
+        Methods Include:
+        - player.examine()
+          - Prints the description of object
+    """
 
     def __init__(self, name, description, locDescription, weight):
         self.name = name
@@ -486,7 +506,16 @@ class Item(object):
 
 
 class InteractableItem(Item):
+    """ Class used to instantiate an Item a player can
+        interact with (like kicking)
 
+        Attributes Include:
+        - A name (String)
+        - A description (String)
+        - A local description (String)
+          - Used when 'look'ing
+        - And a weight
+    """
     def __init__(self, name, description, locDescription, weight):
         super().__init__(name, description, locDescription, weight)
 
