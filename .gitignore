@@ -91,9 +91,8 @@ ENV/
 # PyCharm
 .idea
 
-<<<<<<< HEAD
-# Personal, auto generated files
 save.db
-=======
 save
->>>>>>> 08349982e70c8406db7d1ef6ae7e4e393133bd89
+
+.\#*
+\#*\#
