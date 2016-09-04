@@ -4,7 +4,7 @@ Location_Storage = []
 
 
 class Location(object):
-    """ Class used to instantinate objects
+    """ Class used to instantiate objects
 
         Attributes Include:
          - A name (String)
