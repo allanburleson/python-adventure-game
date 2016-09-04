@@ -28,6 +28,7 @@ class Player(object):
     def die(self):
         print('GAME OVER.')
         print('Your score was {0}.'.format(self.score))
+        self.restart('', '', True)
         sys.exit(0)
 
     def sayLocation(self):
@@ -303,14 +304,20 @@ class Player(object):
         else:
             print('Cancelled.')
 
-    def restart(self, action, noun):
-        resp = input('Are you sure you want to restart the game? [y/N] ')
-        if resp.lower().startswith('y'):
+    def restart(self, action, noun, force=False):
+        def reset():
             for i in os.listdir():
-                if i.startswith('save'):
-                    os.remove(i)
-            print('Now run play.py again.')
-            sys.exit(0)
+                    if i.startswith('save'):
+                        os.remove(i)
+                        
+        if not force:
+            resp = input('Are you sure you want to restart the game? [y/N] ')
+            if resp.lower().startswith('y'):
+                reset()
+                print('Now run play.py again.')
+        else:
+            reset()
+        sys.exit(0)
 
     def show(self, action, noun):
         # TODO: Remove reduntant ifs
