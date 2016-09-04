@@ -89,10 +89,7 @@ class BlackPit(Location):
                          description='You are in a dank, dirty pit. Yo'
                                      'u don\'t know why you are here i'
                                      'nstead of being on a mountain of'
-                                     ' gold and jewels.\nThere is a si'
-                                     'gn on the wall that says "MORIA '
-                                     '(in the Common Tongue, the \'Bl'
-                                     'ack Pit\')."',
+                                     ' gold and jewels.',
                          showNameWhenExit=True,
                          dark=True)
         self.firstTime = True
@@ -127,44 +124,15 @@ bathroom.description = 'There is a toilet and a sink here. They seem'\
 home = Location('Home', [Paper(), Lantern(), Coconuts()], [],
                 showNameWhenExit=True)
 home.items[0].description = '''NOTICE:
-Dear bloody pea--I mean subject,
-This area has been troubled with all sorts of monsters lately--orcs,
-large spiders, ghosts, and other foul creatures. If you would be so kind
-as to assist in their destruction, you could be handsomely rewarded. Of
-significant note is the robbery of the beloved and most holy Grail. If
-you were to recover it, I, Arthur, King of the Britons, would give you
-full command of the land of Camelot and all resources within it,
-including all of the ham, jam, and spam that is so dear to the knights
-that reside there. I will be excited to be rid of that ridi--I mean,
-I hope this incentive will help motivate you peasants to follow my
-orders. Oh--yes, did I mention that any person found not hunting these
-abominations will be executed? I am your King, you see.
-King Arthur of the Britons
-PS: I have included with this letter a worthy steed.'''
-#'''"NOTICE:
-# All able-bodied individuals are asked to assist in capturing or
-# destroying the Robots of Unusual Size. More commonly knows as ROUS, they
-# have been terrorizing humankind for several weeks and already 3000 lives
-# have been lost. Visit our headquarters to register and get free
-# ROUS-fighting supplies.
-
-# Here is what popular media outlets have to say about this menace:
-#'Robots of Unusual Size? I don't think they exist.'--DPR Daily
-
-#'Well, since the population of the universe is zero, I'm not sure how
-# this issue came about. (See Guide chapter 5) Hopefully this will be
-# resolved.'--Zarniwoop, HG2G
-
-#'We extend condolences to all whose friends and family have been harmed
-# in these attacks. Many thanks to the RRO which so dilligently protects
-# our loved ones.'--Old York Times
-
-# Please await further letters for updates.
-
-#--RRO (ROUS Resistance Organization)"
-
-# Written under this letter is a handwritten note that says:
-#"RRO headquarters: sssessw"'''
+These lands have recently become infested with the servants of evil.
+Currently, the main problem is the Legendary Dragon of Nogard (the LDN),
+a very powerful lizard that threatens to destroy everything we live for.
+It would be greatly appreciated if you would help exterminate the
+creatures currently endangering the world. There may be some reward to
+anyone who defeats the Legendary Dragon of Nogard that has been ravaging
+the nation.
+We have left a weapon for you in a nearby chest that might be locked in
+a chest. You may have to break it open. We really didn't plan this very well.'''
 home.description = 'You are in a familiar cabin made out of logs. '\
                    'There is a pleasantly warm fire in the fireplace '\
                    'and a comfortable-looking armchair beside it.'
@@ -194,15 +162,9 @@ forest.description = 'You are in a forest. There is a sign that says '\
 blackpit = BlackPit()
 dtn = DarkTunnel()
 dts = DarkTunnel()
-tunnelwinscription = Location(
-    'Inscription Room', [], [], showNameWhenExit=True)
-tunnelwinscription.description = 'You are at a dead end. This is inscr'\
-                                 'ibed on the wall:\n"Here are the las'\
-                                 't words of Joseph of Aramithea: The '\
-                                 'last resting place of the most holy '\
-                                 'Grail is in the den of the dra--aauu'\
-                                 'gh!"\nPoor Joseph must have been kil'\
-                                 'ed while writing this.'
+deadend = Location(
+    'Dead End', [], [], showNameWhenExit=True)
+deadend.description = 'You are at a dead end.'
 home.exits = {'north': bathroom, 'south': closet, 'east': backyard,
               'west': frontyard, 'up': attic}
 bathroom.exits = {'south': home}
@@ -219,5 +181,5 @@ homesouth.exits = {'northwest': frontyard, 'northeast': backyard,
                    'south': blackpit}
 blackpit.exits = {'north': dtn, 'south': dts}
 dtn.exits = {'south': blackpit}
-dts.exits = {'north': blackpit, 'south': tunnelwinscription}
-tunnelwinscription.exits = {'north': dts}
+dts.exits = {'north': blackpit, 'south': deadend}
+deadend.exits = {'north': dts}
