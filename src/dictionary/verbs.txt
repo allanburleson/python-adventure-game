@@ -2,7 +2,6 @@ take:pick up,grab
 look:examine,see,read
 attack:fight,confront,battle,engage
 use
-drink
 eat
 jump:leap,hop
 help:?
@@ -15,7 +14,7 @@ back:previous,prev,b
 show:display
 open
 hit:strike,break
-eat:consume
+eat:consume,drink
 light
 restart:reset
 
