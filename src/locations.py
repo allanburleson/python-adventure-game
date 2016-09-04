@@ -121,7 +121,7 @@ class DarkTunnel(Location):
 bathroom = Location('Bathroom', [ToiletPaper()], [], showNameWhenExit=True)
 bathroom.description = 'There is a toilet and a sink here. They seem'\
                        ' out of place since this is 600 B.C.'
-home = Location('Home', [Paper(), Lantern(), Coconuts()], [],
+home = Location('Home', [Paper(), Lantern()], [],
                 showNameWhenExit=True)
 home.items[0].description = '''NOTICE:
 These lands have recently become infested with the servants of evil.
