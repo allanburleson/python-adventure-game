@@ -25,10 +25,11 @@ class Player(object):
         self.hasLight = False
         self.location.giveInfo(True, self.hasLight)
 
-    def die(self):
+    def die(self, restart=True):
         print('GAME OVER.')
         print('Your score was {0}.'.format(self.score))
-        self.restart('', '', True)
+        if restart:
+            xself.restart('', '', True)
         sys.exit(0)
 
     def sayLocation(self):
@@ -300,7 +301,7 @@ class Player(object):
             save['locations'] = self.locations
             save['Items'] = Items
             save.close()
-            self.die()
+            self.die(False)
         else:
             print('Cancelled.')
 
