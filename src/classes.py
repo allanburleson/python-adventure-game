@@ -108,6 +108,8 @@ class Player(object):
             self.location.items.remove(i)
             self.inventory.append(i)
             print('{0} taken.'.format(i.name))
+
+        weightstring = 'You are carrying too much weight already. Try dropping something.'
         if noun == '':
             print('What do you want to take?')
         else:
@@ -117,14 +119,14 @@ class Player(object):
                 if self.canCarry(item):
                     takeItem(item)
                 else:
-                    print('You are carrying too much weight already.')
+                    print(weightstring)
             elif noun == 'all':
                 for i in self.location.items[:]:
                     if not isinstance(i, InteractableItem):
                         if self.canCarry(i):
                             takeItem(i)
                         else:
-                            print('You are carrying too much weight already.')
+                            print(weightstring)
                 # if len(self.location.items) > 1:
                 #   takeItem(self.location.items[0])
             elif self.location.dark and not self.hasLight:
