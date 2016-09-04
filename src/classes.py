@@ -326,13 +326,14 @@ class Player(object):
                 print('Inventory:')
                 for item in self.inventory:
                     if isinstance(item, Food):
-                        print('{0}: Restores {1} health.'.format(
-                            item.name, item.health))
+                        print('{0}: Restores {1} health,'.format(
+                            item.name, item.health), end=' ')
                     elif isinstance(item, Weapon):
-                        print('{0}: Deals {1} damage.'.format(
-                            item.name, item.power))
+                        print('{0}: Deals {1} damage,'.format(
+                            item.name, item.power), end=' ')
                     else:
-                        print(item.name)
+                        print(item.name, end=': ')
+                    print('weighs {} pounds.'.format(item.weight))
             else:
                 print('There are no items in your inventory.')
         elif noun == 'location':
