@@ -29,7 +29,7 @@ class Player(object):
         print('GAME OVER.')
         print('Your score was {0}.'.format(self.score))
         if restart:
-            xself.restart('', '', True)
+            self.restart('', '', True)
         sys.exit(0)
 
     def sayLocation(self):
