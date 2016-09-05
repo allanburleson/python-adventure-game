@@ -53,16 +53,31 @@ class Location(object):
             print('You are in {}.'.format(self.name))
         print()
 
+        Entity_Stack = []
+        # TODO: Refactor
         for item in self.items:
+            Entity_Stack.append(item)
             if item.locDescription != '':
                 print(item.locDescription)
             else:
-                print('There is {0} {1}'.format(
-                    utils.getIndefArticle(item.name), item.name))
+                if len(Entity_Stack) > 1:
+                    if Entity_Stack[-1].name == item.name:
+                        print('There are {0} {1}s'.format(len(Entity_Stack),
+                            item.name))
+                else:
+                    print('There is {0} {1}'.format(
+                        utils.getIndefArticle(item.name), item.name))
         if len(self.items) > 0:
             print()
+        Entity_Stack = []
         if len(self.creatures) > 0:
             for creature in self.creatures:
+                Entity_Stack.append(creature)
+            if len(Entity_Stack) > 1:
+                if Entity_Stack[-1].name == creature.name:
+                    print('There are {0} {1}s here'.format(len(Entity_Stack),
+                        creature.name))
+            else:
                 print('There is {0} {1} here.'.format(
                     utils.getIndefArticle(creature.name), creature.name))
 
