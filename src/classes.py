@@ -88,6 +88,7 @@ class Player(object):
                 elif baddie.hp < 1 and self.health > 0:
                     print('The {0} has been defeated!'.format(baddie.name))
                     self.changeScore(1)
+                    self.location.items += baddie.die()
                     return 'win'
                 else:
                     print('Both you and the {0} died!'.format(baddie.name))
@@ -422,16 +423,32 @@ class Player(object):
 
 
 class Creature(object):
-
-    def __init__(self, name, hp, description):
+    ''' Supply a name, the creature's health, a description, and
+        the items it drops. Set dropItems to a dict with the
+        format {item: drop chance percentage}
+    '''
+    def __init__(self, name, hp, description, dropItems={}):
         self.name = name
         self.description = description
         self.hp = hp
+        self.dropItems = dropItems
         Creatures.append(self)
 
     def describe(self):
         assert self.description != '', 'There must be a description.'
         print(self.description)
+
+    def die(self):
+        # Run when creature is killed
+        itemsToDrop = []
+        if len(self.dropItems) > 0:
+            for i in self.dropItems:
+                randomResult = random.randint(0, 100)
+                if randomResult <= self.dropItems[i] and randomResult > 0:
+                    itemsToDrop.append(i)
+        if len(itemsToDrop) > 0:
+            print('The {0} dropped {1} on its death.'.format(self.name, ', '.join([i.name for i in itemsToDrop])))
+        return itemsToDrop
 
 
 class Snail(Creature):
@@ -444,8 +461,8 @@ class Snail(Creature):
 
 class Baddie(Creature):
 
-    def __init__(self, name, hp, description, power):
-        super().__init__(name, hp, description)
+    def __init__(self, name, hp, description, power, dropItems={}):
+        super().__init__(name, hp, description, dropItems)
         assert type(power) == int or type(power) == float
         self.power = power
 
@@ -475,7 +492,8 @@ class GiantSpider(Baddie):
         super().__init__(name='giant spider',
                          hp=500,
                          description='The spider is large and ugly.',
-                         power=15)
+                         power=15,
+                         dropItems={ToiletPaper(): 1})
 
 
 class Bear(Baddie):
