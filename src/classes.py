@@ -196,7 +196,7 @@ class Player(object):
                         result = self.fight(i)
                         if result[0] == 'retreat':
                             if len(result) > 1:
-                                i.hp = result[1]
+                               i.hp = result[1]
                             self.back('', '')
                         else:
                             self.location.creatures.remove(i)
@@ -208,7 +208,10 @@ class Player(object):
         else:
             isDirection = False
             isLoc = False
-            locToGoTo = None
+            try:
+                locToGoTo = self.locationStack[-1]
+            except IndexError:
+                pass
             for direction in ['north', 'south', 'east', 'west', 'up',
                               'down', 'northwest', 'northeast',
                               'southwest', 'southeast']:
