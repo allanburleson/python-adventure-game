@@ -201,7 +201,7 @@ class Player(object):
                         else:
                             self.location.creatures.remove(i)
         if self.hasLight and not utils.inInventory(Lantern, self):
-            self.hasLight = False
+            self.hasLight = False 
         if Location is not None:
             locToGoTo = Location
             isLoc = True
@@ -209,8 +209,8 @@ class Player(object):
             isDirection = False
             isLoc = False
             try:
-                locToGoTo = self.locationStack[-1]
-            except IndexError:
+                locToGoTo = self.location.exits[noun]
+            except KeyError:
                 pass
             for direction in ['north', 'south', 'east', 'west', 'up',
                               'down', 'northwest', 'northeast',
