@@ -284,10 +284,6 @@ class Player(object):
                     self.changeScore(1)
                 print('You vanished and reappeared in your house.\n')
                 self.go(action, noun)
-                for Location in self.locations:
-                    if Location.name == 'home':
-                        self.go(location=Location)
-                        break
             else:
                 print('There was a flash of light...and your score was'
                       ' mysteriously lowered by one.')
