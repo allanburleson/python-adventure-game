@@ -1,8 +1,9 @@
 #!/usr/bin/env python3.5
 import os
-import readline
 import shelve
 import sys
+if os.name is not "nt":
+    import readline
 
 assert sys.version_info >= (3, 5), 'You must use at least Python 3.5.'
 
