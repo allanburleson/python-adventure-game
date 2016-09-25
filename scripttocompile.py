@@ -295,7 +295,7 @@ class Player(object):
         resp = input('Are you sure you want to quit? Your progress '
                      'will be saved. [Y/n] ')
         if resp.lower().startswith('y') or resp.strip() == '':
-            save = shelve.open('save')
+            save = shelve.open('pag_save')
             save['player'] = self
             save['Creatures'] = Creatures
             save['locations'] = self.locations
@@ -308,7 +308,7 @@ class Player(object):
     def restart(self, action, noun, force=False):
         def reset():
             for i in os.listdir():
-                    if i.startswith('save'):
+                    if i.startswith('pag_save'):
                         os.remove(i)
                         
         if not force:
@@ -1142,11 +1142,11 @@ def main():
 
     sfExists = False
     for i in os.listdir():
-        if i.startswith('save'):
+        if i.startswith('pag_save'):
             sfExists = True
             break
     if sfExists:
-        save = shelve.open('save')
+        save = shelve.open('pag_save')
         player = save['player']
         Locations = save['locations']
         save.close()
