@@ -25,15 +25,22 @@ class Player(object):
         self.hasLight = False
         self.location.giveInfo(True, self.hasLight)
 
+    def __str__(self):
+        inventory = [item.name for item in self.inventory]
+        # For some reason, everything is indented. (except the first line,
+        # which is indented explicitly)
+        return "\t\tYou are in {0}.\n\
+                Have {1} health points.\n\
+                Have a score of {2} points\n\
+                And have in your inventory:\n\
+                \t{3}".format(self.location.name, self.health, self.score, ",\n\t\t\t".join(inventory))
+
     def die(self, restart=True):
         print('GAME OVER.')
         print('Your score was {0}.'.format(self.score))
         if restart:
             self.restart('', '', True)
         sys.exit(0)
-
-    def sayLocation(self):
-        print('You are in {0}.'.format(self.location.name))
 
     def changeScore(self, amount):
         self.score += amount
@@ -201,7 +208,7 @@ class Player(object):
                         else:
                             self.location.creatures.remove(i)
         if self.hasLight and not utils.inInventory(Lantern, self):
-            self.hasLight = False 
+            self.hasLight = False
         if Location is not None:
             locToGoTo = Location
             isLoc = True
@@ -310,7 +317,7 @@ class Player(object):
             for i in os.listdir():
                     if i.startswith('save'):
                         os.remove(i)
-                        
+
         if not force:
             resp = input('Are you sure you want to restart the game? [y/N] ')
             if resp.lower().startswith('y'):
@@ -344,6 +351,8 @@ class Player(object):
         elif noun == 'exits':
             # TODO: Refactor into function
             self.location.displayExits()
+        elif noun == "all":
+            print(self)
         else:
             print('This isn\'t something I can show you.')
 
