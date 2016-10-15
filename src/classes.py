@@ -327,11 +327,9 @@ class Player(object):
                 print('Inventory:')
                 for item in self.inventory:
                     if isinstance(item, Food):
-                        print('{0}: Restores {1} health,'.format(
-                            item.name, item.health), end=' ')
+                        print(item, end=' ')
                     elif isinstance(item, Weapon):
-                        print('{0}: Deals {1} damage,'.format(
-                            item.name, item.power), end=' ')
+                        print(item, end=' ')
                     else:
                         print(item.name, end=': ')
                     print('weighs {} pounds.'.format(item.weight))
@@ -579,6 +577,9 @@ class Weapon(Item):
         assert type(power) == int
         self.power = power
 
+    def __str__(self):
+        return '{0}: Deals {1} damage,'.format(self.name, self.power)
+
 
 class Sword(Weapon):
 
@@ -684,6 +685,8 @@ class Food(Item):
         super().__init__(name, description, locDescription, weight)
         self.health = health
 
+    def __str__(self):
+        return "{0}: Restores {1} health,".format(self.name, self.health)
 
 class HealthPot(Food):
 
