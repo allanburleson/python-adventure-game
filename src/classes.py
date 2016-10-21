@@ -402,6 +402,9 @@ class Player(object):
                 item = i
         if item:
             if isinstance(item, Food):
+                # Ensure that health can't go above 100
+                if item.health + self.health > 100:
+                    item.health = 100 - self.health
                 print('You ate the {0} and gained {1} health.'.format(
                     item.name, item.health))
                 self.health += item.health
