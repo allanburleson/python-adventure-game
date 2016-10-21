@@ -6,10 +6,7 @@ def parseCommand(command):
     command = command.lower()
     # remove extra words
     splitCmd = command.split(' ')
-    removing = []
-    for word in splitCmd:
-        if word in extras:
-            removing.append(word)
+    removing = [word for word in splitCmd if word in extras]
     for word in removing:
         splitCmd.remove(word)
     command = ' '.join(splitCmd)

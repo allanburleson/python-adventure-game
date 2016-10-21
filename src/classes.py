@@ -69,12 +69,9 @@ class Player(object):
             elif choice.startswith('1'):
                 if weapon is None:
                     print('Choose your weapon.')
-                    weapons = []
-                    for item in self.inventory:
-                        if isinstance(item, Weapon):
-                            print('{0}: {1} power'.format(
-                                item.name, item.power))
-                            weapons.append(item)
+                    weapons = [i for i in self.inventory if isinstance(i, Weapon)]
+                    for i in weapons:
+                        print('{0}: {1} power'.format(i.name, i.power))
                     choice = input('Weapon: ')
                     for i in weapons:
                         if choice == i.name:

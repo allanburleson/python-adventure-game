@@ -18,9 +18,7 @@ def getWordList(filepath):
                 if syn == '':
                     words[index].remove(syn)
     else:
-        words = []
-        for word in txt:
-            words.append(word.strip())
+        words = [word.strip() for word in txt]
     return words
 
 
