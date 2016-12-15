@@ -33,24 +33,26 @@ class Player(object):
                "Inventory:\n" + \
                f"{inventory}"
 
-    def die(self, restart=True):
+    # Non-public class methods
+
+    def _die(self, restart=True):
         print('GAME OVER.')
         print(f'Your score was {self.score}.')
         if restart:
             self.restart('', '', True)
         sys.exit(0)
 
-    def changeScore(self, amount):
+    def _changeScore(self, amount):
         self.score += amount
         if amount > 0:
             print(f'Your score was increased by {amount}.')
         elif amount < 0:
             print(f'Your score was decreased by {amount * -1}.')
 
-    def fight(self, baddie):
+    def _fight(self, baddie):
         def typingError():
             print('Since you can\'t type, you\'re forced to retreat.')
-            self.changeScore(-1)
+            self._changeScore(-1)
         weapon = None
         while True:
             print('What do you want to do?')
@@ -62,7 +64,7 @@ class Player(object):
                 return 'retreat', baddie.hp
             elif choice.startswith('2'):
                 print('You cowardly run away.')
-                self.changeScore(-1)
+                self._changeScore(-1)
                 return 'retreat', baddie.hp
             elif choice.startswith('1'):
                 if weapon is None:
@@ -85,24 +87,24 @@ class Player(object):
                     print(f'The {baddie.name}\'s health is {baddie.hp}.')
                 elif self.health < 1 and baddie.hp > 0:
                     print('You died.')
-                    self.die()
+                    self._die()
                 elif baddie.hp < 1 and self.health > 0:
                     print(f'The {baddie.name} has been defeated!')
-                    self.changeScore(1)
+                    self._changeScore(1)
                     self.location.items += baddie.die()
                     return 'win'
                 else:
                     print(f'Both you and the {baddie.name} died!')
-                    self.die()
+                    self._die()
 
-    def canCarry(self, itemToTake):
+    def _canCarry(self, itemToTake):
         weight = itemToTake.weight
         for item in self.inventory:
             weight += item.weight
         # return True if player can carry item
         return weight <= 100
 
-    # Command functions called in game.py
+    # Functions callable by the player in-game
 
     def clrscn(self, action, noun):
         utils.clrscn()
@@ -120,14 +122,14 @@ class Player(object):
             item = utils.getItemFromName(noun, self.location.items, self)
             if item and not isinstance(item, InteractableItem) and \
                     (not self.location.dark or self.hasLight):
-                if self.canCarry(item):
+                if self._canCarry(item):
                     takeItem(item)
                 else:
                     print(weightstring)
             elif noun == 'all':
                 for i in self.location.items[:]:
                     if not isinstance(i, InteractableItem):
-                        if self.canCarry(i):
+                        if self._canCarry(i):
                             takeItem(i)
                         else:
                             print(weightstring)
@@ -193,7 +195,7 @@ class Player(object):
             if len(self.location.creatures) > 0:
                 for i in self.location.creatures[:]:
                     if isinstance(i, Baddie):
-                        result = self.fight(i)
+                        result = self._fight(i)
                         if result[0] == 'retreat':
                             if len(result) > 1:
                                i.hp = result[1]
@@ -281,7 +283,7 @@ class Player(object):
         if noun == 'xyzzy':
             if utils.inInventory(Mirror, self):
                 if self.location.name == 'Start':
-                    self.changeScore(1)
+                    self._changeScore(1)
                 print('You vanished and reappeared in your house.\n')
                 self.go(action, noun)
             else:
@@ -301,7 +303,7 @@ class Player(object):
             save['locations'] = self.locations
             save['Items'] = Items
             save.close()
-            self.die(False)
+            self._die(False)
         else:
             print('Cancelled.')
 
@@ -359,7 +361,7 @@ class Player(object):
             if hasMirror:
                 print('The mirror exploded. A large shard of glass hit'
                       ' you in the face.')
-                self.die()
+                self._die()
 
     def open(self, action, noun):
         chest = None

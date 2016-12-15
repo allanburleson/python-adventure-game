@@ -56,12 +56,9 @@ def main():
                 if previousNoun != '' and noun == 'it':
                     noun = previousNoun
                 # Where game executes result.
-                try:
-                    # Player stuff happens here
-                    # Ex: getattr(player, "go")(action, noun) -> player.go(action, noun)
-                    commandResult = getattr(player, action)(action, noun)
-                except AttributeError:
-                    print('You can\'t do that here.')
+                # Player stuff happens here
+                # Ex: getattr(player, "go")(action, noun) -> player.go(action, noun)
+                getattr(player, action)(action, noun)
 
                 if noun != '':
                     previousNoun = noun
@@ -73,7 +70,7 @@ def main():
                               'this isn\'t Zork, the grue didn\'t eat you;'
                               ' it just killed you instead. So that\'s alr'
                               'ight.')
-                        player.die()
+                        player._die()
                     else:
                         darkTurn = turns
                 turns += 1
