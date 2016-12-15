@@ -50,7 +50,7 @@ class Location(object):
             # directions = ['north', 'south', 'east', 'west', 'up', 'down']
             self.displayExits()
         else:
-            print('You are in {}.'.format(self.name))
+            print(f'You are in {self.name}.')
         print()
 
         Entity_Stack = []
@@ -62,11 +62,9 @@ class Location(object):
             else:
                 if len(Entity_Stack) > 1:
                     if Entity_Stack[-1].name == item.name:
-                        print('There are {0} {1}s'.format(len(Entity_Stack),
-                            item.name))
+                        print(f'There are {len(Entity_Stack)} {item.name}s')
                 else:
-                    print('There is {0} {1}'.format(
-                        utils.getIndefArticle(item.name), item.name))
+                    print(f'There is {utils.getIndefArticle(item.name)} {item.name}')
         if len(self.items) > 0:
             print()
         Entity_Stack = []
@@ -75,21 +73,19 @@ class Location(object):
                 Entity_Stack.append(creature)
             if len(Entity_Stack) > 1:
                 if Entity_Stack[-1].name == creature.name:
-                    print('There are {0} {1}s here'.format(len(Entity_Stack),
-                        creature.name))
+                    print(f'There are {len(Entity_Stack)} {creature.name}s here')
             else:
-                print('There is {0} {1} here.'.format(
-                    utils.getIndefArticle(creature.name), creature.name))
+                print(f'There is {utils.getIndefArticle(creature.name)} {creature.name} here.')
 
     def displayExits(self):
         for i in self.exits:
             if self.exits[i].showNameWhenExit:
                 if i == 'up' or i == 'down':
-                    print('{} is {}.'.format(self.exits[i].name, i))
+                    print(f'{self.exits[i].name} is {i}.')
                 else:
-                    print('{} is to the {}.'.format(self.exits[i].name, i))
+                    print(f'{self.exits[i].name} is to the {i}.')
             else:
-                print('There is an exit {0}.'.format(i))
+                print(f'There is an exit {i}.')
         if len(self.exits) == 0:
             print('There does not appear to be an exit.')
 

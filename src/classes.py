@@ -26,18 +26,16 @@ class Player(object):
         self.location.giveInfo(True, self.hasLight)
 
     def __str__(self):
-        inventory = [item.name for item in self.inventory]
-        # For some reason, everything is indented. (except the first line,
-        # which is indented explicitly)
-        return "\t\tYou are in {0}.\n\
-                Have {1} health points.\n\
-                Have a score of {2} points\n\
-                And have in your inventory:\n\
-                \t{3}".format(self.location.name, self.health, self.score, ",\n\t\t\t".join(inventory))
+        inventory = '\n'.join(['\t' + item.name for item in self.inventory])
+        return f"You are in {self.location.name}.\n" + \
+               f"You have {self.health} health points.\n" + \
+               f"You have a score of {self.score} points.\n" + \
+               "Inventory:\n" + \
+               f"{inventory}"
 
     def die(self, restart=True):
         print('GAME OVER.')
-        print('Your score was {0}.'.format(self.score))
+        print(f'Your score was {self.score}.')
         if restart:
             self.restart('', '', True)
         sys.exit(0)
@@ -45,9 +43,9 @@ class Player(object):
     def changeScore(self, amount):
         self.score += amount
         if amount > 0:
-            print('Your score was increased by {0}.'.format(amount))
+            print(f'Your score was increased by {amount}.')
         elif amount < 0:
-            print('Your score was decreased by {0}.'.format(amount * -1))
+            print(f'Your score was decreased by {amount * -1}.')
 
     def fight(self, baddie):
         def typingError():
@@ -71,7 +69,7 @@ class Player(object):
                     print('Choose your weapon.')
                     weapons = [i for i in self.inventory if isinstance(i, Weapon)]
                     for i in weapons:
-                        print('{0}: {1} power'.format(i.name, i.power))
+                        print(f'{i.name}: {i.power} power')
                     choice = input('Weapon: ')
                     for i in weapons:
                         if choice == i.name:
@@ -83,19 +81,18 @@ class Player(object):
                 self.health -= baddie.power
                 baddie.hp -= weapon.power
                 if self.health > 0 and baddie.hp > 0:
-                    print('Your health is {0}.'.format(self.health))
-                    print('The {0}\'s health is {1}.'.format(
-                        baddie.name, baddie.hp))
+                    print(f'Your health is {self.health}.')
+                    print(f'The {baddie.name}\'s health is {baddie.hp}.')
                 elif self.health < 1 and baddie.hp > 0:
                     print('You died.')
                     self.die()
                 elif baddie.hp < 1 and self.health > 0:
-                    print('The {0} has been defeated!'.format(baddie.name))
+                    print(f'The {baddie.name} has been defeated!')
                     self.changeScore(1)
                     self.location.items += baddie.die()
                     return 'win'
                 else:
-                    print('Both you and the {0} died!'.format(baddie.name))
+                    print(f'Both you and the {baddie.name} died!')
                     self.die()
 
     def canCarry(self, itemToTake):
@@ -114,7 +111,7 @@ class Player(object):
         def takeItem(i):
             self.location.items.remove(i)
             self.inventory.append(i)
-            print('{0} taken.'.format(i.name))
+            print(f'{i.name} taken.')
 
         weightstring = 'You are carrying too much weight already. Try dropping something.'
         if noun == '':
@@ -140,14 +137,13 @@ class Player(object):
                 print('There\'s no way to tell if that is here because'
                       ' it is too dark.')
             else:
-                print('You can\'t pick up {0} {1}.'.format(
-                    utils.getIndefArticle(noun), noun))
+                print(f'You can\'t pick up {utils.getIndefArticle(noun)} {noun}.')
 
     def drop(self, action, noun):
         def dropItem(i):
             self.location.items.append(i)
             self.inventory.remove(i)
-            print('{} dropped.'.format(i.name))
+            print(f'{i.name} dropped.')
         if noun == '':
             print('Say what you want to drop.')
         else:
@@ -162,7 +158,7 @@ class Player(object):
                     if i.name != 'fist':
                         dropItem(i)
             else:
-                print('You do not have a {} to drop.'.format(noun))
+                print(f'You do not have a {noun} to drop.')
 
     def look(self, action, noun):
         if self.hasLight and not utils.inInventory(Lantern, self):
@@ -190,7 +186,7 @@ class Player(object):
                 else:
                     item.examine()
             else:
-                print('You do not have {0}'.format(noun))
+                print(f'You do not have {noun}')
 
     def go(self, action, noun='', Location=None, history=True):
         def fightCheck():
@@ -293,7 +289,7 @@ class Player(object):
                       ' mysteriously lowered by one.')
                 self.score -= 1
         else:
-            print('You said "{}" but nothing happened.'.format(noun))
+            print(f'You said "{noun}" but nothing happened.')
 
     def quit(self, action, noun):
         resp = input('Are you sure you want to quit? Your progress '
@@ -336,15 +332,15 @@ class Player(object):
                         print(item, end=' ')
                     else:
                         print(item.name, end=': ')
-                    print('weighs {} pounds.'.format(item.weight))
+                    print(f'weighs {item.weight} pounds.')
             else:
                 print('There are no items in your inventory.')
         elif noun == 'location':
             print('You are at ' + self.location.name)
         elif noun == 'score':
-            print('Your score is {}.'.format(self.score))
+            print(f'Your score is {self.score}.')
         elif noun == 'health':
-            print('You have {} health.'.format(self.health))
+            print(f'You have {self.health} health.')
         elif noun == 'exits':
             # TODO: Refactor into function
             self.location.displayExits()
@@ -405,8 +401,7 @@ class Player(object):
                 # Ensure that health can't go above 100
                 if item.health + self.health > 100:
                     item.health = 100 - self.health
-                print('You ate the {0} and gained {1} health.'.format(
-                    item.name, item.health))
+                print(f'You ate the {item.name} and gained {item.health} health.')
                 self.health += item.health
                 self.inventory.remove(item)
             else:
@@ -453,7 +448,7 @@ class Creature(object):
                 if randomResult <= self.dropItems[i] and randomResult > 0:
                     itemsToDrop.append(i)
         if len(itemsToDrop) > 0:
-            print('The {0} dropped {1} on its death.'.format(self.name, ', '.join([i.name for i in itemsToDrop])))
+            print(f'The {self.name} dropped {", ".join([i.name for i in itemsToDrop])} on its death.')
         return itemsToDrop
 
 
@@ -587,7 +582,7 @@ class Weapon(Item):
         self.power = power
 
     def __str__(self):
-        return '{0}: Deals {1} damage,'.format(self.name, self.power)
+        return f'{self.name}: Deals {self.power} damage,'
 
 
 class Sword(Weapon):
@@ -695,7 +690,7 @@ class Food(Item):
         self.health = health
 
     def __str__(self):
-        return "{0}: Restores {1} health,".format(self.name, self.health)
+        return f"{self.name}: Restores {self.health} health,"
 
 class HealthPot(Food):
 

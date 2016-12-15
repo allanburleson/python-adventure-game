@@ -5,7 +5,7 @@ import sys
 if os.name is not "nt":
     import readline
 
-assert sys.version_info >= (3, 5), 'You must use at least Python 3.5.'
+assert sys.version_info >= (3, 6), "You must use at least Python 3.6."
 
 # Change directory to directory that includes play.py
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
