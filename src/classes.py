@@ -24,6 +24,7 @@ class Player(object):
         self.health = 100
         self.hasLight = False
         self.location.giveInfo(True, self.hasLight)
+        self.moves = 0
 
     def __str__(self):
         inventory = '\n'.join(['\t' + item.name for item in self.inventory])
@@ -38,6 +39,7 @@ class Player(object):
     def _die(self, restart=True):
         print('GAME OVER.')
         print(f'Your score was {self.score}.')
+        print(f'You used {self.moves} moves.')
         if restart:
             self.restart('', '', True)
         sys.exit(0)
@@ -108,6 +110,7 @@ class Player(object):
 
     def clrscn(self, action, noun):
         utils.clrscn()
+        return False
 
     def take(self, action, noun):
         def takeItem(i):
@@ -124,6 +127,7 @@ class Player(object):
                     (not self.location.dark or self.hasLight):
                 if self._canCarry(item):
                     takeItem(item)
+                    return True
                 else:
                     print(weightstring)
             elif noun == 'all':
@@ -131,6 +135,7 @@ class Player(object):
                     if not isinstance(i, InteractableItem):
                         if self._canCarry(i):
                             takeItem(i)
+                            return True
                         else:
                             print(weightstring)
                 # if len(self.location.items) > 1:
@@ -140,6 +145,7 @@ class Player(object):
                       ' it is too dark.')
             else:
                 print(f'You can\'t pick up {utils.getIndefArticle(noun)} {noun}.')
+        return False
 
     def drop(self, action, noun):
         def dropItem(i):
@@ -151,18 +157,21 @@ class Player(object):
         else:
             if noun == 'fist':
                 print('You can\'t drop your own fist, silly!')
-                return
             item = utils.getItemFromName(noun, self.inventory, self)
             if item:
                 dropItem(item)
+                return True
             elif noun == 'all':
                 for i in self.inventory[:]:
                     if i.name != 'fist':
                         dropItem(i)
+                        return True
             else:
                 print(f'You do not have a {noun} to drop.')
+        return False
 
     def look(self, action, noun):
+        # Disable light if a lantern is not in the inventory
         if self.hasLight and not utils.inInventory(Lantern, self):
             self.hasLight = False
         if noun == '' or noun == 'around':
@@ -176,7 +185,6 @@ class Player(object):
                     for i in self.location.creatures:
                         if isinstance(i, Baddie):
                             item.examine(True)
-                            return
                     if not glowing:
                         for exit in self.location.exits:
                             for creature in self.location.exits[exit].creatures:
@@ -189,6 +197,8 @@ class Player(object):
                     item.examine()
             else:
                 print(f'You do not have {noun}')
+                return False
+        return True
 
     def go(self, action, noun='', Location=None, history=True):
         def fightCheck():
@@ -250,7 +260,7 @@ class Player(object):
                 pass
             else:
                 print('There is no exit in that direction.')
-                return
+                return False
         if locToGoTo is not None:
             if self.location.history and history:
                 self.locationStack.append(self.location)
@@ -264,6 +274,8 @@ class Player(object):
                 fightCheck()
         else:
             print('Something went wrong.')
+            return False
+        return True
 
     def back(self, action, noun):
         try:
@@ -271,6 +283,8 @@ class Player(object):
             self.locationStack.pop()
         except IndexError:
             print("There is not a previous location you can go to.")
+            return False
+        return True
 
     def help(self, action, noun):
         print('I can only understand what you say if you first type an'
@@ -278,6 +292,7 @@ class Player(object):
         print(' My vocabulary is limited. If one word doesn\'t work,'
               ' try a synonym. If you get stuck, check the documentati'
               'on.')
+        return False
 
     def say(self, action, noun):
         if noun == 'xyzzy':
@@ -292,6 +307,8 @@ class Player(object):
                 self.score -= 1
         else:
             print(f'You said "{noun}" but nothing happened.')
+            return False
+        return True
 
     def quit(self, action, noun):
         resp = input('Are you sure you want to quit? Your progress '
@@ -306,6 +323,7 @@ class Player(object):
             self._die(False)
         else:
             print('Cancelled.')
+        return False
 
     def restart(self, action, noun, force=False):
         def reset():
@@ -323,7 +341,7 @@ class Player(object):
         sys.exit(0)
 
     def show(self, action, noun):
-        # TODO: Remove reduntant ifs
+        # TODO: Remove redundant ifs
         if noun == 'inventory':
             if len(self.inventory) > 0:
                 print('Inventory:')
@@ -350,6 +368,7 @@ class Player(object):
             print(self)
         else:
             print('This isn\'t something I can show you.')
+        return False
 
     def use(self, action, noun):
         if noun == 'magic mirror':
@@ -362,6 +381,7 @@ class Player(object):
                 print('The mirror exploded. A large shard of glass hit'
                       ' you in the face.')
                 self._die()
+        return True
 
     def open(self, action, noun):
         chest = None
@@ -372,6 +392,8 @@ class Player(object):
         if chest:
             items = chest.open()
             self.location.items += items
+            return True
+        return False
 
     def hit(self, action, noun):
         chest = None
@@ -388,10 +410,12 @@ class Player(object):
             if stick:
                 print('You smashed the lock off the chest.')
                 chest.locked = False
+                return True
             else:
                 print('You have nothing to break the chest with.')
         else:
             print('Hitting doesn\'t help.')
+        return False
 
     def eat(self, action, noun):
         item = None
@@ -406,10 +430,12 @@ class Player(object):
                 print(f'You ate the {item.name} and gained {item.health} health.')
                 self.health += item.health
                 self.inventory.remove(item)
+                return True
             else:
                 print('Sorry, that isn\'t food.')
         else:
             print('You don\'t have that.')
+        return False
 
     def light(self, action, noun):
         if utils.inInventory(Lantern, self) and not self.hasLight:
@@ -419,10 +445,12 @@ class Player(object):
             if self.location.dark:
                 # history=False so the same location isn't saved back into self.locationStack
                 self.go('go', Location=self.location, history=False)
+            return True
         elif utils.inInventory(Lantern, self):
             print('Your light is already lit.')
         else:
             print('You need a light source!')
+        return False
 
 
 class Creature(object):

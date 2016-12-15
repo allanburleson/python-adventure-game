@@ -58,7 +58,10 @@ def main():
                 # Where game executes result.
                 # Player stuff happens here
                 # Ex: getattr(player, "go")(action, noun) -> player.go(action, noun)
-                getattr(player, action)(action, noun)
+                result = getattr(player, action)(action, noun)
+                # Add 1 to player moves if function returns True
+                if result:
+                    player.moves += 1
 
                 if noun != '':
                     previousNoun = noun
