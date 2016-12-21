@@ -6,7 +6,7 @@ around
 xyzzy
 it
 the
-inventory:items
+inventory:items,i
 location:current location,position
 score:points
 toilet paper:toilet tissue,toilet paper roll

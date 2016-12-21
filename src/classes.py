@@ -353,6 +353,11 @@ class Player(object):
             reset()
         sys.exit(0)
 
+    def i(self, action, noun):
+        """Shortened version of "show inventory"
+        """
+        self.show('show', 'inventory')
+
     def show(self, action, noun):
         """Gives information about different things."""
         # TODO: Remove redundant ifs
@@ -360,6 +365,7 @@ class Player(object):
             if len(self.inventory) > 0:
                 print('Inventory:')
                 for item in self.inventory:
+                    print('\t', end='')
                     if isinstance(item, Food):
                         print(item, end=' ')
                     elif isinstance(item, Weapon):

@@ -17,5 +17,5 @@ hit:strike,break
 eat:consume,drink
 light
 restart:reset
-
 clrscn:clear
+i:inventory
