@@ -16,36 +16,33 @@ os.chdir(os.path.dirname(os.path.abspath(__file__)))
 from src import parser
 from src import locations
 from src import classes
-from src import utils
 
 
 def main():
-    utils.clrscn()
-
-    sfExists = False
+    sf_exists = False
     for i in os.listdir():
         if i.startswith('save'):
-            sfExists = True
+            sf_exists = True
             break
-    if sfExists:
+    if sf_exists:
         save = shelve.open('save')
         player = save['player']
         Locations = save['locations']
         save.close()
         player.locations = Locations
         for i in Locations:
-            player.visitedPlaces[i] = False
-        player.location.giveInfo(True, player.hasLight)
+            player.visited_places[i] = False
+        player.location.give_info(True, player.has_light)
     else:
         player = classes.Player(locations.Location_Storage, locations.start)
-    previousNoun = ''
+    previous_noun = ''
     turns = 0
-    darkTurn = 0
+    dark_turn = 0
     
     # Main game loop
     while True:
         try:
-            command = parser.parseCommand(input('> '))
+            command = parser.parse_command(input('> '))
             if command is not None:
                 action = command[0]
                 if len(command) >= 2:
@@ -54,32 +51,35 @@ def main():
                     noun = ''
                 if action is None and noun != '':
                     action = 'go'
-                if previousNoun != '' and noun == 'it':
-                    noun = previousNoun
+                if previous_noun != '' and noun == 'it':
+                    noun = previous_noun
                 # Where game executes result.
                 # Player stuff happens here
                 # Ex: getattr(player, "go")(action, noun) -> player.go(action, noun)
-                result = getattr(player, action)(action, noun)
+                try:
+                    result = getattr(player, action)(action, noun)
+                except AttributeError:
+                    print('This cannot be done.')
                 # Add 1 to player moves if function returns True
                 if result:
                     player.moves += 1
 
                 if noun != '':
-                    previousNoun = noun
+                    previous_noun = noun
                 else:
-                    previousNoun = ''
-                if player.location.dark and not player.hasLight:
-                    if darkTurn < turns:
+                    previous_noun = ''
+                if player.location.dark and not player.has_light:
+                    if dark_turn < turns:
                         print('A grue magically appeared. However, since '
                               'this isn\'t Zork, the grue didn\'t eat you;'
                               ' it just killed you instead. So that\'s alr'
                               'ight.')
-                        player._die()
+                        player.die()
                     else:
-                        darkTurn = turns
+                        dark_turn = turns
                 turns += 1
-                if not player.location.dark or player.hasLight:
-                    darkTurn = turns
+                if not player.location.dark or player.has_light:
+                    dark_turn = turns
         except KeyboardInterrupt:
             player.quit('', '')
 

@@ -2,22 +2,23 @@
 
 import os
 
-def inInventory(itemClass, player):
+
+def in_inventory(item_class, player):
     for item in player.inventory:
-        if isinstance(item, itemClass):
+        if isinstance(item, item_class):
             return True
     return False
 
 
-def getItemFromName(itemName, itemList, player):
+def get_item_from_name(item_name, item_list):
     """Retrieve an item's object from its name."""
-    for item in itemList:
-        if itemName == item.name:
+    for item in item_list:
+        if item_name == item.name:
             return item
     return False
 
 
-def getIndefArticle(noun):
+def get_indef_article(noun):
     """Get the indefinite article that precedes a noun."""
     vowels = [i for i in 'aeiou']
     consonants = [i for i in 'bcdfghjklmnpqrstvwxyz1234567890']
@@ -32,10 +33,9 @@ def clrscn():
     os.system("cls" if os.name == "nt" else "clear")
 
 
-def numberStrings(*strings):
+def number_strings(*strings):
     """Print a list of strings with a number preceding each."""
     for number, string in enumerate(strings):
         number += 1
         print(number, string)
     return
-

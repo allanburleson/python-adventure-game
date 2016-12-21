@@ -16,8 +16,8 @@ class Location(object):
          - If room name should be shown when exiting (Bool)
          - And if it's dark (Bool)
     """
-    def __init__(self, name, items, creatures, exits={},
-                 description='', history=True, showNameWhenExit=False,
+    def __init__(self, name, items, creatures=[], exits={},
+                 description='', history=True, show_name_when_exit=False,
                  dark=False):
         # exit needs to be a dict with keys north, south, east, west,
         # up, down
@@ -34,21 +34,21 @@ class Location(object):
         Location_Storage.append(self)
         self.exits = exits
         self.history = history
-        self.showNameWhenExit = showNameWhenExit
+        self.show_name_when_exit = show_name_when_exit
         self.dark = dark
 
-    def giveInfo(self, fullInfo, light):
+    def give_info(self, full_info, light):
         assert self.description != '', 'There must be a description.'
         if self.dark and not light:
             print('It is too dark to see anything. However, you are '
                   'not likely to be eaten by a grue. What do you think'
                   ' this is, Zork?')
             return
-        elif fullInfo:
+        elif full_info:
             print(self.description)
             print()
             # directions = ['north', 'south', 'east', 'west', 'up', 'down']
-            self.displayExits()
+            self.display_exits()
         else:
             print(f'You are in {self.name}.')
         print()
@@ -57,14 +57,14 @@ class Location(object):
         # TODO: Refactor
         for item in self.items:
             Entity_Stack.append(item)
-            if item.locDescription != '':
-                print(item.locDescription)
+            if item.loc_description != '':
+                print(item.loc_description)
             else:
                 if len(Entity_Stack) > 1:
                     if Entity_Stack[-1].name == item.name:
                         print(f'There are {len(Entity_Stack)} {item.name}s')
                 else:
-                    print(f'There is {utils.getIndefArticle(item.name)} {item.name}')
+                    print(f'There is {utils.get_indef_article(item.name)} {item.name}')
         if len(self.items) > 0:
             print()
         Entity_Stack = []
@@ -75,11 +75,11 @@ class Location(object):
                 if Entity_Stack[-1].name == creature.name:
                     print(f'There are {len(Entity_Stack)} {creature.name}s here')
             else:
-                print(f'There is {utils.getIndefArticle(creature.name)} {creature.name} here.')
+                print(f'There is {utils.get_indef_article(creature.name)} {creature.name} here.')
 
-    def displayExits(self):
+    def display_exits(self):
         for i in self.exits:
-            if self.exits[i].showNameWhenExit:
+            if self.exits[i].show_name_when_exit:
                 if i == 'up' or i == 'down':
                     print(f'{self.exits[i].name} is {i}.')
                 else:
@@ -101,20 +101,19 @@ class BlackPit(Location):
                                      'u don\'t know why you are here i'
                                      'nstead of being on a mountain of'
                                      ' gold and jewels.',
-                         showNameWhenExit=True,
+                         show_name_when_exit=True,
                          dark=True)
-        self.firstTime = True
+        self.first_time = True
 
-    def giveInfo(self, fullInfo, light):
-        if self.firstTime:
-            print('You run towards the amazing riches...without notici'
-                  'ng the giant hole at your feet.')
+    def give_info(self, full_info, light):
+        if self.first_time:
+            print('You run towards the amazing riches...without noticing the giant hole at your feet.')
             print()
             self.name = 'Black Pit'
-            self.firstTime = False
-            super().giveInfo(True, light)
+            self.first_time = False
+            super().give_info(True, light)
         else:
-            super().giveInfo(fullInfo, light)
+            super().give_info(full_info, light)
 
 
 class DarkTunnel(Location):
@@ -125,15 +124,15 @@ class DarkTunnel(Location):
                          creatures=[Orc(), Orc(), Orc(), Orc()],
                          exits={},
                          description='You are in a featureless dark tunnel.',
-                         showNameWhenExit=False,
+                         show_name_when_exit=False,
                          dark=True)
 
 
-bathroom = Location('Bathroom', [ToiletPaper()], [], showNameWhenExit=True)
+bathroom = Location('Bathroom', [ToiletPaper()], [], show_name_when_exit=True)
 bathroom.description = 'There is a toilet and a sink here. They seem'\
                        ' out of place since this is 600 B.C.'
 home = Location('Home', [Paper(), Lantern()], [],
-                showNameWhenExit=True)
+                show_name_when_exit=True)
 home.items[0].description = '''NOTICE:
 These lands have recently become infested with the servants of evil.
 Currently, the main problem is the Legendary Dragon of Nogard (the LDN),
@@ -150,23 +149,23 @@ home.description = 'You are in a familiar cabin made out of logs. '\
 start = Location('Start', [Mirror()], [], history=False)
 start.description = 'You are in a small room with concrete walls and '\
                     'no windows.'
-closet = Location('Closet', [Stick()], [], showNameWhenExit=True)
+closet = Location('Closet', [Stick()], [], show_name_when_exit=True)
 closet.description = 'You are in a closet that is full of cobwebs.'
 attic = Location('Attic', [Bread(), HealthPot()], [GiantSpider()],
-                 showNameWhenExit=True, dark=True)
+                 show_name_when_exit=True, dark=True)
 attic.description = 'The attic has been obviously unused for many year'\
                     's. There are large spiderwebs everywhere.'
 backyard = Location('Backyard', [], [Snail()])
 backyard.description = 'You are in the back yard of your house.'
 frontyard = Location('Front Yard', [Chest([Sword()], True)], [])
 frontyard.description = 'You are in your front yard.'
-homenorth = Location('North of Home', [], [], showNameWhenExit=False)
+homenorth = Location('North of Home', [], [], show_name_when_exit=False)
 homenorth.description = 'You are at the side of your house.'
-homesouth = Location('South of Home', [], [], showNameWhenExit=False)
+homesouth = Location('South of Home', [], [], show_name_when_exit=False)
 homesouth.description = 'You are at a side of your house with a window visible.'
-creepyforest = Location('Creepy forest', [], [Ghost()], showNameWhenExit=True)
+creepyforest = Location('Creepy forest', [], [Ghost()], show_name_when_exit=True)
 creepyforest.description = 'You are in a spooky forest.'
-forest = Location('Forest', [], [Bear()], showNameWhenExit=True)
+forest = Location('Forest', [], [Bear()], show_name_when_exit=True)
 forest.description = 'You are in a forest. There is a sign that says '\
                      '"This is not the spooky forest of the East. Stay'\
                      ' away from there!"'
@@ -174,7 +173,7 @@ blackpit = BlackPit()
 dtn = DarkTunnel()
 dts = DarkTunnel()
 deadend = Location(
-    'Dead End', [], [], showNameWhenExit=True)
+    'Dead End', [], [], show_name_when_exit=True)
 deadend.description = 'You are at a dead end.'
 home.exits = {'north': bathroom, 'south': closet, 'east': backyard,
               'west': frontyard, 'up': attic}

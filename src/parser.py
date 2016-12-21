@@ -2,35 +2,36 @@
 
 from src.words import verbs, nouns, extras, directions
 
-def parseCommand(command):
+
+def parse_command(command):
     command = command.lower()
     # remove extra words
-    splitCmd = command.split(' ')
-    removing = [word for word in splitCmd if word in extras]
+    split_cmd = command.split(' ')
+    removing = [word for word in split_cmd if word in extras]
     for word in removing:
-        splitCmd.remove(word)
-    command = ' '.join(splitCmd)
-    parsedCommand = []
+        split_cmd.remove(word)
+    command = ' '.join(split_cmd)
+    parsed_command = []
     # command must start with a verb
-    noNoun = False
+    no_noun = False
     verb = ''
-    typedVerb = ''
+    typed_verb = ''
     for i in verbs:
         if command.startswith(i + ' ') or command.strip() == i:
             verb = i
-            typedVerb = i
+            typed_verb = i
         if command.strip() == i:
-            noNoun = True
+            no_noun = True
         else:
             for syn in verbs[i]:
                 if command.startswith(syn + ' ') or (
                    command.strip() == syn):
                     verb = i
-                    typedVerb = syn
+                    typed_verb = syn
                 if command.strip() == syn:
-                    noNoun = True
+                    no_noun = True
     if verb != '':
-        parsedCommand.append(verb)
+        parsed_command.append(verb)
     else:
         # See if command is only a direction
         for i in directions:
@@ -45,20 +46,20 @@ def parseCommand(command):
         return
     # next is a noun
     noun = ''
-    restOfCommand = ''
-    if not noNoun:
-        if len(command) > len(typedVerb) + 1:
-            restOfCommand = command.split(typedVerb + ' ')[1]
+    rest_of_command = ''
+    if not no_noun:
+        if len(command) > len(typed_verb) + 1:
+            rest_of_command = command.split(typed_verb + ' ')[1]
             for i in {**nouns, **directions}:
-                if restOfCommand == i:
+                if rest_of_command == i:
                     noun = i
                 else:
                     for syn in {**nouns, **directions}[i]:
-                        if restOfCommand == syn:
+                        if rest_of_command == syn:
                             noun = i
             if noun != '':
-                parsedCommand.append(noun)
+                parsed_command.append(noun)
             else:
-                print(f'I don\'t understand the noun "{restOfCommand}."')
+                print(f'I don\'t understand the noun "{rest_of_command}."')
                 return
-    return parsedCommand
+    return parsed_command

@@ -2,7 +2,7 @@
 
 import os
 
-def getWordList(filepath):
+def get_word_list(filepath):
     """
     Get a list of words from a file.
     
@@ -26,7 +26,7 @@ def getWordList(filepath):
     return words
 
 
-verbs = getWordList('src/dictionary/verbs.txt')
-nouns = getWordList('src/dictionary/nouns.txt')
-extras = getWordList('src/dictionary/extras.txt')
-directions = getWordList('src/dictionary/directions.txt')
+verbs = get_word_list('src/dictionary/verbs.txt')
+nouns = get_word_list('src/dictionary/nouns.txt')
+extras = get_word_list('src/dictionary/extras.txt')
+directions = get_word_list('src/dictionary/directions.txt')
