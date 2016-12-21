@@ -1,7 +1,7 @@
+"""A rather messy way of parsing commands."""
+
 from src.words import verbs, nouns, extras, directions
 
-# Input: Command you want parsed.
-# Output/Return: List of parsed command.
 def parseCommand(command):
     command = command.lower()
     # remove extra words

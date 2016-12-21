@@ -1,3 +1,5 @@
+"""Contains most classes used in the game."""
+
 import random
 import os
 import shelve
@@ -11,13 +13,19 @@ Location_Storage = []
 
 
 class Player(object):
-
-    def __init__(self, locations, startLoc):
+    """
+    The class for everything about the player.
+    
+    All public methods either return True or False. This value tells the game
+    whether the command should increase the number of moves the player has
+    taken.
+    """
+    def __init__(self, locations, location):
         self.inventory = [Fist()]
         self.score = 0
         self.visitedPlaces = {}
         self.locationStack = []
-        self.location = startLoc
+        self.location = location
         self.locations = locations
         for i in self.locations:
             self.visitedPlaces[i] = False
@@ -171,6 +179,7 @@ class Player(object):
         return False
 
     def look(self, action, noun):
+        """Display information about the current location or an item."""
         # Disable light if a lantern is not in the inventory
         if self.hasLight and not utils.inInventory(Lantern, self):
             self.hasLight = False
@@ -215,13 +224,13 @@ class Player(object):
         if self.hasLight and not utils.inInventory(Lantern, self):
             self.hasLight = False
         if Location is not None:
-            locToGoTo = Location
+            destination = Location
             isLoc = True
         else:
             isDirection = False
             isLoc = False
             try:
-                locToGoTo = self.location.exits[noun]
+                destination = self.location.exits[noun]
             except KeyError:
                 pass
             for direction in ['north', 'south', 'east', 'west', 'up',
@@ -232,7 +241,7 @@ class Player(object):
                     break
                 elif direction in self.location.exits:
                     if self.location.exits[direction].name.lower() == noun:
-                        locToGoTo = self.location.exits[direction]
+                        destination = self.location.exits[direction]
                         break
             if not isDirection and not isLoc and action != 'say':
                 print('You must specify a valid direction.')
@@ -241,7 +250,7 @@ class Player(object):
                 # Get right Location from list called locations
                 for i in self.locations:
                     if i.name == 'Home':
-                        locToGoTo = i
+                        destination = i
                         break
             elif noun in self.location.exits:
                 # Get right Location from list called locations
@@ -254,17 +263,17 @@ class Player(object):
                 if loc:
                     for i in self.locations:
                         if i == loc:
-                            locToGoTo = i
+                            destination = i
                             break
             elif isLoc:
                 pass
             else:
                 print('There is no exit in that direction.')
                 return False
-        if locToGoTo is not None:
+        if destination is not None:
             if self.location.history and history:
                 self.locationStack.append(self.location)
-            self.location = locToGoTo
+            self.location = destination
             if not self.visitedPlaces[self.location]:
                 self.location.giveInfo(True, self.hasLight)
                 self.visitedPlaces[self.location] = True
@@ -287,11 +296,10 @@ class Player(object):
         return True
 
     def help(self, action, noun):
-        print('I can only understand what you say if you first type an'
-              ' action and then a noun (if necessary).', end='')
-        print(' My vocabulary is limited. If one word doesn\'t work,'
-              ' try a synonym. If you get stuck, check the documentati'
-              'on.')
+        print('I can only understand what you say if you first type an action \
+                and then a noun (if necessary). My vocabulary is limited. If \
+                one word doesn\'t work, try a synonym. If you get stuck, check\
+                 the documentation.')
         return False
 
     def say(self, action, noun):
@@ -311,6 +319,7 @@ class Player(object):
         return True
 
     def quit(self, action, noun):
+        """Save progress and exit the game. Run on KeyboardInterrupt."""
         resp = input('Are you sure you want to quit? Your progress '
                      'will be saved. [Y/n] ')
         if resp.lower().startswith('y') or resp.strip() == '':
@@ -326,6 +335,7 @@ class Player(object):
         return False
 
     def restart(self, action, noun, force=False):
+        """Deletes the save file."""
         def reset():
             for i in os.listdir():
                     if i.startswith('save'):
@@ -341,6 +351,7 @@ class Player(object):
         sys.exit(0)
 
     def show(self, action, noun):
+        """Gives information about different things."""
         # TODO: Remove redundant ifs
         if noun == 'inventory':
             if len(self.inventory) > 0:
@@ -454,9 +465,10 @@ class Player(object):
 
 
 class Creature(object):
-    ''' Supply a name, the creature's health, a description, and
-        the items it drops. Set dropItems to a dict with the
-        format {item: drop chance percentage}
+    '''
+    Supply a name, the creature's health, a description, and
+    the items it drops. Set dropItems to a dict with the
+    format {item: drop chance percentage}
     '''
     def __init__(self, name, hp, description, dropItems={}):
         self.name = name

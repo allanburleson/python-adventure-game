@@ -1,9 +1,13 @@
+"""Get words from files in "src/dictionary/"."""
+
 import os
 
-
-# Input: File Name
-# Output: Dict of type {Word: [Synonym, Synonym]}
 def getWordList(filepath):
+    """
+    Get a list of words from a file.
+    
+    Input: file name
+    Output: dict with formula {word: [synonym, synonym]}"""
     assert os.path.isfile(filepath), 'Must be a file'
     txt = open(filepath).read().strip().split('\n')
     if ':' in open(filepath).read():

@@ -1,4 +1,7 @@
-#!/usr/bin/env python3.5
+#!/usr/bin/env python3
+
+"""The main game script."""
+
 import os
 import shelve
 import sys
@@ -9,8 +12,6 @@ assert sys.version_info >= (3, 6), "You must use at least Python 3.6."
 
 # Change directory to directory that includes play.py
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
-# Below removes the save file for devel purposes
-# os.system("rm save.db")
 
 from src import parser
 from src import locations
@@ -19,7 +20,6 @@ from src import utils
 
 
 def main():
-    """ Main Game Loop. """
     utils.clrscn()
 
     sfExists = False
@@ -41,6 +41,7 @@ def main():
     previousNoun = ''
     turns = 0
     darkTurn = 0
+    
     # Main game loop
     while True:
         try:
@@ -82,6 +83,5 @@ def main():
         except KeyboardInterrupt:
             player.quit('', '')
 
-# Run.
 if __name__ == '__main__':
     main()
