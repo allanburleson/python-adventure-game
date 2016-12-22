@@ -15,7 +15,6 @@ def get_word_list(filepath):
         for line in txt:
             if line[0] == '#':
                 ntxt.remove(ntxt[ntxt.index(line)])
-                print('Removing ' + line)
             elif ':' not in line:
                 ntxt[ntxt.index(line)] = line + ':'
         txt = ntxt

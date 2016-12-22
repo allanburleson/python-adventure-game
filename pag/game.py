@@ -13,7 +13,7 @@ from pag import parser
     
 
 class Game(object):
-    def __init__(self, locations):
+    def __init__(self, locations=[]):
         self.locations = locations
     
     def play(self):

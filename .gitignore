@@ -93,6 +93,7 @@ ENV/
 
 save.db
 save
+.pag-save*
 
 .\#*
 \#*\#

@@ -1,9 +1,15 @@
 #!/usr/bin/env python3
 from pag import Game
-from pag.classes import *
+from pag import classes
+
+# This gives the Game the list of all locations that is updated every time a
+# new location is created. Since setting a variable to another variable with a
+# list points to the one list's memory address, the list in the game class also
+# updates.
+game = Game(locations=classes.location_list)
 
 
-class ToiletPaper(Item):
+class ToiletPaper(classes.Item):
     def __init__(self):
         super().__init__(name='toilet paper',
                          description='The toilet paper is labeled "X-t'
@@ -11,14 +17,13 @@ class ToiletPaper(Item):
                          loc_description='A roll of toilet paper is in '
                          'the room.',
                          weight=1)
-                         
 
-home = Location('Home', start=True, show_name_when_exit=True)
+
+home = classes.Location('Home', start=True, show_name_when_exit=True)
 home.description = 'You\'re at home.'
-bathroom = Location('Bathroom', items=[ToiletPaper()], show_name_when_exit=True)
+bathroom = classes.Location('Bathroom', items=[ToiletPaper()], show_name_when_exit=True)
 bathroom.description = 'You\'re in the bathroom.'
 home.exits = {'south': bathroom}
 bathroom.exits = {'north': home}
 
-game = Game(location_list)
 game.play()

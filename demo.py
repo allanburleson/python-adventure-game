@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
+import random
+
 from pag import Game
-from pag.classes import *
+from pag import classes
+
+game = Game(classes.location_list)
 
 
-class Snail(Creature):
+class Snail(classes.Creature):
 
     def __init__(self):
         super().__init__(name='snail',
@@ -11,7 +15,7 @@ class Snail(Creature):
                          description='There is a snail on the ground.')
 
 
-class Orc(Baddie):
+class Orc(classes.Baddie):
 
     def __init__(self):
         super().__init__(name='orc',
@@ -21,7 +25,7 @@ class Orc(Baddie):
                          power=random.randint(20, 50))
 
 
-class Ghost(Baddie):
+class Ghost(classes.Baddie):
 
     def __init__(self):
         super().__init__(name='ghost',
@@ -30,7 +34,7 @@ class Ghost(Baddie):
                          power=0.01)
 
 
-class GiantSpider(Baddie):
+class GiantSpider(classes.Baddie):
 
     def __init__(self):
         super().__init__(name='giant spider',
@@ -40,7 +44,7 @@ class GiantSpider(Baddie):
                          drop_items={ToiletPaper(): 1})
 
 
-class Bear(Baddie):
+class Bear(classes.Baddie):
 
     def __init__(self):
         super().__init__(name='bear',
@@ -49,7 +53,7 @@ class Bear(Baddie):
                          power=30)
 
 
-class Sword(Weapon):
+class Sword(classes.Weapon):
 
     def __init__(self):
         super().__init__(name='sword',
@@ -67,7 +71,7 @@ class Sword(Weapon):
             print()
 
 
-class HealthPot(Food):
+class HealthPot(classes.Food):
 
     def __init__(self):
         super().__init__(name='health potion',
@@ -78,7 +82,7 @@ class HealthPot(Food):
                          health=100)
 
 
-class Bread(Food):
+class Bread(classes.Food):
 
     def __init__(self):
         super().__init__(name='bread',
@@ -89,7 +93,7 @@ class Bread(Food):
                          health=30)
 
 
-class ToiletPaper(Item):
+class ToiletPaper(classes.Item):
 
     def __init__(self):
         super().__init__(name='toilet paper',
@@ -100,7 +104,7 @@ class ToiletPaper(Item):
                          weight=1)
 
 
-class Stick(Item):
+class Stick(classes.Item):
 
     def __init__(self):
         super().__init__(name='stick',
@@ -112,7 +116,7 @@ class Stick(Item):
                          weight=3)
 
 
-class Paper(Item):
+class Paper(classes.Item):
 
     def __init__(self, text=''):
         super().__init__(name='paper',
@@ -122,7 +126,7 @@ class Paper(Item):
                          weight=1)
 
 
-class Coconuts(Item):
+class Coconuts(classes.Item):
 
     def __init__(self):
         super().__init__(name='coconut halves',
@@ -135,7 +139,7 @@ class Coconuts(Item):
                          weight=2)
 
 
-class BlackPit(Location):
+class BlackPit(classes.Location):
 
     def __init__(self):
         super().__init__(name='A mountain of gold and jewels',
@@ -161,7 +165,7 @@ class BlackPit(Location):
             super().give_info(full_info, light)
 
 
-class DarkTunnel(Location):
+class DarkTunnel(classes.Location):
 
     def __init__(self):
         super().__init__(name='Dark Tunnel',
@@ -173,11 +177,11 @@ class DarkTunnel(Location):
                          dark=True)
 
 
-bathroom = Location('Bathroom', [ToiletPaper()], [], show_name_when_exit=True)
+bathroom = classes.Location('Bathroom', [ToiletPaper()], [], show_name_when_exit=True)
 bathroom.description = 'There is a toilet and a sink here. They seem'\
                        ' out of place since this is 600 B.C.'
-home = Location('Home', [Paper(), Lantern()], [],
-                show_name_when_exit=True)
+home = classes.Location('Home', [Paper(), classes.Lantern()], [],
+                        show_name_when_exit=True)
 home.items[0].description = '''NOTICE:
 These lands have recently become infested with the servants of evil.
 Currently, the main problem is the Legendary Dragon of Nogard (the LDN),
@@ -191,33 +195,33 @@ a chest. You may have to break it open. We really didn't plan this very well.'''
 home.description = 'You are in a familiar cabin made out of logs. '\
                    'There is a pleasantly warm fire in the fireplace '\
                    'and a comfortable-looking armchair beside it.'
-start = Location('Start', [Mirror()], [], history=False, start=True)
+start = classes.Location('Start', [classes.Mirror()], [], history=False, start=True)
 start.description = 'You are in a small room with concrete walls and '\
                     'no windows.'
-closet = Location('Closet', [Stick()], [], show_name_when_exit=True)
+closet = classes.Location('Closet', [Stick()], [], show_name_when_exit=True)
 closet.description = 'You are in a closet that is full of cobwebs.'
-attic = Location('Attic', [Bread(), HealthPot()], [GiantSpider()],
-                 show_name_when_exit=True, dark=True)
+attic = classes.Location('Attic', [Bread(), HealthPot()], [GiantSpider()],
+                         show_name_when_exit=True, dark=True)
 attic.description = 'The attic has been obviously unused for many year'\
                     's. There are large spiderwebs everywhere.'
-backyard = Location('Backyard', [], [Snail()])
+backyard = classes.Location('Backyard', [], [Snail()])
 backyard.description = 'You are in the back yard of your house.'
-frontyard = Location('Front Yard', [Chest([Sword()], True)], [])
+frontyard = classes.Location('Front Yard', [classes.Chest([Sword()], True)], [])
 frontyard.description = 'You are in your front yard.'
-homenorth = Location('North of Home', [], [], show_name_when_exit=False)
+homenorth = classes.Location('North of Home', [], [], show_name_when_exit=False)
 homenorth.description = 'You are at the side of your house.'
-homesouth = Location('South of Home', [], [], show_name_when_exit=False)
+homesouth = classes.Location('South of Home', [], [], show_name_when_exit=False)
 homesouth.description = 'You are at a side of your house with a window visible.'
-creepyforest = Location('Creepy forest', [], [Ghost()], show_name_when_exit=True)
+creepyforest = classes.Location('Creepy forest', [], [Ghost()], show_name_when_exit=True)
 creepyforest.description = 'You are in a spooky forest.'
-forest = Location('Forest', [], [Bear()], show_name_when_exit=True)
+forest = classes.Location('Forest', [], [Bear()], show_name_when_exit=True)
 forest.description = 'You are in a forest. There is a sign that says '\
                      '"This is not the spooky forest of the East. Stay'\
                      ' away from there!"'
 blackpit = BlackPit()
 dtn = DarkTunnel()
 dts = DarkTunnel()
-deadend = Location(
+deadend = classes.Location(
     'Dead End', [], [], show_name_when_exit=True)
 deadend.description = 'You are at a dead end.'
 home.exits = {'north': bathroom, 'south': closet, 'east': backyard,
@@ -239,5 +243,4 @@ dtn.exits = {'south': blackpit}
 dts.exits = {'north': blackpit, 'south': deadend}
 deadend.exits = {'north': dts}
 
-game = Game(location_list)
 game.play()
