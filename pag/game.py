@@ -6,6 +6,8 @@ if os.name is not "nt":
     import readline
     
 
+from pag import cwd
+from pag import sf_name
 from pag.classes import Player
 from pag import parser
     
@@ -16,12 +18,12 @@ class Game(object):
     
     def play(self):
         sf_exists = False
-        for i in os.listdir():
-            if i.startswith('save'):
+        for i in os.listdir(cwd):
+            if i.startswith(sf_name):
                 sf_exists = True
                 break
         if sf_exists:
-            save = shelve.open('save')
+            save = shelve.open(f'{cwd}/{sf_name}')
             player = save['player']
             Locations = save['locations']
             save.close()

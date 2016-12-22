@@ -19,3 +19,4 @@ light
 restart:reset
 clrscn:clear
 i:inventory
+save

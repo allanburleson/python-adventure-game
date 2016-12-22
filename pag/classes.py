@@ -1,6 +1,5 @@
 """
-Contains most classes used in the game. Locations are stored in locations.py,
-though the Location class is here.
+Contains most classes used in the game.
 """
 
 import random
@@ -8,11 +7,12 @@ import os
 import shelve
 import sys
 
+from pag import cwd
+from pag import sf_name
 from pag import utils
 
 Creatures = []
 Items = []
-
 
 
 class Player(object):
@@ -329,23 +329,28 @@ class Player(object):
         resp = input('Are you sure you want to quit? Your progress '
                      'will be saved. [Y/n] ')
         if resp.lower().startswith('y') or resp.strip() == '':
-            save = shelve.open('save')
-            save['player'] = self
-            save['Creatures'] = Creatures
-            save['locations'] = self.locations
-            save['Items'] = Items
-            save.close()
+            self.save()
             self.die(False)
         else:
             print('Cancelled.')
         return False
+        
+    def save(self, action='', noun=''):
+        path = f'{cwd}/{sf_name}'
+        sf = shelve.open(path)
+        sf['player'] = self
+        sf['Creatures'] = Creatures
+        sf['locations'] = self.locations
+        sf['Items'] = Items
+        sf.close()
+        print(f'Progress saved to {path}.')
 
     def restart(self, action, noun, force=False):
         """Deletes the save file."""
         def reset():
-            for i in os.listdir():
-                if i.startswith('save'):
-                    os.remove(i)
+            for i in os.listdir(cwd):
+                if i.startswith(sf_name):
+                    os.remove(f'{cwd}/{i}')
 
         if not force:
             resp = input('Are you sure you want to restart the game? [y/N] ')
@@ -427,7 +432,7 @@ class Player(object):
         if chest:
             for i in self.inventory:
                 stick = True
-                if isinstance(i, Stick):
+                if i.name == 'stick':
                     stick = True
                     break
             if stick:
@@ -545,8 +550,8 @@ class Item(object):
 
     def examine(self):
         print(self.description)
-        
-        
+
+
 class Mirror(Item):
 
     def __init__(self):
@@ -646,7 +651,7 @@ location_list = []
 
 
 class Location(object):
-    """ 
+    """
     Class used to instantiate objects
 
     Attributes Include:
@@ -668,7 +673,7 @@ class Location(object):
         up, down
         """
         global location_list
-        
+
         assert type(items) == list
         assert (type(exits) == dict or exits is None)
         for i in exits:
