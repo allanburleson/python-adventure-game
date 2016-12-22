@@ -8,10 +8,11 @@ import os
 import shelve
 import sys
 
-from src import utils
+from pag import utils
 
 Creatures = []
 Items = []
+
 
 
 class Player(object):
@@ -509,58 +510,12 @@ class Creature(object):
         return items_to_drop
 
 
-class Snail(Creature):
-
-    def __init__(self):
-        super().__init__(name='snail',
-                         hp=2,
-                         description='There is a snail on the ground.')
-
-
 class Baddie(Creature):
 
     def __init__(self, name, hp, description, power, drop_items={}):
         super().__init__(name, hp, description, drop_items)
         assert type(power) == int or type(power) == float
         self.power = power
-
-
-class Orc(Baddie):
-
-    def __init__(self):
-        super().__init__(name='orc',
-                         hp=50,
-                         description='There is an orc in '
-                                     'the room.',
-                         power=random.randint(20, 50))
-
-
-class Ghost(Baddie):
-
-    def __init__(self):
-        super().__init__(name='ghost',
-                         hp=99999999,
-                         description='Wooooo',
-                         power=0.01)
-
-
-class GiantSpider(Baddie):
-
-    def __init__(self):
-        super().__init__(name='giant spider',
-                         hp=500,
-                         description='The spider is large and ugly.',
-                         power=15,
-                         drop_items={ToiletPaper(): 1})
-
-
-class Bear(Baddie):
-
-    def __init__(self):
-        super().__init__(name='bear',
-                         hp=200,
-                         description='The bear growls at you.',
-                         power=30)
 
 
 class Item(object):
@@ -590,6 +545,18 @@ class Item(object):
 
     def examine(self):
         print(self.description)
+        
+        
+class Mirror(Item):
+
+    def __init__(self):
+        super().__init__(name='magic mirror',
+                         description='The mirror is round and you can '
+                         'see your reflection clearly. Under the glass'
+                         ' is an inscription that says "XYZZY."',
+                         loc_description='There is a small mirror lying'
+                         ' on the ground.',
+                         weight=2)
 
 
 class InteractableItem(Item):
@@ -643,24 +610,6 @@ class Weapon(Item):
         return f'{self.name}: Deals {self.power} damage,'
 
 
-class Sword(Weapon):
-
-    def __init__(self):
-        super().__init__(name='sword',
-                         description='The sword is small and has an el'
-                         'vish look to it.',
-                         loc_description='There is a small sword here.',
-                         weight=75,
-                         power=random.randint(90, 150))
-
-    def examine(self, glowing):
-        print(self.description, end='')
-        if glowing:
-            print(' It is glowing light blue.')
-        else:
-            print()
-
-
 class Fist(Weapon):
 
     def __init__(self):
@@ -671,64 +620,6 @@ class Fist(Weapon):
                          'reading this.',
                          weight=0,
                          power=10)
-
-
-class Mirror(Item):
-
-    def __init__(self):
-        super().__init__(name='magic mirror',
-                         description='The mirror is round and you can '
-                         'see your reflection clearly. Under the glass'
-                         ' is an inscription that says "XYZZY."',
-                         loc_description='There is a small mirror lying'
-                         ' on the ground.',
-                         weight=2)
-
-
-class ToiletPaper(Item):
-
-    def __init__(self):
-        super().__init__(name='toilet paper',
-                         description='The toilet paper is labeled "X-t'
-                         'raSoft.',
-                         loc_description='A roll of toilet paper is in '
-                         'the room.',
-                         weight=1)
-
-
-class Stick(Item):
-
-    def __init__(self):
-        super().__init__(name='stick',
-                         description='The stick is long and thick. It '
-                         'looks like it would be perfect '
-                         'for bashing things with.',
-                         loc_description='There is a random stick on '
-                         'the ground.',
-                         weight=3)
-
-
-class Paper(Item):
-
-    def __init__(self, text=''):
-        super().__init__(name='paper',
-                         description=text,
-                         loc_description='On a table is a paper labeled'
-                                         ' NOTICE.',
-                         weight=1)
-
-
-class Coconuts(Item):
-
-    def __init__(self):
-        super().__init__(name='coconut halves',
-                         description='The coconuts make a noise like '
-                                     'horse hooves when banged together.',
-                         loc_description='Also on the table are two coc'
-                                     'onut halves that look like they '
-                                     'probably were carried here by a '
-                                     'swallow.',
-                         weight=2)
 
 
 class Lantern(Item):
@@ -751,29 +642,7 @@ class Food(Item):
         return f"{self.name}: Restores {self.health} health,"
 
 
-class HealthPot(Food):
-
-    def __init__(self):
-        super().__init__(name='health potion',
-                         description='The potion looks disgusting but '
-                                     'is probably good for you.',
-                         loc_description='There is a health potion here.',
-                         weight=2,
-                         health=100)
-
-
-class Bread(Food):
-
-    def __init__(self):
-        super().__init__(name='bread',
-                         description='The bread is slightly stale but '
-                         'looks wholesome.',
-                         loc_description='There is a loaf of bread.',
-                         weight=1,
-                         health=30)
-
-
-location_storage = []
+location_list = []
 
 
 class Location(object):
@@ -791,14 +660,14 @@ class Location(object):
      - If it's dark (Bool)
      - Whether it is the starting location (Bool)
     """
-    def __init__(self, name, items, creatures=[], exits={},
+    def __init__(self, name, items=[], creatures=[], exits={},
                  description='', history=True, show_name_when_exit=False,
                  dark=False, start=False):
         """
         exits needs to be a dict with keys north, south, east, west,
         up, down
         """
-        global location_storage
+        global location_list
         
         assert type(items) == list
         assert (type(exits) == dict or exits is None)
@@ -810,14 +679,14 @@ class Location(object):
         self.items = items
         self.creatures = creatures
         self.description = description
-        location_storage.append(self)
+        location_list.append(self)
         self.exits = exits
         self.history = history
         self.show_name_when_exit = show_name_when_exit
         self.dark = dark
         self.start = start
         if start:
-            for loc in location_storage:
+            for loc in location_list:
                 if loc.start and loc.name != self.name:
                     assert False, f'Locations {self.name} and {loc.name} are both marked as being the start location.'
 

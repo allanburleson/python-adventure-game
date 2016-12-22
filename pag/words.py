@@ -26,7 +26,7 @@ def get_word_list(filepath):
     return words
 
 
-verbs = get_word_list('src/dictionary/verbs.txt')
-nouns = get_word_list('src/dictionary/nouns.txt')
-extras = get_word_list('src/dictionary/extras.txt')
-directions = get_word_list('src/dictionary/directions.txt')
+verbs = get_word_list('dictionary/verbs.txt')
+nouns = get_word_list('dictionary/nouns.txt')
+extras = get_word_list('dictionary/extras.txt')
+directions = get_word_list('dictionary/directions.txt')

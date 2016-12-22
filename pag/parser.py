@@ -1,6 +1,6 @@
 """A rather messy way of parsing commands."""
 
-from src.words import verbs, nouns, extras, directions
+from pag.words import verbs, nouns, extras, directions
 
 
 def parse_command(command):

@@ -16,7 +16,7 @@
 - [ ] Add game achievements
 
 ## Wishlist
-- [ ] API like thing
+- [x] API like thing
   - Like "import pag" like of thing.
 - [ ] Rudementary curses support
   - [ ] Single character movement

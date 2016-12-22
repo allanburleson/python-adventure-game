@@ -1,17 +1,138 @@
-"""
-This file contains all of the definitions for locations, since there are so
-many. Most of these are instances of Location, but some are subclasses since
-they need specific functions.
-"""
-
-from src.classes import *
+#!/usr/bin/env python3
+from pag import Game
+from pag.classes import *
 
 
-def start_location():
-    for loc in location_storage:
-        if loc.start:
-            return loc
-    assert False, 'No location is marked as the start location.'
+class Snail(Creature):
+
+    def __init__(self):
+        super().__init__(name='snail',
+                         hp=2,
+                         description='There is a snail on the ground.')
+
+
+class Orc(Baddie):
+
+    def __init__(self):
+        super().__init__(name='orc',
+                         hp=50,
+                         description='There is an orc in '
+                                     'the room.',
+                         power=random.randint(20, 50))
+
+
+class Ghost(Baddie):
+
+    def __init__(self):
+        super().__init__(name='ghost',
+                         hp=99999999,
+                         description='Wooooo',
+                         power=0.01)
+
+
+class GiantSpider(Baddie):
+
+    def __init__(self):
+        super().__init__(name='giant spider',
+                         hp=500,
+                         description='The spider is large and ugly.',
+                         power=15,
+                         drop_items={ToiletPaper(): 1})
+
+
+class Bear(Baddie):
+
+    def __init__(self):
+        super().__init__(name='bear',
+                         hp=200,
+                         description='The bear growls at you.',
+                         power=30)
+
+
+class Sword(Weapon):
+
+    def __init__(self):
+        super().__init__(name='sword',
+                         description='The sword is small and has an el'
+                         'vish look to it.',
+                         loc_description='There is a small sword here.',
+                         weight=75,
+                         power=random.randint(90, 150))
+
+    def examine(self, glowing):
+        print(self.description, end='')
+        if glowing:
+            print(' It is glowing light blue.')
+        else:
+            print()
+
+
+class HealthPot(Food):
+
+    def __init__(self):
+        super().__init__(name='health potion',
+                         description='The potion looks disgusting but '
+                                     'is probably good for you.',
+                         loc_description='There is a health potion here.',
+                         weight=2,
+                         health=100)
+
+
+class Bread(Food):
+
+    def __init__(self):
+        super().__init__(name='bread',
+                         description='The bread is slightly stale but '
+                         'looks wholesome.',
+                         loc_description='There is a loaf of bread.',
+                         weight=1,
+                         health=30)
+
+
+class ToiletPaper(Item):
+
+    def __init__(self):
+        super().__init__(name='toilet paper',
+                         description='The toilet paper is labeled "X-t'
+                         'raSoft.',
+                         loc_description='A roll of toilet paper is in '
+                         'the room.',
+                         weight=1)
+
+
+class Stick(Item):
+
+    def __init__(self):
+        super().__init__(name='stick',
+                         description='The stick is long and thick. It '
+                         'looks like it would be perfect '
+                         'for bashing things with.',
+                         loc_description='There is a random stick on '
+                         'the ground.',
+                         weight=3)
+
+
+class Paper(Item):
+
+    def __init__(self, text=''):
+        super().__init__(name='paper',
+                         description=text,
+                         loc_description='On a table is a paper labeled'
+                                         ' NOTICE.',
+                         weight=1)
+
+
+class Coconuts(Item):
+
+    def __init__(self):
+        super().__init__(name='coconut halves',
+                         description='The coconuts make a noise like '
+                                     'horse hooves when banged together.',
+                         loc_description='Also on the table are two coc'
+                                     'onut halves that look like they '
+                                     'probably were carried here by a '
+                                     'swallow.',
+                         weight=2)
 
 
 class BlackPit(Location):
@@ -117,3 +238,6 @@ blackpit.exits = {'north': dtn, 'south': dts}
 dtn.exits = {'south': blackpit}
 dts.exits = {'north': blackpit, 'south': deadend}
 deadend.exits = {'north': dts}
+
+game = Game(location_list)
+game.play()
