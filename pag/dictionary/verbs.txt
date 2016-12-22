@@ -1,3 +1,7 @@
+# Verbs added here may be used as commands in the game. Using one of the verbs
+# that follow a colon is magically interpreted as the first word on the line.
+# There must be a method in the Player class with the name of the base word
+# for the action to be doable in-game.
 take:pick up,grab
 look:examine,see,read
 attack:fight,confront,battle,engage

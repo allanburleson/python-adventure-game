@@ -11,9 +11,14 @@ def get_word_list(filepath):
     assert os.path.isfile(filepath), 'Must be a file'
     txt = open(filepath).read().strip().split('\n')
     if ':' in open(filepath).read():
+        ntxt = txt[:]
         for line in txt:
-            if ':' not in line:
-                txt[txt.index(line)] = line + ':'
+            if line[0] == '#':
+                ntxt.remove(ntxt[ntxt.index(line)])
+                print('Removing ' + line)
+            elif ':' not in line:
+                ntxt[ntxt.index(line)] = line + ':'
+        txt = ntxt
         words = {}
         for line in txt:
             index = line.split(':')[0]
