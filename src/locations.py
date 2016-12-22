@@ -1,93 +1,17 @@
+"""
+This file contains all of the definitions for locations, since there are so
+many. Most of these are instances of Location, but some are subclasses since
+they need specific functions.
+"""
+
 from src.classes import *
 
-Location_Storage = []
 
-
-class Location(object):
-    """ Class used to instantiate objects
-
-        Attributes Include:
-         - A name (String)
-         - Any items (List)
-         - Any creatures (List)
-         - Any exits (Dict)
-         - A description (String)
-         - If the player can use 'back' to return (Bool)
-         - If room name should be shown when exiting (Bool)
-         - And if it's dark (Bool)
-    """
-    def __init__(self, name, items, creatures=[], exits={},
-                 description='', history=True, show_name_when_exit=False,
-                 dark=False):
-        # exit needs to be a dict with keys north, south, east, west,
-        # up, down
-        assert type(items) == list
-        assert (type(exits) == dict or exits is None)
-        for i in exits:
-            assert isinstance(exits[i], Location)
-            assert i in ['north', 'south', 'east', 'west', 'up', 'down',
-                         'northwest', 'northeast', 'southwest', 'southeast']
-        self.name = name
-        self.items = items
-        self.creatures = creatures
-        self.description = description
-        Location_Storage.append(self)
-        self.exits = exits
-        self.history = history
-        self.show_name_when_exit = show_name_when_exit
-        self.dark = dark
-
-    def give_info(self, full_info, light):
-        assert self.description != '', 'There must be a description.'
-        if self.dark and not light:
-            print('It is too dark to see anything. However, you are '
-                  'not likely to be eaten by a grue. What do you think'
-                  ' this is, Zork?')
-            return
-        elif full_info:
-            print(self.description)
-            print()
-            # directions = ['north', 'south', 'east', 'west', 'up', 'down']
-            self.display_exits()
-        else:
-            print(f'You are in {self.name}.')
-        print()
-
-        Entity_Stack = []
-        # TODO: Refactor
-        for item in self.items:
-            Entity_Stack.append(item)
-            if item.loc_description != '':
-                print(item.loc_description)
-            else:
-                if len(Entity_Stack) > 1:
-                    if Entity_Stack[-1].name == item.name:
-                        print(f'There are {len(Entity_Stack)} {item.name}s')
-                else:
-                    print(f'There is {utils.get_indef_article(item.name)} {item.name}')
-        if len(self.items) > 0:
-            print()
-        Entity_Stack = []
-        if len(self.creatures) > 0:
-            for creature in self.creatures:
-                Entity_Stack.append(creature)
-            if len(Entity_Stack) > 1:
-                if Entity_Stack[-1].name == creature.name:
-                    print(f'There are {len(Entity_Stack)} {creature.name}s here')
-            else:
-                print(f'There is {utils.get_indef_article(creature.name)} {creature.name} here.')
-
-    def display_exits(self):
-        for i in self.exits:
-            if self.exits[i].show_name_when_exit:
-                if i == 'up' or i == 'down':
-                    print(f'{self.exits[i].name} is {i}.')
-                else:
-                    print(f'{self.exits[i].name} is to the {i}.')
-            else:
-                print(f'There is an exit {i}.')
-        if len(self.exits) == 0:
-            print('There does not appear to be an exit.')
+def start_location():
+    for loc in location_storage:
+        if loc.start:
+            return loc
+    assert False, 'No location is marked as the start location.'
 
 
 class BlackPit(Location):
@@ -146,7 +70,7 @@ a chest. You may have to break it open. We really didn't plan this very well.'''
 home.description = 'You are in a familiar cabin made out of logs. '\
                    'There is a pleasantly warm fire in the fireplace '\
                    'and a comfortable-looking armchair beside it.'
-start = Location('Start', [Mirror()], [], history=False)
+start = Location('Start', [Mirror()], [], history=False, start=True)
 start.description = 'You are in a small room with concrete walls and '\
                     'no windows.'
 closet = Location('Closet', [Stick()], [], show_name_when_exit=True)

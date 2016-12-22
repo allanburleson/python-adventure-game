@@ -34,7 +34,8 @@ def main():
             player.visited_places[i] = False
         player.location.give_info(True, player.has_light)
     else:
-        player = classes.Player(locations.Location_Storage, locations.start)
+        player = classes.Player(classes.location_storage, 
+                                locations.start_location())
     previous_noun = ''
     turns = 0
     dark_turn = 0

@@ -1,4 +1,7 @@
-"""Contains most classes used in the game."""
+"""
+Contains most classes used in the game. Locations are stored in locations.py,
+though the Location class is here.
+"""
 
 import random
 import os
@@ -9,7 +12,6 @@ from src import utils
 
 Creatures = []
 Items = []
-Location_Storage = []
 
 
 class Player(object):
@@ -769,3 +771,103 @@ class Bread(Food):
                          loc_description='There is a loaf of bread.',
                          weight=1,
                          health=30)
+
+
+location_storage = []
+
+
+class Location(object):
+    """ 
+    Class used to instantiate objects
+
+    Attributes Include:
+     - A name (String)
+     - Any items (List)
+     - Any creatures (List)
+     - Any exits (Dict)
+     - A description (String)
+     - If the player can use 'back' to return (Bool)
+     - If room name should be shown when exiting (Bool)
+     - If it's dark (Bool)
+     - Whether it is the starting location (Bool)
+    """
+    def __init__(self, name, items, creatures=[], exits={},
+                 description='', history=True, show_name_when_exit=False,
+                 dark=False, start=False):
+        """
+        exits needs to be a dict with keys north, south, east, west,
+        up, down
+        """
+        global location_storage
+        
+        assert type(items) == list
+        assert (type(exits) == dict or exits is None)
+        for i in exits:
+            assert isinstance(exits[i], Location)
+            assert i in ['north', 'south', 'east', 'west', 'up', 'down',
+                         'northwest', 'northeast', 'southwest', 'southeast']
+        self.name = name
+        self.items = items
+        self.creatures = creatures
+        self.description = description
+        location_storage.append(self)
+        self.exits = exits
+        self.history = history
+        self.show_name_when_exit = show_name_when_exit
+        self.dark = dark
+        self.start = start
+        if start:
+            for loc in location_storage:
+                if loc.start and loc.name != self.name:
+                    assert False, f'Locations {self.name} and {loc.name} are both marked as being the start location.'
+
+    def give_info(self, full_info, light):
+        assert self.description != '', 'There must be a description.'
+        if self.dark and not light:
+            print('It is too dark to see anything. However, you are '
+                  'not likely to be eaten by a grue. What do you think'
+                  ' this is, Zork?')
+            return
+        elif full_info:
+            print(self.description)
+            print()
+            self.display_exits()
+        else:
+            print(f'You are in {self.name}.')
+        print()
+
+        Entity_Stack = []
+        # TODO: Refactor
+        for item in self.items:
+            Entity_Stack.append(item)
+            if item.loc_description != '':
+                print(item.loc_description)
+            else:
+                if len(Entity_Stack) > 1:
+                    if Entity_Stack[-1].name == item.name:
+                        print(f'There are {len(Entity_Stack)} {item.name}s')
+                else:
+                    print(f'There is {utils.get_indef_article(item.name)} {item.name}')
+        if len(self.items) > 0:
+            print()
+        Entity_Stack = []
+        if len(self.creatures) > 0:
+            for creature in self.creatures:
+                Entity_Stack.append(creature)
+            if len(Entity_Stack) > 1:
+                if Entity_Stack[-1].name == creature.name:
+                    print(f'There are {len(Entity_Stack)} {creature.name}s here')
+            else:
+                print(f'There is {utils.get_indef_article(creature.name)} {creature.name} here.')
+
+    def display_exits(self):
+        for i in self.exits:
+            if self.exits[i].show_name_when_exit:
+                if i == 'up' or i == 'down':
+                    print(f'{self.exits[i].name} is {i}.')
+                else:
+                    print(f'{self.exits[i].name} is to the {i}.')
+            else:
+                print(f'There is an exit {i}.')
+        if len(self.exits) == 0:
+            print('There does not appear to be an exit.')
