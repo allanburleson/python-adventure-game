@@ -24,7 +24,7 @@ class Player(object):
     taken.
     """
 
-    def __init__(self, locations, location):
+    def __init__(self, locations, location, mute=False):
         self.inventory = [Fist()]
         self.score = 0
         self.visited_places = {}
@@ -35,7 +35,8 @@ class Player(object):
             self.visited_places[i] = False
         self.health = 100
         self.has_light = False
-        self.location.give_info(True, self.has_light)
+        if not mute:
+            self.location.give_info(True, self.has_light)
         self.moves = 0
 
     def __str__(self):
