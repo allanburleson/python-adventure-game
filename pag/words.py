@@ -8,6 +8,7 @@ def get_word_list(filepath):
     
     Input: file name
     Output: dict with formula {word: [synonym, synonym]}"""
+    filepath = os.path.abspath(filepath)
     assert os.path.isfile(filepath), 'Must be a file'
     txt = open(filepath).read().strip().split('\n')
     if ':' in open(filepath).read():
