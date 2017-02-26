@@ -13,23 +13,20 @@ def get_word_list(filepath):
     f = open(filepath, 'r')
     contents = f.read()
     txt = contents.strip().split('\n')
-    if ':' in contents:
-        ntxt = txt[:]
-        for line in txt:
-            if line[0] == '#':
-                ntxt.remove(ntxt[ntxt.index(line)])
-            elif ':' not in line:
-                ntxt[ntxt.index(line)] = line + ':'
-        txt = ntxt
-        words = {}
-        for line in txt:
-            index = line.split(':')[0]
-            words[index] = line.split(':')[1].split(',')
-            for syn in words[index]:
-                if syn == '':
-                    words[index].remove(syn)
-    else:
-        words = [word.strip() for word in txt]
+    ntxt = txt[:]
+    for line in txt:
+        if line[0] == '#':
+            ntxt.remove(ntxt[ntxt.index(line)])
+        elif ':' not in line:
+            ntxt[ntxt.index(line)] = line + ':'
+    txt = ntxt
+    words = {}
+    for line in txt:
+        index = line.split(':')[0]
+        words[index] = line.split(':')[1].split(',')
+        for syn in words[index]:
+            if syn == '':
+                words[index].remove(syn)
     f.close()
     return words
 
