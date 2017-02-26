@@ -10,8 +10,9 @@ def get_word_list(filepath):
     Output: dict with formula {word: [synonym, synonym]}"""
     filepath = os.path.abspath(filepath)
     assert os.path.isfile(filepath), 'Must be a file'
-    txt = open(filepath).read().strip().split('\n')
-    if ':' in open(filepath).read():
+    f = open(filepath)
+    txt = f.read().strip().split('\n')
+    if ':' in f.read():
         ntxt = txt[:]
         for line in txt:
             if line[0] == '#':
@@ -28,8 +29,8 @@ def get_word_list(filepath):
                     words[index].remove(syn)
     else:
         words = [word.strip() for word in txt]
+    f.close()
     return words
-
 
 verbs = get_word_list('dictionary/verbs.txt')
 nouns = get_word_list('dictionary/nouns.txt')
