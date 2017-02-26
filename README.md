@@ -1,5 +1,5 @@
 # python-adventure-game
-![ci](https://travis-ci.org/disorientedperson/python-adventure-game.svg?branch=master)
+[![Build Status](https://travis-ci.org/disorientedperson/python-adventure-game.svg?branch=master)](https://travis-ci.org/disorientedperson/python-adventure-game)
 
 This is a text-based adventure game engine written in Python. There are probably better ones out there; I'm just making this for fun.
 
