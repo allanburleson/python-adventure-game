@@ -3,12 +3,11 @@ from setuptools import setup, find_packages
 
 here = path.abspath(path.dirname(__file__))
 
-# TODO: change to rst
-with open(path.join(here, 'README.md'), encoding='utf-8') as f:
+with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(
-    name='pag',
+    name='python-adventure-game',
     version='0.1.0',
     description='A simple text-based adventure game engine.',
     long_description=long_description,
