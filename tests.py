@@ -9,10 +9,19 @@ class TestPlayer(unittest.TestCase):
     def setUpClass(self):
         self.l = pag.classes.Location('Test')
         self.l.description = 'Test description'
+        self.l2 = pag.classes.Location('Test 2', description='t2 description')
+        self.l.exits = {'north': self.l2}
+        self.l2.exits = {'south': self.l}
         self.player = pag.classes.Player(pag.classes.location_list, self.l, mute=True)
         
     def test_fist_in_inventory(self):
         self.assertTrue(self.player.inventory[0].name == 'fist')
+
+    def test_go(self):
+        self.player.go('go', 'north')
+        self.assertEqual(self.player.location, self.l2)
+        self.player.go('', '', self.l)
+        self.assertEqual(self.player.location, self.l)
 
 
 class TestWords(unittest.TestCase):
