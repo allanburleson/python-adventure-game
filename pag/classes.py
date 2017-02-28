@@ -74,11 +74,12 @@ class Player(GameObject):
             self.print(f'Your score was increased by {amount}.')
         elif amount < 0:
             self.print(f'Your score was decreased by {amount * -1}.')
-
+            
+    def _typing_error(self):
+        self.print('Since you can\'t type, you\'re forced to retreat.')
+        self._change_score(-1)
+        
     def _fight(self, baddie):
-        def typing_error():
-            self.print('Since you can\'t type, you\'re forced to retreat.')
-            self._change_score(-1)
         weapon = None
         while True:
             self.print('What do you want to do?')
@@ -86,7 +87,7 @@ class Player(GameObject):
             utils.number_strings("Attack", "Retreat")
             choice = input('#')
             if choice not in ['1', '2']:
-                typing_error()
+                self._typing_error()
                 return 'retreat', baddie.hp
             elif choice.startswith('2'):
                 self.print('You cowardly run away.')
@@ -105,7 +106,7 @@ class Player(GameObject):
                             weapon = i
                             break
                     if weapon is None:
-                        typing_error()
+                        self._typing_error()
                         return 'retreat', baddie.hp
                 self.health -= baddie.power
                 baddie.hp -= weapon.power
@@ -142,6 +143,11 @@ class Player(GameObject):
             weight += item.weight
         # return True if player can carry item
         return weight <= 100
+        
+    def _drop_item(self, i):
+        self.location.items.append(i)
+        self.inventory.remove(i)
+        self.print(f'{i.name} dropped.')
 
     # Functions callable by the player in-game
 
@@ -186,10 +192,6 @@ class Player(GameObject):
         return False
 
     def drop(self, action, noun):
-        def drop_item(i):
-            self.location.items.append(i)
-            self.inventory.remove(i)
-            self.print(f'{i.name} dropped.')
         if noun == '':
             self.print('Say what you want to drop.')
         else:
@@ -197,12 +199,12 @@ class Player(GameObject):
                 self.print('You can\'t drop your own fist, silly!')
             item = utils.get_item_from_name(noun, self.inventory)
             if item:
-                drop_item(item)
+                self._drop_item(item)
                 return True
             elif noun == 'all':
                 for i in self.inventory[:]:
                     if i.name != 'fist':
-                        drop_item(i)
+                        self._drop_item(i)
                 return True
             else:
                 self.print(f'You do not have a {noun} to drop.')
