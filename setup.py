@@ -8,7 +8,7 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
 
 setup(
     name='python-adventure-game',
-    version='0.1.0',
+    version='0.1.1',
     description='A simple text-based adventure game engine.',
     long_description=long_description,
     url='https://github.com/allanburleson/python-adventure-game',
