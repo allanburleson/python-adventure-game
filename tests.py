@@ -16,6 +16,33 @@ class TestPlayer(unittest.TestCase):
         
     def test_fist_in_inventory(self):
         self.assertTrue(self.player.inventory[0].name == 'fist')
+    
+    def test_change_score(self):
+        score = self.player.score + 1
+        self.player._change_score(1)
+        self.assertEqual(score, self.player.score)
+        score = self.player.score - 4
+        self.player._change_score(-4)
+        self.assertEqual(score, self.player.score)
+    
+    def test_typing_error(self):
+        score = self.player.score - 1
+        self.player._typing_error()
+        self.assertEqual(score, self.player.score)
+        
+    def test_can_carry(self):
+        i = pag.classes.Item('test', '', '', 99)
+        self.assertTrue(self.player._can_carry(i))
+        i = pag.classes.Item('test', '', '', 104.347)
+        self.assertFalse(self.player._can_carry(i))
+        
+    def test_drop_item(self):
+        i = pag.classes.Item('test', '', '', 0)
+        self.player.inventory.append(i)
+        self.assertTrue(i in self.player.inventory)
+        self.player._drop_item(i)
+        self.assertTrue(i not in self.player.inventory)
+        self.player.location.items.remove(i)
 
     def test_go(self):
         self.player.go('go', 'north')
