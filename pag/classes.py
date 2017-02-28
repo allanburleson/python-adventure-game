@@ -14,8 +14,19 @@ from pag import utils
 Creatures = []
 Items = []
 
+mute = False
 
-class Player(object):
+class GameObject(object):
+    def __init__(self, _mute=False):
+        global mute
+        if _mute == True:
+            mute = _mute
+        
+    def print(self, *args, end='\n', sep=' ', flush=False, file=None):
+        if not mute:
+            print(*args, end=end, sep=sep, flush=flush, file=file)
+
+class Player(GameObject):
     """
     The class for everything about the player.
 
@@ -25,6 +36,7 @@ class Player(object):
     """
 
     def __init__(self, locations, location, mute=False):
+        super().__init__(mute)
         self.inventory = [Fist()]
         self.score = 0
         self.visited_places = {}
@@ -35,8 +47,7 @@ class Player(object):
             self.visited_places[i] = False
         self.health = 100
         self.has_light = False
-        if not mute:
-            self.location.give_info(True, self.has_light)
+        self.location.give_info(True, self.has_light)
         self.moves = 0
 
     def __str__(self):
@@ -48,9 +59,9 @@ class Player(object):
                f"{inventory}"
 
     def die(self, restart=True):
-        print('GAME OVER.')
-        print(f'Your score was {self.score}.')
-        print(f'You used {self.moves} moves.')
+        self.print('GAME OVER.')
+        self.print(f'Your score was {self.score}.')
+        self.print(f'You used {self.moves} moves.')
         if restart:
             self.restart('', '', True)
         sys.exit(0)
@@ -60,17 +71,17 @@ class Player(object):
     def _change_score(self, amount):
         self.score += amount
         if amount > 0:
-            print(f'Your score was increased by {amount}.')
+            self.print(f'Your score was increased by {amount}.')
         elif amount < 0:
-            print(f'Your score was decreased by {amount * -1}.')
+            self.print(f'Your score was decreased by {amount * -1}.')
 
     def _fight(self, baddie):
         def typing_error():
-            print('Since you can\'t type, you\'re forced to retreat.')
+            self.print('Since you can\'t type, you\'re forced to retreat.')
             self._change_score(-1)
         weapon = None
         while True:
-            print('What do you want to do?')
+            self.print('What do you want to do?')
             # Enumerate strings
             utils.number_strings("Attack", "Retreat")
             choice = input('#')
@@ -78,16 +89,16 @@ class Player(object):
                 typing_error()
                 return 'retreat', baddie.hp
             elif choice.startswith('2'):
-                print('You cowardly run away.')
+                self.print('You cowardly run away.')
                 self._change_score(-1)
                 return 'retreat', baddie.hp
             elif choice.startswith('1'):
                 if weapon is None:
-                    print('Choose your weapon.')
+                    self.print('Choose your weapon.')
                     weapons = [
                         i for i in self.inventory if isinstance(i, Weapon)]
                     for i in weapons:
-                        print(f'{i.name}: {i.power} power')
+                        self.print(f'{i.name}: {i.power} power')
                     choice = input('Weapon: ')
                     for i in weapons:
                         if choice == i.name:
@@ -99,19 +110,31 @@ class Player(object):
                 self.health -= baddie.power
                 baddie.hp -= weapon.power
                 if self.health > 0 and baddie.hp > 0:
-                    print(f'Your health is {self.health}.')
-                    print(f'The {baddie.name}\'s health is {baddie.hp}.')
+                    self.print(f'Your health is {self.health}.')
+                    self.print(f'The {baddie.name}\'s health is {baddie.hp}.')
                 elif self.health < 1 and baddie.hp > 0:
-                    print('You died.')
+                    self.print('You died.')
                     self.die()
                 elif baddie.hp < 1 and self.health > 0:
-                    print(f'The {baddie.name} has been defeated!')
+                    self.print(f'The {baddie.name} has been defeated!')
                     self._change_score(1)
                     self.location.items += baddie.die()
                     return 'win'
                 else:
-                    print(f'Both you and the {baddie.name} died!')
+                    self.print(f'Both you and the {baddie.name} died!')
                     self.die()
+                    
+    def _fight_check(self):
+        if len(self.location.creatures) > 0:
+            for i in self.location.creatures[:]:
+                if isinstance(i, Baddie):
+                    result = self._fight(i)
+                    if result[0] == 'retreat':
+                        if len(result) > 1:
+                            i.hp = result[1]
+                        self.back('', '')
+                    else:
+                        self.location.creatures.remove(i)
 
     def _can_carry(self, item_to_take):
         weight = item_to_take.weight
@@ -130,11 +153,11 @@ class Player(object):
         def take_item(i):
             self.location.items.remove(i)
             self.inventory.append(i)
-            print(f'{i.name} taken.')
+            self.print(f'{i.name} taken.')
 
         weightstring = 'You are carrying too much weight already. Try dropping something.'
         if noun == '':
-            print('What do you want to take?')
+            self.print('What do you want to take?')
         else:
             item = utils.get_item_from_name(noun, self.location.items)
             if item and not isinstance(item, InteractableItem) and \
@@ -143,22 +166,22 @@ class Player(object):
                     take_item(item)
                     return True
                 else:
-                    print(weightstring)
+                    self.print(weightstring)
             elif noun == 'all':
                 for i in self.location.items[:]:
                     if not isinstance(i, InteractableItem):
                         if self._can_carry(i):
                             take_item(i)
                         else:
-                            print(weightstring)
+                            self.print(weightstring)
                 return True
                 # if len(self.location.items) > 1:
                 #   takeItem(self.location.items[0])
             elif self.location.dark and not self.has_light:
-                print('There\'s no way to tell if that is here because'
+                self.print('There\'s no way to tell if that is here because'
                       ' it is too dark.')
             else:
-                print(
+                self.print(
                     f'You can\'t pick up {utils.get_indef_article(noun)} {noun}.')
         return False
 
@@ -166,12 +189,12 @@ class Player(object):
         def drop_item(i):
             self.location.items.append(i)
             self.inventory.remove(i)
-            print(f'{i.name} dropped.')
+            self.print(f'{i.name} dropped.')
         if noun == '':
-            print('Say what you want to drop.')
+            self.print('Say what you want to drop.')
         else:
             if noun == 'fist':
-                print('You can\'t drop your own fist, silly!')
+                self.print('You can\'t drop your own fist, silly!')
             item = utils.get_item_from_name(noun, self.inventory)
             if item:
                 drop_item(item)
@@ -182,7 +205,7 @@ class Player(object):
                         drop_item(i)
                 return True
             else:
-                print(f'You do not have a {noun} to drop.')
+                self.print(f'You do not have a {noun} to drop.')
         return False
 
     def look(self, action, noun):
@@ -212,22 +235,11 @@ class Player(object):
                 else:
                     item.examine()
             else:
-                print(f'You do not have {noun}')
+                self.print(f'You do not have {noun}')
                 return False
         return True
 
     def go(self, action, noun='', Location=None, history=True):
-        def fight_check():
-            if len(self.location.creatures) > 0:
-                for i in self.location.creatures[:]:
-                    if isinstance(i, Baddie):
-                        result = self._fight(i)
-                        if result[0] == 'retreat':
-                            if len(result) > 1:
-                                i.hp = result[1]
-                            self.back('', '')
-                        else:
-                            self.location.creatures.remove(i)
         if self.has_light and not utils.in_inventory(Lantern, self):
             self.has_light = False
         if Location is not None:
@@ -251,7 +263,7 @@ class Player(object):
                         destination = self.location.exits[direction]
                         break
             if not is_direction and not is_loc and action != 'say':
-                print('You must specify a valid direction.')
+                self.print('You must specify a valid direction.')
                 return
             elif action == 'say':
                 # Get right Location from list called locations
@@ -275,7 +287,7 @@ class Player(object):
             elif is_loc:
                 pass
             else:
-                print('There is no exit in that direction.')
+                self.print('There is no exit in that direction.')
                 return False
         if destination is not None:
             if self.location.history and history:
@@ -286,10 +298,10 @@ class Player(object):
                 self.visited_places[self.location] = True
             else:
                 self.location.give_info(False, self.has_light)
-            if (not self.location.dark) or self.has_light:
-                fight_check()
+            if not mute and  (not self.location.dark) or self.has_light:
+                self._fight_check()
         else:
-            print('Something went wrong.')
+            self.print('Something went wrong.')
             return False
         return True
 
@@ -298,12 +310,12 @@ class Player(object):
             self.go('', '', Location=self.location_stack[-1])
             self.location_stack.pop()
         except IndexError:
-            print("There is not a previous location you can go to.")
+            self.print("There is not a previous location you can go to.")
             return False
         return True
 
     def help(self, action, noun):
-        print('I can only understand what you say if you first type an action \
+        self.print('I can only understand what you say if you first type an action \
                 and then a noun (if necessary). My vocabulary is limited. If \
                 one word doesn\'t work, try a synonym. If you get stuck, check\
                  the documentation.')
@@ -314,14 +326,14 @@ class Player(object):
             if utils.in_inventory(Mirror, self):
                 if self.location.name == 'Start':
                     self._change_score(1)
-                print('You vanished and reappeared in your house.\n')
+                self.print('You vanished and reappeared in your house.\n')
                 self.go(action, noun)
             else:
-                print('There was a flash of light...and your score was'
+                self.print('There was a flash of light...and your score was'
                       ' mysteriously lowered by one.')
                 self.score -= 1
         else:
-            print(f'You said "{noun}" but nothing happened.')
+            self.print(f'You said "{noun}" but nothing happened.')
             return False
         return True
 
@@ -333,7 +345,7 @@ class Player(object):
             self.save()
             self.die(False)
         else:
-            print('Cancelled.')
+            self.print('Cancelled.')
         return False
         
     def save(self, action='', noun=''):
@@ -344,7 +356,7 @@ class Player(object):
         sf['locations'] = self.locations
         sf['Items'] = Items
         sf.close()
-        print(f'Progress saved to {path}.')
+        self.print(f'Progress saved to {path}.')
 
     def restart(self, action, noun, force=False):
         """Deletes the save file."""
@@ -357,7 +369,7 @@ class Player(object):
             resp = input('Are you sure you want to restart the game? [y/N] ')
             if resp.lower().startswith('y'):
                 reset()
-                print('Now run play.py again.')
+                self.print('The save file has been deleted.')
         else:
             reset()
         sys.exit(0)
@@ -372,31 +384,31 @@ class Player(object):
         # TODO: Remove redundant ifs
         if noun == 'inventory':
             if len(self.inventory) > 0:
-                print('Inventory:')
+                self.print('Inventory:')
                 for item in self.inventory:
-                    print('\t', end='')
+                    self.print('\t', end='')
                     if isinstance(item, Food):
-                        print(item, end=' ')
+                        self.print(item, end=' ')
                     elif isinstance(item, Weapon):
-                        print(item, end=' ')
+                        self.print(item, end=' ')
                     else:
-                        print(item.name, end=': ')
-                    print(f'weighs {item.weight} pounds.')
+                        self.print(item.name, end=': ')
+                    self.print(f'weighs {item.weight} pounds.')
             else:
-                print('There are no items in your inventory.')
+                self.print('There are no items in your inventory.')
         elif noun == 'location':
-            print('You are at ' + self.location.name)
+            self.print('You are at ' + self.location.name)
         elif noun == 'score':
-            print(f'Your score is {self.score}.')
+            self.print(f'Your score is {self.score}.')
         elif noun == 'health':
-            print(f'You have {self.health} health.')
+            self.print(f'You have {self.health} health.')
         elif noun == 'exits':
             # TODO: Refactor into function
             self.location.display_exits()
         elif noun == "all":
-            print(self)
+            self.print(self)
         else:
-            print('This isn\'t something I can show you.')
+            self.print('This isn\'t something I can show you.')
         return False
 
     def use(self, action, noun):
@@ -407,7 +419,7 @@ class Player(object):
                     has_mirror = True
                     break
             if has_mirror:
-                print('The mirror exploded. A large shard of glass hit'
+                self.print('The mirror exploded. A large shard of glass hit'
                       ' you in the face.')
                 self.die()
         return True
@@ -437,13 +449,13 @@ class Player(object):
                     stick = True
                     break
             if stick:
-                print('You smashed the lock off the chest.')
+                self.print('You smashed the lock off the chest.')
                 chest.locked = False
                 return True
             else:
-                print('You have nothing to break the chest with.')
+                self.print('You have nothing to break the chest with.')
         else:
-            print('Hitting doesn\'t help.')
+            self.print('Hitting doesn\'t help.')
         return False
 
     def eat(self, action, noun):
@@ -456,20 +468,20 @@ class Player(object):
                 # Ensure that health can't go above 100
                 if item.health + self.health > 100:
                     item.health = 100 - self.health
-                print(
+                self.print(
                     f'You ate the {item.name} and gained {item.health} health.')
                 self.health += item.health
                 self.inventory.remove(item)
                 return True
             else:
-                print('Sorry, that isn\'t food.')
+                self.print('Sorry, that isn\'t food.')
         else:
-            print('You don\'t have that.')
+            self.print('You don\'t have that.')
         return False
 
     def light(self, action, noun):
         if utils.in_inventory(Lantern, self) and not self.has_light:
-            print('Your lantern bursts in green flame that illuminates'
+            self.print('Your lantern bursts in green flame that illuminates'
                   ' the room.')
             self.has_light = True
             if self.location.dark:
@@ -478,13 +490,13 @@ class Player(object):
                 self.go('go', Location=self.location, history=False)
             return True
         elif utils.in_inventory(Lantern, self):
-            print('Your light is already lit.')
+            self.print('Your light is already lit.')
         else:
-            print('You need a light source!')
+            self.print('You need a light source!')
         return False
 
 
-class Creature(object):
+class Creature(GameObject):
     """
     Supply a name, the creature's health, a description, and
     the items it drops. Set dropItems to a dict with the
@@ -492,6 +504,7 @@ class Creature(object):
     """
 
     def __init__(self, name, hp, description, drop_items={}):
+        super().__init__()
         self.name = name
         self.description = description
         self.hp = hp
@@ -500,7 +513,7 @@ class Creature(object):
 
     def describe(self):
         assert self.description != '', 'There must be a description.'
-        print(self.description)
+        self.print(self.description)
 
     def die(self):
         # Run when creature is killed
@@ -511,7 +524,7 @@ class Creature(object):
                 if self.drop_items[i] >= random_result > 0:
                     items_to_drop.append(i)
         if len(items_to_drop) > 0:
-            print(
+            self.print(
                 f'The {self.name} dropped {", ".join([i.name for i in items_to_drop])} on its death.')
         return items_to_drop
 
@@ -524,7 +537,7 @@ class Baddie(Creature):
         self.power = power
 
 
-class Item(object):
+class Item(GameObject):
     """ Class used to instantiate Items
         It is the parent class of:
         - InteractableItem
@@ -543,6 +556,7 @@ class Item(object):
     """
 
     def __init__(self, name, description, loc_description, weight):
+        super().__init__()
         self.name = name
         self.description = description
         self.loc_description = loc_description
@@ -550,7 +564,7 @@ class Item(object):
         Items.append(self)
 
     def examine(self):
-        print(self.description)
+        self.print(self.description)
 
 
 class Mirror(Item):
@@ -594,12 +608,12 @@ class Chest(InteractableItem):
 
     def open(self):
         if self.locked:
-            print('The chest cannot be opened because it it locked.')
+            self.print('The chest cannot be opened because it it locked.')
             return []
         else:
-            print('The chest is empty now.')
+            self.print('The chest is empty now.')
             for item in self.items:
-                print(item.loc_description)
+                self.print(item.loc_description)
             backup_items = self.items[:]
             self.items = []
             return backup_items
@@ -651,7 +665,7 @@ class Food(Item):
 location_list = []
 
 
-class Location(object):
+class Location(GameObject):
     """
     Class used to instantiate objects
 
@@ -673,6 +687,8 @@ class Location(object):
         exits needs to be a dict with keys north, south, east, west,
         up, down
         """
+        super().__init__()
+        
         global location_list
 
         assert type(items) == list
@@ -699,50 +715,50 @@ class Location(object):
     def give_info(self, full_info, light):
         assert self.description != '', 'There must be a description.'
         if self.dark and not light:
-            print('It is too dark to see anything. However, you are '
+            self.print('It is too dark to see anything. However, you are '
                   'not likely to be eaten by a grue. What do you think'
                   ' this is, Zork?')
             return
         elif full_info:
-            print(self.description)
-            print()
+            self.print(self.description)
+            self.print()
             self.display_exits()
         else:
-            print(f'You are in {self.name}.')
-        print()
+            self.print(f'You are in {self.name}.')
+        self.print()
 
         Entity_Stack = []
         # TODO: Refactor
         for item in self.items:
             Entity_Stack.append(item)
             if item.loc_description != '':
-                print(item.loc_description)
+                self.print(item.loc_description)
             else:
                 if len(Entity_Stack) > 1:
                     if Entity_Stack[-1].name == item.name:
-                        print(f'There are {len(Entity_Stack)} {item.name}s')
+                        self.print(f'There are {len(Entity_Stack)} {item.name}s')
                 else:
-                    print(f'There is {utils.get_indef_article(item.name)} {item.name}')
+                    self.print(f'There is {utils.get_indef_article(item.name)} {item.name}')
         if len(self.items) > 0:
-            print()
+            self.print()
         Entity_Stack = []
         if len(self.creatures) > 0:
             for creature in self.creatures:
                 Entity_Stack.append(creature)
             if len(Entity_Stack) > 1:
                 if Entity_Stack[-1].name == creature.name:
-                    print(f'There are {len(Entity_Stack)} {creature.name}s here')
+                    self.print(f'There are {len(Entity_Stack)} {creature.name}s here')
             else:
-                print(f'There is {utils.get_indef_article(creature.name)} {creature.name} here.')
+                self.print(f'There is {utils.get_indef_article(creature.name)} {creature.name} here.')
 
     def display_exits(self):
         for i in self.exits:
             if self.exits[i].show_name_when_exit:
                 if i == 'up' or i == 'down':
-                    print(f'{self.exits[i].name} is {i}.')
+                    self.print(f'{self.exits[i].name} is {i}.')
                 else:
-                    print(f'{self.exits[i].name} is to the {i}.')
+                    self.print(f'{self.exits[i].name} is to the {i}.')
             else:
-                print(f'There is an exit {i}.')
+                self.print(f'There is an exit {i}.')
         if len(self.exits) == 0:
-            print('There does not appear to be an exit.')
+            self.print('There does not appear to be an exit.')
