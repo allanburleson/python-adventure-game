@@ -2,8 +2,13 @@
 
 from pag.words import verbs, nouns, extras, directions
 
-
-def parse_command(command):
+def parse_command(command, words=None):
+    verbs = {**verbs, **words['verbs']}
+    print(verbs)
+    nouns = {**nouns, **words['nouns']}
+    extras = {**extras, **words['extras']}
+    directions = {**directions, **words['directions']}
+    
     command = command.lower()
     # remove extra words
     split_cmd = command.split(' ')

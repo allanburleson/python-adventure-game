@@ -13,7 +13,10 @@ from pag import parser
     
 
 class Game(object):
-    def __init__(self, locations=[]):
+    def __init__(self, locations=[], words=None):
+        if words:
+            for i in words:
+                assert i == 'nouns' or i == 'verbs' or i == 'directions' or i == 'extras', 'Bad word input.'
         self.locations = locations
     
     def play(self):
