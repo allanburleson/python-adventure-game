@@ -22,9 +22,9 @@ class GameObject(object):
         if _mute == True:
             mute = _mute
         
-    def print(self, *args, end='\n', sep=' ', flush=False, file=None):
+    def print(self, *args, **kwargs):
         if not mute:
-            print(*args, end=end, sep=sep, flush=flush, file=file)
+            print(*args, **kwargs)
 
 class Player(GameObject):
     """
