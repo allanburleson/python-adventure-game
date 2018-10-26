@@ -1,13 +1,27 @@
 """A rather messy way of parsing commands."""
 
-from pag.words import verbs, nouns, extras, directions
+import pag.words
 
 def parse_command(command, words=None):
-    verbs = {**verbs, **words['verbs']}
-    print(verbs)
-    nouns = {**nouns, **words['nouns']}
-    extras = {**extras, **words['extras']}
-    directions = {**directions, **words['directions']}
+    
+    verbs = pag.words.verbs
+    nouns = pag.words.nouns 
+    extras = pag.words.extras 
+    directions = pag.words.directions 
+    
+    if words is not None:
+        if 'verbs' in words:
+            verbs = {**verbs, **words['verbs']}
+
+        if 'nouns' in words:
+            nouns = {**nouns, **words['nouns']}
+
+        if 'extras' in words:
+            extras = {**extras, **words['extras']}
+
+        if 'directions' in words:
+            directions = {**verbs, **words['directions']}
+        
     
     command = command.lower()
     # remove extra words
