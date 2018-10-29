@@ -1,14 +1,14 @@
 """A rather messy way of parsing commands."""
 
-import pag.words
+from pag import words as pag_words
 
 def parse_command(command, words=None):
-    
-    verbs = pag.words.verbs
-    nouns = pag.words.nouns 
-    extras = pag.words.extras 
-    directions = pag.words.directions 
-    
+
+    verbs = pag_words.verbs
+    nouns = pag_words.nouns
+    extras = pag_words.extras
+    directions = pag_words.directions
+
     if words is not None:
         if 'verbs' in words:
             verbs = {**verbs, **words['verbs']}
@@ -21,8 +21,8 @@ def parse_command(command, words=None):
 
         if 'directions' in words:
             directions = {**verbs, **words['directions']}
-        
-    
+
+
     command = command.lower()
     # remove extra words
     split_cmd = command.split(' ')
@@ -43,8 +43,8 @@ def parse_command(command, words=None):
             no_noun = True
         else:
             for syn in verbs[i]:
-                if command.startswith(syn + ' ') or (
-                   command.strip() == syn):
+                if (command.startswith(syn + ' ') or
+                    command.strip() == syn):
                     verb = i
                     typed_verb = syn
                 if command.strip() == syn:
