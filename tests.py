@@ -3,8 +3,10 @@ import os
 
 import pag
 
+from pag.parser import parse_command
+
 class TestPlayer(unittest.TestCase):
-    
+
     @classmethod
     def setUpClass(self):
         self.l = pag.classes.Location('Test')
@@ -13,10 +15,10 @@ class TestPlayer(unittest.TestCase):
         self.l.exits = {'north': self.l2}
         self.l2.exits = {'south': self.l}
         self.player = pag.classes.Player(pag.classes.location_list, self.l, mute=True)
-        
+
     def test_fist_in_inventory(self):
         self.assertTrue(self.player.inventory[0].name == 'fist')
-    
+
     def test_change_score(self):
         score = self.player.score + 1
         self.player._change_score(1)
@@ -24,18 +26,18 @@ class TestPlayer(unittest.TestCase):
         score = self.player.score - 4
         self.player._change_score(-4)
         self.assertEqual(score, self.player.score)
-    
+
     def test_typing_error(self):
         score = self.player.score - 1
         self.player._typing_error()
         self.assertEqual(score, self.player.score)
-        
+
     def test_can_carry(self):
         i = pag.classes.Item('test', '', '', 99)
         self.assertTrue(self.player._can_carry(i))
         i = pag.classes.Item('test', '', '', 104.347)
         self.assertFalse(self.player._can_carry(i))
-        
+
     def test_drop_item(self):
         i = pag.classes.Item('test', '', '', 0)
         self.player.inventory.append(i)
@@ -62,7 +64,44 @@ class TestWords(unittest.TestCase):
         self.assertFalse('#test comment' in wl)
         self.assertEqual(wl['t2'][1], 'testtwo')
         os.remove(test_dict_path)
-        
-        
+
+
+class TestParser(unittest.TestCase):
+
+    def test_go_direction(self):
+        string = 'go south'
+        self.assertEqual(pag.parser.parse_command(string), ['go', 'south'])
+
+    def test_take(self):
+        string = 'take sword'
+        self.assertEqual(pag.parser.parse_command(string), ['take', 'sword'])
+
+        string = 'take toilet paper'
+        self.assertEqual(pag.parser.parse_command(string), ['take', 'toilet paper'])
+
+    def test_remove_extras(self):
+        """
+        Verify that extras are stripped from commands.
+        """
+
+        str1 = "look at toilet paper"
+        str2 = "look toilet paper"
+        expected = ['look', 'toilet paper']
+        self.assertEqual(pag.parser.parse_command(str1), expected)
+        self.assertEqual(pag.parser.parse_command(str2), expected)
+
+    def test_substitute_synonyms(self):
+        """
+        Verify that synonyms are replaced with their canonical representation.
+        """
+        str1 = "take toilet paper"
+        str2 = "grab toilet paper"
+        str3 = "pick up toilet paper"
+        expected = ['take', 'toilet paper']
+        self.assertEqual(pag.parser.parse_command(str1), expected)
+        self.assertEqual(pag.parser.parse_command(str2), expected)
+        self.assertEqual(pag.parser.parse_command(str3), expected)
+
+
 if __name__ == '__main__':
     unittest.main()
