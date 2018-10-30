@@ -1,4 +1,6 @@
 language: python
 python:
   - "3.6"
-script: python3.6 tests.py
+  - "3.7"
+  - "3.7.1"
+script: python tests.py
