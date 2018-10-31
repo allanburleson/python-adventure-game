@@ -100,6 +100,26 @@ class TestParser(unittest.TestCase):
         self.assertEqual(pag.parser.parse_command(str1), expected)
         self.assertEqual(pag.parser.parse_command(str2), expected)
 
+    def test_handle_whitespace(self):
+
+        # Empty command inputs.
+        self.assertEqual(pag.parser.parse_command(""), None)
+        self.assertEqual(pag.parser.parse_command(" "), None)
+        self.assertEqual(pag.parser.parse_command("    "), None)
+
+
+        # Command inputs with extra whitespace. Can't handle whitespace in the middle of words though.
+        expected = ['look', 'toilet paper']
+
+        strings = [ "look toilet paper  ",
+                    " look toilet   paper  ",
+                    "    look   toilet   paper  ",
+                    " look toilet\tpaper  ",]
+
+        for string in strings:
+            self.assertEqual(pag.parser.parse_command(string), expected)
+
+
     def test_noun_management(self):
         """
         Noun parsing.

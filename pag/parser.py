@@ -26,24 +26,29 @@ class Preprocessor:
         Pre-process a command.
         """
 
+        # Normalise whitespaces
         toreturn = command.lower().strip()
+        if len(toreturn) == 0:
+            return ""
+
+        tokens = toreturn.split()
+        tokens = [t for t in tokens if len(t) > 0]
 
         # See if command is only a direction
         for i in self._directions:
             if command.strip() == i:
                 # Return Verb, Noun
-                toreturn = "go {}".format(i)
+                tokens = ["go", i]
             else:
                 for syn in self._directions[i]:
                     if command.strip() == syn:
-                        toreturn = "go {}".format(i)
+                        tokens = ["go", i]
 
         # remove extra words
-        split_cmd = toreturn.split(' ')
-        removing = [word for word in split_cmd if word in self._extras]
+        removing = [word for word in tokens if word in self._extras]
         for word in removing:
-            split_cmd.remove(word)
-        toreturn = ' '.join(split_cmd)
+            tokens.remove(word)
+        toreturn = ' '.join(tokens)
 
         return toreturn
 
