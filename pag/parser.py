@@ -6,14 +6,19 @@ class Preprocessor:
     def __init__(self):
 
         self._directions = pag_words.directions
+        self._extras = pag_words.extras
 
 
     def supplement_words(self, words=None):
         """
         """
+        if words is not None:
 
-        if 'directions' in words:
-            self._directions = {**self._verbs, **words['directions']}
+            if 'extras' in words:
+                self._extras = {**self._extras, **words['extras']}
+
+            if 'directions' in words:
+                self._directions = {**self._verbs, **words['directions']}
 
 
     def prep(self, command):
@@ -33,12 +38,20 @@ class Preprocessor:
                     if command.strip() == syn:
                         toreturn = "go {}".format(i)
 
+        # remove extra words
+        split_cmd = toreturn.split(' ')
+        removing = [word for word in split_cmd if word in self._extras]
+        for word in removing:
+            split_cmd.remove(word)
+        toreturn = ' '.join(split_cmd)
+
         return toreturn
 
 
 class Parser:
     def __init__(self):
         pass
+        self._words = None
         self._verbs = pag_words.verbs
         self._nouns = pag_words.nouns
         self._extras = pag_words.extras
@@ -48,6 +61,8 @@ class Parser:
     def supplement_words(self, words=None):
         """
         """
+
+        self._words = words
 
         if words is not None:
             if 'verbs' in words:
@@ -88,15 +103,10 @@ class Parser:
 
 
         prep = Preprocessor()
+        prep.supplement_words(self._words)
 
         command = prep.prep(command)
 
-        # remove extra words
-        split_cmd = command.split(' ')
-        removing = [word for word in split_cmd if word in self._extras]
-        for word in removing:
-            split_cmd.remove(word)
-        command = ' '.join(split_cmd)
         parsed_command = []
         # command must start with a verb
         expect_noun = True
