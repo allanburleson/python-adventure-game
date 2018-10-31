@@ -87,6 +87,24 @@ class Parser:
         """
         Try to consume a verb.
         """
+        verb = ''
+        typed_verb = ''
+        for i in self._verbs:
+            if command.startswith(i + ' ') or command.strip() == i:
+                verb = i
+                typed_verb = i
+            if command.strip() == i:
+                expect_noun = False
+            else:
+                for syn in self._verbs[i]:
+                    if (command.startswith(syn + ' ') or
+                        command.strip() == syn):
+                        verb = i
+                        typed_verb = syn
+                    if command.strip() == syn:
+                        expect_noun = False
+
+        return verb, typed_verb
 
     def eat_noun(self, command, typed_verb):
         """
@@ -114,42 +132,23 @@ class Parser:
 
         parsed_command = []
         # command must start with a verb
-        expect_noun = True
-        verb = ''
-        typed_verb = ''
-        for i in self._verbs:
-            if command.startswith(i + ' ') or command.strip() == i:
-                verb = i
-                typed_verb = i
-            if command.strip() == i:
-                expect_noun = False
-            else:
-                for syn in self._verbs[i]:
-                    if (command.startswith(syn + ' ') or
-                        command.strip() == syn):
-                        verb = i
-                        typed_verb = syn
-                    if command.strip() == syn:
-                        expect_noun = False
+        verb, typed_verb = self.eat_verb(command)
         if verb != '':
             parsed_command.append(verb)
         else:
             print('What?')
             return
 
-
         # next is a noun
-        noun = ''
         rest_of_command = ''
-        if expect_noun:
-            if len(command) > len(typed_verb) + 1:
-                noun_result = self.eat_noun(command, typed_verb)
-                if noun_result != '' and noun_result is not None:
-                    parsed_command.append(noun_result)
-                else:
-                    rest_of_command = command.split(typed_verb + ' ')[1]
-                    print(f'I don\'t understand the noun "{rest_of_command}."')
-                    return
+        if len(command) > len(typed_verb) + 1:
+            noun_result = self.eat_noun(command, typed_verb)
+            if noun_result != '' and noun_result is not None:
+                parsed_command.append(noun_result)
+            else:
+                rest_of_command = command.split(typed_verb + ' ')[1]
+                print(f'I don\'t understand the noun "{rest_of_command}."')
+                return
 
         return parsed_command
 
