@@ -30,6 +30,27 @@ class Parser:
                 self._directions = {**self._verbs, **words['directions']}
 
 
+    def eat_verb(self, command):
+        """
+        Try to consome a verb.
+        """
+
+    def eat_noun(self, command, typed_verb):
+        """
+        Try to consume a noun.
+        """
+        rest_of_command = command.split(typed_verb + ' ')[1]
+        for i in {**self._nouns, **self._directions}:
+            if rest_of_command == i:
+                noun = i
+                return noun
+
+            else:
+                for syn in {**self._nouns, **self._directions}[i]:
+                    if rest_of_command == syn:
+                        noun = i
+                        return noun
+
     def parse(self, command):
 
         command = command.lower()
@@ -41,7 +62,7 @@ class Parser:
         command = ' '.join(split_cmd)
         parsed_command = []
         # command must start with a verb
-        no_noun = False
+        expect_noun = True
         verb = ''
         typed_verb = ''
         for i in self._verbs:
@@ -49,7 +70,7 @@ class Parser:
                 verb = i
                 typed_verb = i
             if command.strip() == i:
-                no_noun = True
+                expect_noun = False
             else:
                 for syn in self._verbs[i]:
                     if (command.startswith(syn + ' ') or
@@ -57,7 +78,7 @@ class Parser:
                         verb = i
                         typed_verb = syn
                     if command.strip() == syn:
-                        no_noun = True
+                        expect_noun = False
         if verb != '':
             parsed_command.append(verb)
         else:
@@ -72,24 +93,22 @@ class Parser:
                             return [None, i]
             print('What?')
             return
+
+
         # next is a noun
         noun = ''
         rest_of_command = ''
-        if not no_noun:
+        if expect_noun:
             if len(command) > len(typed_verb) + 1:
-                rest_of_command = command.split(typed_verb + ' ')[1]
-                for i in {**self._nouns, **self._directions}:
-                    if rest_of_command == i:
-                        noun = i
-                    else:
-                        for syn in {**self._nouns, **self._directions}[i]:
-                            if rest_of_command == syn:
-                                noun = i
-                if noun != '':
-                    parsed_command.append(noun)
+                noun_result = self.eat_noun(command, typed_verb)
+                if noun_result != '' and noun_result is not None:
+                    parsed_command.append(noun_result)
                 else:
+                    rest_of_command = command.split(typed_verb + ' ')[1]
                     print(f'I don\'t understand the noun "{rest_of_command}."')
                     return
+
+        print(parsed_command)
         return parsed_command
 
 
