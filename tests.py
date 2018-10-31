@@ -69,8 +69,18 @@ class TestWords(unittest.TestCase):
 class TestParser(unittest.TestCase):
 
     def test_go_direction(self):
-        string = 'go south'
-        self.assertEqual(pag.parser.parse_command(string), ['go', 'south'])
+        str1 = 's'
+        str2 = 'south'
+        str3 = 'go s'
+        str4 = 'go south'
+        expected = ['go', 'south']
+        self.assertEqual(pag.parser.parse_command(str1), expected)
+        self.assertEqual(pag.parser.parse_command(str2), expected)
+        self.assertEqual(pag.parser.parse_command(str3), expected)
+        self.assertEqual(pag.parser.parse_command(str4), expected)
+
+
+        self.assertEqual(pag.parser.parse_command("n"), ['go', 'north'])
 
     def test_take(self):
         string = 'take sword'

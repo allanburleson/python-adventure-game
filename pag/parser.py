@@ -2,6 +2,39 @@
 
 from pag import words as pag_words
 
+class Preprocessor:
+    def __init__(self):
+
+        self._directions = pag_words.directions
+
+
+    def supplement_words(self, words=None):
+        """
+        """
+
+        if 'directions' in words:
+            self._directions = {**self._verbs, **words['directions']}
+
+
+    def prep(self, command):
+        """
+        Pre-process a command.
+        """
+
+        toreturn = command.lower().strip()
+
+        # See if command is only a direction
+        for i in self._directions:
+            if command.strip() == i:
+                # Return Verb, Noun
+                toreturn = "go {}".format(i)
+            else:
+                for syn in self._directions[i]:
+                    if command.strip() == syn:
+                        toreturn = "go {}".format(i)
+
+        return toreturn
+
 
 class Parser:
     def __init__(self):
@@ -32,7 +65,7 @@ class Parser:
 
     def eat_verb(self, command):
         """
-        Try to consome a verb.
+        Try to consume a verb.
         """
 
     def eat_noun(self, command, typed_verb):
@@ -53,7 +86,11 @@ class Parser:
 
     def parse(self, command):
 
-        command = command.lower()
+
+        prep = Preprocessor()
+
+        command = prep.prep(command)
+
         # remove extra words
         split_cmd = command.split(' ')
         removing = [word for word in split_cmd if word in self._extras]
@@ -82,15 +119,6 @@ class Parser:
         if verb != '':
             parsed_command.append(verb)
         else:
-            # See if command is only a direction
-            for i in self._directions:
-                if command.strip() == i:
-                    # Return Verb, Noun
-                    return [None, i]
-                else:
-                    for syn in self._directions[i]:
-                        if command.strip() == syn:
-                            return [None, i]
             print('What?')
             return
 
@@ -108,7 +136,6 @@ class Parser:
                     print(f'I don\'t understand the noun "{rest_of_command}."')
                     return
 
-        print(parsed_command)
         return parsed_command
 
 
