@@ -69,8 +69,18 @@ class TestWords(unittest.TestCase):
 class TestParser(unittest.TestCase):
 
     def test_go_direction(self):
-        string = 'go south'
-        self.assertEqual(pag.parser.parse_command(string), ['go', 'south'])
+        str1 = 's'
+        str2 = 'south'
+        str3 = 'go s'
+        str4 = 'go south'
+        expected = ['go', 'south']
+        self.assertEqual(pag.parser.parse_command(str1), expected)
+        self.assertEqual(pag.parser.parse_command(str2), expected)
+        self.assertEqual(pag.parser.parse_command(str3), expected)
+        self.assertEqual(pag.parser.parse_command(str4), expected)
+
+
+        self.assertEqual(pag.parser.parse_command("n"), ['go', 'north'])
 
     def test_take(self):
         string = 'take sword'
@@ -89,6 +99,46 @@ class TestParser(unittest.TestCase):
         expected = ['look', 'toilet paper']
         self.assertEqual(pag.parser.parse_command(str1), expected)
         self.assertEqual(pag.parser.parse_command(str2), expected)
+
+    def test_handle_whitespace(self):
+
+        # Empty command inputs.
+        self.assertEqual(pag.parser.parse_command(""), None)
+        self.assertEqual(pag.parser.parse_command(" "), None)
+        self.assertEqual(pag.parser.parse_command("    "), None)
+
+
+        # Command inputs with extra whitespace. Can't handle whitespace in the middle of words though.
+        expected = ['look', 'toilet paper']
+
+        strings = [ "look toilet paper  ",
+                    " look toilet   paper  ",
+                    "    look   toilet   paper  ",
+                    " look toilet\tpaper  ",]
+
+        for string in strings:
+            self.assertEqual(pag.parser.parse_command(string), expected)
+
+
+    def test_noun_management(self):
+        """
+        Noun parsing.
+        """
+        str1 = "look" ; exp1 = ['look']
+        str2 = "look fist" ; exp2 = ['look', 'fist']
+        str3 = "look look" ; exp3 = None # & printed error 'I don't understand the noun "look."'
+        str4 = "look xixt" ; exp4 = None # & printed error 'I don't understand the noun "xixt."'
+        str5 = "look fi st" ; exp5 = None # & printed error 'I don't understand the noun "fi st."'
+        str6 = "look toilet paper" ; exp6 = ['look', 'toilet paper']
+        str7 = "look fist fist " ; exp7 = None # & printed error 'I don't understand the noun "fist fist."'
+
+        self.assertEqual(pag.parser.parse_command(str1), exp1)
+        self.assertEqual(pag.parser.parse_command(str2), exp2)
+        self.assertEqual(pag.parser.parse_command(str3), exp3)
+        self.assertEqual(pag.parser.parse_command(str4), exp4)
+        self.assertEqual(pag.parser.parse_command(str5), exp5)
+        self.assertEqual(pag.parser.parse_command(str6), exp6)
+        self.assertEqual(pag.parser.parse_command(str7), exp7)
 
     def test_substitute_synonyms(self):
         """
