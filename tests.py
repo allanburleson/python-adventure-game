@@ -4,6 +4,8 @@ import os
 import pag
 
 from pag.parser import parse_command
+from pag.parser import Parser
+from pag.parser import Token
 
 class TestPlayer(unittest.TestCase):
 
@@ -120,6 +122,51 @@ class TestParser(unittest.TestCase):
             self.assertEqual(pag.parser.parse_command(string), expected)
 
 
+    def test_eat_verb(self):
+        p = Parser()
+
+        word_seq = ['sword', 'sword']
+        token = p.eat_verb(word_seq)
+
+        self.assertEqual(None, token)
+        self.assertEqual(2, len(word_seq))
+
+        word_seq = ['take', 'sword']
+        token = p.eat_verb(word_seq)
+
+        self.assertEqual(Token('take'), token)
+        self.assertEqual(1, len(word_seq))
+
+    def test_eat_noun(self):
+        p = Parser()
+
+        # Eat two swords.
+        word_seq = ['sword', 'sword']
+        token = p.eat_noun(word_seq)
+
+        self.assertEqual(Token('sword', Token.T_NOUN), token)
+        self.assertEqual(1, len(word_seq))
+
+        token = p.eat_noun(word_seq)
+
+        self.assertEqual(Token('sword', Token.T_NOUN), token)
+        self.assertEqual(0, len(word_seq))
+
+        # Eat a noun, but leave extra nouns
+        word_seq = ['toilet', 'paper', 'sword']
+        token = p.eat_noun(word_seq)
+
+        self.assertEqual(Token('toilet paper', Token.T_NOUN), token)
+        self.assertEqual(1, len(word_seq))
+
+        # Eat a noun, all of it.
+        word_seq = ['toilet', 'paper', 'roll']
+        token = p.eat_noun(word_seq)
+
+        self.assertEqual(Token('toilet paper', Token.T_NOUN), token)
+        self.assertEqual(0, len(word_seq))
+
+
     def test_noun_management(self):
         """
         Noun parsing.
@@ -130,7 +177,7 @@ class TestParser(unittest.TestCase):
         str4 = "look xixt" ; exp4 = None # & printed error 'I don't understand the noun "xixt."'
         str5 = "look fi st" ; exp5 = None # & printed error 'I don't understand the noun "fi st."'
         str6 = "look toilet paper" ; exp6 = ['look', 'toilet paper']
-        str7 = "look fist fist " ; exp7 = None # & printed error 'I don't understand the noun "fist fist."'
+        str7 = "look fist fist " ; exp7 = None # & printed error 'I don't understand the extra word "fist."
 
         self.assertEqual(pag.parser.parse_command(str1), exp1)
         self.assertEqual(pag.parser.parse_command(str2), exp2)
@@ -147,10 +194,15 @@ class TestParser(unittest.TestCase):
         str1 = "take toilet paper"
         str2 = "grab toilet paper"
         str3 = "pick up toilet paper"
+        str4 = "pick up toilet paper roll"
         expected = ['take', 'toilet paper']
         self.assertEqual(pag.parser.parse_command(str1), expected)
         self.assertEqual(pag.parser.parse_command(str2), expected)
         self.assertEqual(pag.parser.parse_command(str3), expected)
+        self.assertEqual(pag.parser.parse_command(str4), expected)
+
+        self.assertEqual(pag.parser.parse_command('travel nw'), ['go', 'northwest'])
+        self.assertEqual(pag.parser.parse_command('see s'), ['look', 'south'])
 
 
 if __name__ == '__main__':
