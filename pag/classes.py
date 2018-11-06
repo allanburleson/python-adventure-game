@@ -21,7 +21,7 @@ class GameObject(object):
         global mute
         if _mute == True:
             mute = _mute
-        
+
     def print(self, *args, **kwargs):
         if not mute:
             print(*args, **kwargs)
@@ -74,11 +74,11 @@ class Player(GameObject):
             self.print(f'Your score was increased by {amount}.')
         elif amount < 0:
             self.print(f'Your score was decreased by {amount * -1}.')
-            
+
     def _typing_error(self):
         self.print('Since you can\'t type, you\'re forced to retreat.')
         self._change_score(-1)
-        
+
     def _fight(self, baddie):
         weapon = None
         while True:
@@ -124,7 +124,7 @@ class Player(GameObject):
                 else:
                     self.print(f'Both you and the {baddie.name} died!')
                     self.die()
-                    
+
     def _fight_check(self):
         if len(self.location.creatures) > 0:
             for i in self.location.creatures[:]:
@@ -143,7 +143,7 @@ class Player(GameObject):
             weight += item.weight
         # return True if player can carry item
         return weight <= 100
-        
+
     def _drop_item(self, i):
         self.location.items.append(i)
         self.inventory.remove(i)
@@ -197,6 +197,7 @@ class Player(GameObject):
         else:
             if noun == 'fist':
                 self.print('You can\'t drop your own fist, silly!')
+                return False
             item = utils.get_item_from_name(noun, self.inventory)
             if item:
                 self._drop_item(item)
@@ -349,7 +350,7 @@ class Player(GameObject):
         else:
             self.print('Cancelled.')
         return False
-        
+
     def save(self, action='', noun=''):
         path = f'{cwd}/{sf_name}'
         sf = shelve.open(path)
@@ -690,7 +691,7 @@ class Location(GameObject):
         up, down
         """
         super().__init__()
-        
+
         global location_list
 
         assert type(items) == list

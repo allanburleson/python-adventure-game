@@ -48,6 +48,14 @@ class TestPlayer(unittest.TestCase):
         self.assertTrue(i not in self.player.inventory)
         self.player.location.items.remove(i)
 
+    def test_undroppable_fist(self):
+        fists = [obj for obj in self.player.inventory if isinstance(obj, pag.classes.Fist)]
+        self.assertEqual(1, len(fists))
+        self.player.drop('drop', 'fist')
+        fists = [obj for obj in self.player.inventory if isinstance(obj, pag.classes.Fist)]
+        self.assertEqual(1, len(fists))
+
+
     def test_go(self):
         self.player.go('go', 'north')
         self.assertEqual(self.player.location, self.l2)
