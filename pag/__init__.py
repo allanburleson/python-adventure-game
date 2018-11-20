@@ -6,4 +6,5 @@ os.chdir(os.path.dirname(os.path.abspath(__file__)))
 sf_name = '.pag-save'
 
 
-from pag.game import Game
+from pag.game import GameWorld
+from pag.game import Cli
