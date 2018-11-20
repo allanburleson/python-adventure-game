@@ -2,23 +2,24 @@
 
 import os
 import shelve
-if os.name is not "nt":
+if os.name != "nt":
     import readline
-    
+
 
 from pag import cwd
 from pag import sf_name
 from pag.classes import Player
 from pag import parser
-    
+
 
 class Game(object):
     def __init__(self, locations=[], words=None):
         if words:
             for i in words:
                 assert i == 'nouns' or i == 'verbs' or i == 'directions' or i == 'extras', 'Bad word input.'
-        self.locations = locations
-    
+        self._locations = locations
+        self._player = None
+
     def play(self):
         sf_exists = False
         for i in os.listdir(cwd):
@@ -27,20 +28,20 @@ class Game(object):
                 break
         if sf_exists:
             save = shelve.open(f'{cwd}/{sf_name}')
-            player = save['player']
-            Locations = save['locations']
+            self._player = save['player']
+            locations = save['locations']
             save.close()
-            player.locations = Locations
-            for i in Locations:
-                player.visited_places[i] = False
-            player.location.give_info(True, player.has_light)
+            self._player.locations = locations
+            for i in locations:
+                self._player.visited_places[i] = False
+            self._player.location.give_info(True, self._player.has_light)
         else:
-            player = Player(self.locations, 
-                                    self._start_location())
+            self._player = Player(self._locations,
+                                  self._start_location())
         previous_noun = ''
         turns = 0
         dark_turn = 0
-        
+
         # Main game loop
         while True:
             try:
@@ -57,36 +58,36 @@ class Game(object):
                         noun = previous_noun
                     # Where game executes result.
                     # Player stuff happens here
-                    # Ex: getattr(player, "go")(action, noun) -> player.go(action, noun)
+                    # Ex: getattr(self._player, "go")(action, noun) -> self._player.go(action, noun)
                     try:
-                        result = getattr(player, action)(action, noun)
+                        result = getattr(self._player, action)(action, noun)
                     except AttributeError:
                         print('This cannot be done.')
                     # Add 1 to player moves if function returns True
                     if result:
-                        player.moves += 1
+                        self._player.moves += 1
 
                     if noun != '':
                         previous_noun = noun
                     else:
                         previous_noun = ''
-                    if player.location.dark and not player.has_light:
+                    if self._player.location.dark and not self._player.has_light:
                         if dark_turn < turns:
                             print('A grue magically appeared. However, since '
                                   'this isn\'t Zork, the grue didn\'t eat you;'
                                   ' it just killed you instead. So that\'s alr'
                                   'ight.')
-                            player.die()
+                            self._player.die()
                         else:
                             dark_turn = turns
                     turns += 1
-                    if not player.location.dark or player.has_light:
+                    if not self._player.location.dark or self._player.has_light:
                         dark_turn = turns
             except KeyboardInterrupt:
-                player.quit('', '')
-    
+                self._player.quit('', '')
+
     def _start_location(self):
-        for loc in self.locations:
+        for loc in self._locations:
             if loc.start:
                 return loc
         assert False, 'No location is marked as the start location.'
