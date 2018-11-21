@@ -63,6 +63,34 @@ class TestPlayer(unittest.TestCase):
         self.assertEqual(self.player.location, self.l)
 
 
+class MockOrc(pag.classes.Baddie):
+
+    def __init__(self):
+        super().__init__(name='MockOrc',
+                         hp=5,
+                         description='Mock baddie.',
+                         power=1)
+
+class TestGameworld(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(self):
+        self.l = pag.classes.Location('Test')
+        self.l.description = 'Test description'
+        self.l2 = pag.classes.Location('Test 2', [],  [MockOrc(), MockOrc(), MockOrc(), MockOrc()], description='t2 description')
+        self.l.exits = {'north': self.l2}
+        self.l2.exits = {'south': self.l}
+        self._world = pag.GameWorld(locations=pag.classes.location_list)
+        self.player = pag.classes.Player(pag.classes.location_list, self.l, mute=True)
+        self._world._player = self.player
+
+    def test_go(self):
+        self.assertEqual(self.player.location, self.l)
+        command = pag.parser.parse_command('go north')
+        self._world.game_turn(command)
+        self.assertEqual(self.player.location, self.l2)
+
+
 class TestWords(unittest.TestCase):
 
     def test_get_word_list(self):
@@ -211,6 +239,8 @@ class TestParser(unittest.TestCase):
 
         self.assertEqual(pag.parser.parse_command('travel nw'), ['go', 'northwest'])
         self.assertEqual(pag.parser.parse_command('see s'), ['look', 'south'])
+
+
 
 
 if __name__ == '__main__':
