@@ -4,6 +4,8 @@ import os
 import pag
 
 from pag.parser import parse_command
+from pag.parser import Parser
+from pag.parser import Token
 
 class TestPlayer(unittest.TestCase):
 
@@ -46,11 +48,47 @@ class TestPlayer(unittest.TestCase):
         self.assertTrue(i not in self.player.inventory)
         self.player.location.items.remove(i)
 
+    def test_undroppable_fist(self):
+        fists = [obj for obj in self.player.inventory if isinstance(obj, pag.classes.Fist)]
+        self.assertEqual(1, len(fists))
+        self.player.drop('drop', 'fist')
+        fists = [obj for obj in self.player.inventory if isinstance(obj, pag.classes.Fist)]
+        self.assertEqual(1, len(fists))
+
+
     def test_go(self):
         self.player.go('go', 'north')
         self.assertEqual(self.player.location, self.l2)
         self.player.go('', '', self.l)
         self.assertEqual(self.player.location, self.l)
+
+
+class MockOrc(pag.classes.Baddie):
+
+    def __init__(self):
+        super().__init__(name='MockOrc',
+                         hp=5,
+                         description='Mock baddie.',
+                         power=1)
+
+class TestGameworld(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(self):
+        self.l = pag.classes.Location('Test')
+        self.l.description = 'Test description'
+        self.l2 = pag.classes.Location('Test 2', [],  [MockOrc(), MockOrc(), MockOrc(), MockOrc()], description='t2 description')
+        self.l.exits = {'north': self.l2}
+        self.l2.exits = {'south': self.l}
+        self._world = pag.GameWorld(locations=pag.classes.location_list)
+        self.player = pag.classes.Player(pag.classes.location_list, self.l, mute=True)
+        self._world._player = self.player
+
+    def test_go(self):
+        self.assertEqual(self.player.location, self.l)
+        command = pag.parser.parse_command('go north')
+        self._world.game_turn(command)
+        self.assertEqual(self.player.location, self.l2)
 
 
 class TestWords(unittest.TestCase):
@@ -69,8 +107,18 @@ class TestWords(unittest.TestCase):
 class TestParser(unittest.TestCase):
 
     def test_go_direction(self):
-        string = 'go south'
-        self.assertEqual(pag.parser.parse_command(string), ['go', 'south'])
+        str1 = 's'
+        str2 = 'south'
+        str3 = 'go s'
+        str4 = 'go south'
+        expected = ['go', 'south']
+        self.assertEqual(pag.parser.parse_command(str1), expected)
+        self.assertEqual(pag.parser.parse_command(str2), expected)
+        self.assertEqual(pag.parser.parse_command(str3), expected)
+        self.assertEqual(pag.parser.parse_command(str4), expected)
+
+
+        self.assertEqual(pag.parser.parse_command("n"), ['go', 'north'])
 
     def test_take(self):
         string = 'take sword'
@@ -90,6 +138,91 @@ class TestParser(unittest.TestCase):
         self.assertEqual(pag.parser.parse_command(str1), expected)
         self.assertEqual(pag.parser.parse_command(str2), expected)
 
+    def test_handle_whitespace(self):
+
+        # Empty command inputs.
+        self.assertEqual(pag.parser.parse_command(""), None)
+        self.assertEqual(pag.parser.parse_command(" "), None)
+        self.assertEqual(pag.parser.parse_command("    "), None)
+
+
+        # Command inputs with extra whitespace. Can't handle whitespace in the middle of words though.
+        expected = ['look', 'toilet paper']
+
+        strings = [ "look toilet paper  ",
+                    " look toilet   paper  ",
+                    "    look   toilet   paper  ",
+                    " look toilet\tpaper  ",]
+
+        for string in strings:
+            self.assertEqual(pag.parser.parse_command(string), expected)
+
+
+    def test_eat_verb(self):
+        p = Parser()
+
+        word_seq = ['sword', 'sword']
+        token = p.eat_verb(word_seq)
+
+        self.assertEqual(None, token)
+        self.assertEqual(2, len(word_seq))
+
+        word_seq = ['take', 'sword']
+        token = p.eat_verb(word_seq)
+
+        self.assertEqual(Token('take'), token)
+        self.assertEqual(1, len(word_seq))
+
+    def test_eat_noun(self):
+        p = Parser()
+
+        # Eat two swords.
+        word_seq = ['sword', 'sword']
+        token = p.eat_noun(word_seq)
+
+        self.assertEqual(Token('sword', Token.T_NOUN), token)
+        self.assertEqual(1, len(word_seq))
+
+        token = p.eat_noun(word_seq)
+
+        self.assertEqual(Token('sword', Token.T_NOUN), token)
+        self.assertEqual(0, len(word_seq))
+
+        # Eat a noun, but leave extra nouns
+        word_seq = ['toilet', 'paper', 'sword']
+        token = p.eat_noun(word_seq)
+
+        self.assertEqual(Token('toilet paper', Token.T_NOUN), token)
+        self.assertEqual(1, len(word_seq))
+
+        # Eat a noun, all of it.
+        word_seq = ['toilet', 'paper', 'roll']
+        token = p.eat_noun(word_seq)
+
+        self.assertEqual(Token('toilet paper', Token.T_NOUN), token)
+        self.assertEqual(0, len(word_seq))
+
+
+    def test_noun_management(self):
+        """
+        Noun parsing.
+        """
+        str1 = "look" ; exp1 = ['look']
+        str2 = "look fist" ; exp2 = ['look', 'fist']
+        str3 = "look look" ; exp3 = None # & printed error 'I don't understand the noun "look."'
+        str4 = "look xixt" ; exp4 = None # & printed error 'I don't understand the noun "xixt."'
+        str5 = "look fi st" ; exp5 = None # & printed error 'I don't understand the noun "fi st."'
+        str6 = "look toilet paper" ; exp6 = ['look', 'toilet paper']
+        str7 = "look fist fist " ; exp7 = None # & printed error 'I don't understand the extra word "fist."
+
+        self.assertEqual(pag.parser.parse_command(str1), exp1)
+        self.assertEqual(pag.parser.parse_command(str2), exp2)
+        self.assertEqual(pag.parser.parse_command(str3), exp3)
+        self.assertEqual(pag.parser.parse_command(str4), exp4)
+        self.assertEqual(pag.parser.parse_command(str5), exp5)
+        self.assertEqual(pag.parser.parse_command(str6), exp6)
+        self.assertEqual(pag.parser.parse_command(str7), exp7)
+
     def test_substitute_synonyms(self):
         """
         Verify that synonyms are replaced with their canonical representation.
@@ -97,10 +230,17 @@ class TestParser(unittest.TestCase):
         str1 = "take toilet paper"
         str2 = "grab toilet paper"
         str3 = "pick up toilet paper"
+        str4 = "pick up toilet paper roll"
         expected = ['take', 'toilet paper']
         self.assertEqual(pag.parser.parse_command(str1), expected)
         self.assertEqual(pag.parser.parse_command(str2), expected)
         self.assertEqual(pag.parser.parse_command(str3), expected)
+        self.assertEqual(pag.parser.parse_command(str4), expected)
+
+        self.assertEqual(pag.parser.parse_command('travel nw'), ['go', 'northwest'])
+        self.assertEqual(pag.parser.parse_command('see s'), ['look', 'south'])
+
+
 
 
 if __name__ == '__main__':

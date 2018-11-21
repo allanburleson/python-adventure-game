@@ -2,91 +2,137 @@
 
 import os
 import shelve
-if os.name is not "nt":
+if os.name != "nt":
     import readline
-    
+
 
 from pag import cwd
 from pag import sf_name
 from pag.classes import Player
 from pag import parser
-    
 
-class Game(object):
+class Cli(object):
+    def __init__(self, world):
+        self._world = world
+
+    def play(self):
+        self._world.load_player()
+
+        # Main game loop
+        while True:
+            try:
+                command = parser.parse_command(input('> '))
+                self._world.game_turn(command)
+            except KeyboardInterrupt:
+                self._world.quit()
+
+
+class GameWorld(object):
     def __init__(self, locations=[], words=None):
         if words:
             for i in words:
                 assert i == 'nouns' or i == 'verbs' or i == 'directions' or i == 'extras', 'Bad word input.'
-        self.locations = locations
-    
-    def play(self):
+        self._locations = locations
+        self._player = None
+
+        self._previous_noun = ''
+        self._turns = 0
+        self._dark_turn = 0
+
+    def load_player(self):
         sf_exists = False
         for i in os.listdir(cwd):
             if i.startswith(sf_name):
                 sf_exists = True
                 break
         if sf_exists:
-            save = shelve.open(f'{cwd}/{sf_name}')
-            player = save['player']
-            Locations = save['locations']
-            save.close()
-            player.locations = Locations
-            for i in Locations:
-                player.visited_places[i] = False
-            player.location.give_info(True, player.has_light)
-        else:
-            player = Player(self.locations, 
-                                    self._start_location())
-        previous_noun = ''
-        turns = 0
-        dark_turn = 0
-        
-        # Main game loop
-        while True:
-            try:
-                command = parser.parse_command(input('> '))
-                if command is not None:
-                    action = command[0]
-                    if len(command) >= 2:
-                        noun = command[1]
-                    else:
-                        noun = ''
-                    if action is None and noun != '':
-                        action = 'go'
-                    if previous_noun != '' and noun == 'it':
-                        noun = previous_noun
-                    # Where game executes result.
-                    # Player stuff happens here
-                    # Ex: getattr(player, "go")(action, noun) -> player.go(action, noun)
-                    try:
-                        result = getattr(player, action)(action, noun)
-                    except AttributeError:
-                        print('This cannot be done.')
-                    # Add 1 to player moves if function returns True
-                    if result:
-                        player.moves += 1
+            player = None
+            locations = None
 
-                    if noun != '':
-                        previous_noun = noun
-                    else:
-                        previous_noun = ''
-                    if player.location.dark and not player.has_light:
-                        if dark_turn < turns:
-                            print('A grue magically appeared. However, since '
-                                  'this isn\'t Zork, the grue didn\'t eat you;'
-                                  ' it just killed you instead. So that\'s alr'
-                                  'ight.')
-                            player.die()
-                        else:
-                            dark_turn = turns
-                    turns += 1
-                    if not player.location.dark or player.has_light:
-                        dark_turn = turns
-            except KeyboardInterrupt:
-                player.quit('', '')
-    
+            save = shelve.open(f'{cwd}/{sf_name}')
+
+            try:
+                player = save['player']
+            except Exception:
+                pass
+
+            try:
+                locations = save['locations']
+            except Exception:
+                pass
+
+            save.close()
+
+            if player is None or locations is None:
+                # Failed loading game.
+                self._player = Player(self._locations,
+                                      self._start_location())
+                return
+
+            self._player = player
+            self._player.locations = locations
+            for i in locations:
+                self._player.visited_places[i] = False
+            self._player.location.give_info(True, self._player.has_light)
+        else:
+            self._player = Player(self._locations,
+                                  self._start_location())
+
+
+    def game_turn(self, command):
+        """
+        Take one game turn.
+        """
+        if command is None:
+            return
+
+        action = command[0]
+        if len(command) >= 2:
+            noun = command[1]
+        else:
+            noun = ''
+        if action is None and noun != '':
+            action = 'go'
+        if self._previous_noun != '' and noun == 'it':
+            noun = self._previous_noun
+        # Where game executes result.
+        # Player stuff happens here
+        # Ex: getattr(self._player, "go")(action, noun) -> self._player.go(action, noun)
+        result = False
+        try:
+            result = getattr(self._player, action)(action, noun)
+        except AttributeError:
+            print('This cannot be done.')
+        # Add 1 to player moves if function returns True
+        if result:
+            self._player.moves += 1
+
+        if noun != '':
+            self._previous_noun = noun
+        else:
+            self._previous_noun = ''
+        if self._player.location.dark and not self._player.has_light:
+            if self._dark_turn < self._turns:
+                print('A grue magically appeared. However, since '
+                      'this isn\'t Zork, the grue didn\'t eat you;'
+                      ' it just killed you instead. So that\'s alr'
+                      'ight.')
+                self._player.die()
+            else:
+                self._dark_turn = self._turns
+        self._turns += 1
+        if not self._player.location.dark or self._player.has_light:
+            self._dark_turn = self._turns
+
+
     def _start_location(self):
-        for loc in self.locations:
+        """
+        Return map start location.
+        """
+        for loc in self._locations:
             if loc.start:
                 return loc
         assert False, 'No location is marked as the start location.'
+
+    def quit(self):
+        self._player.quit('', '')

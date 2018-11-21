@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 import random
 
-from pag import Game
+from pag import GameWorld
+from pag import Cli
 from pag import classes
 
-game = Game(classes.location_list)
+gameworld = GameWorld(classes.location_list)
+cli = Cli(gameworld)
 
 
 class Snail(classes.Creature):
@@ -243,4 +245,4 @@ dtn.exits = {'south': blackpit}
 dts.exits = {'north': blackpit, 'south': deadend}
 deadend.exits = {'north': dts}
 
-game.play()
+cli.play()
