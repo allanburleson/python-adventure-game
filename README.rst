@@ -1,6 +1,7 @@
 python-adventure-game
-==============
+=====================
 .. image:: https://travis-ci.org/allanburleson/python-adventure-game.svg?branch=master
+    :target: https://travis-ci.org/allanburleson/python-adventure-game
 
 A text-based adventure game engine written in Python. There are better ones out there; I'm just making this for fun.
 
