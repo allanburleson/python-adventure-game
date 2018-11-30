@@ -3,7 +3,7 @@
 # There must be a method in the Player class with the name of the base word
 # for the action to be doable in-game.
 take:pick up,grab
-look:examine,see,read
+look:examine,see,read,l
 attack:fight,confront,battle,engage
 use
 eat
