@@ -2,6 +2,7 @@
 
 import os
 import shelve
+import traceback
 if os.name != "nt":
     import readline
 
@@ -27,7 +28,7 @@ class GameWorld(object):
         self._turns = 0
         self._dark_turn = 0
 
-    def load_player(self):
+    def load_player(self, ui):
         sf_exists = False
         for i in os.listdir(cwd):
             if i.startswith(sf_name):
@@ -54,9 +55,11 @@ class GameWorld(object):
             if player is None or locations is None:
                 # Failed loading game.
                 self._player = Player(self._locations,
-                                      self._start_location())
+                                      self._start_location(),
+                                      ui)
                 return
 
+            player.set_ui(ui)
             self._player = player
             self._player.locations = locations
             for i in locations:
@@ -64,7 +67,8 @@ class GameWorld(object):
             self._player.location.give_info(True, self._player.has_light)
         else:
             self._player = Player(self._locations,
-                                  self._start_location())
+                                  self._start_location(),
+                                  ui)
 
 
     def game_turn(self, command):
@@ -89,8 +93,9 @@ class GameWorld(object):
         result = False
         try:
             result = getattr(self._player, action)(action, noun)
-        except AttributeError:
-            print('This cannot be done.')
+        except AttributeError as ex:
+            # traceback.print_exc()
+            print("You cannot do %s." % (action))
         # Add 1 to player moves if function returns True
         if result:
             self._player.moves += 1

@@ -10,6 +10,15 @@ class SilentUI(object):
         """
         pass
 
+    def print(self, output):
+        """
+        Silent output.
+        """
+        pass
+
+    def input(self, prompt):
+        raise Exception("Silent prompt can not return input.")
+
 class CommandLineInterface(object):
     def __init__(self, world):
         """
@@ -18,7 +27,7 @@ class CommandLineInterface(object):
         self._world = world
 
     def play(self):
-        self._world.load_player()
+        self._world.load_player(self)
 
         # Main game loop
         while True:
@@ -27,3 +36,9 @@ class CommandLineInterface(object):
                 self._world.game_turn(command)
             except KeyboardInterrupt:
                 self._world.quit()
+
+    def print(self, *args, **kwargs):
+        print(*args, **kwargs)
+
+    def input(self, prompt):
+        return input(prompt)

@@ -6,6 +6,7 @@ import pag
 from pag.parser import parse_command
 from pag.parser import Parser
 from pag.parser import Token
+from pag.interfaces import SilentUI
 
 class TestPlayer(unittest.TestCase):
 
@@ -16,7 +17,7 @@ class TestPlayer(unittest.TestCase):
         self.l2 = pag.classes.Location('Test 2', description='t2 description')
         self.l.exits = {'north': self.l2}
         self.l2.exits = {'south': self.l}
-        self.player = pag.classes.Player(pag.classes.location_list, self.l, mute=True)
+        self.player = pag.classes.Player(pag.classes.location_list, self.l, ui=SilentUI())
 
     def test_fist_in_inventory(self):
         self.assertTrue(self.player.inventory[0].name == 'fist')
@@ -77,11 +78,12 @@ class TestGameworld(unittest.TestCase):
     def setUpClass(self):
         self.l = pag.classes.Location('Test')
         self.l.description = 'Test description'
-        self.l2 = pag.classes.Location('Test 2', [],  [MockOrc(), MockOrc(), MockOrc(), MockOrc()], description='t2 description')
+        #self.l2 = pag.classes.Location('Test 2', [],  [MockOrc(), MockOrc(), MockOrc(), MockOrc()], description='t2 description')
+        self.l2 = pag.classes.Location('Test 2', [],  [], description='t2 description')
         self.l.exits = {'north': self.l2}
         self.l2.exits = {'south': self.l}
         self._world = pag.GameWorld(locations=pag.classes.location_list)
-        self.player = pag.classes.Player(pag.classes.location_list, self.l, mute=True)
+        self.player = pag.classes.Player(pag.classes.location_list, self.l, ui=SilentUI())
         self._world._player = self.player
 
     def test_go(self):

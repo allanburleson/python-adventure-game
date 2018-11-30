@@ -14,17 +14,25 @@ from pag import utils
 Creatures = []
 Items = []
 
-mute = False
+class GameObject:
 
-class GameObject(object):
-    def __init__(self, _mute=False):
-        global mute
-        if _mute == True:
-            mute = _mute
+    __ui = None
+
+    def __init__(self, ui=None):
+        super().__init__()
+        if ui is not None:
+            GameObject.__ui = ui
+
+    def set_ui(self, ui):
+        if ui is not None:
+            GameObject.__ui = ui
 
     def print(self, *args, **kwargs):
-        if not mute:
-            print(*args, **kwargs)
+        if GameObject.__ui is not None:
+            self.__ui.print(*args, **kwargs)
+
+    def input(self, prompt):
+        return GameObject.__ui.input(prompt)
 
 class Player(GameObject):
     """
@@ -35,8 +43,9 @@ class Player(GameObject):
     taken.
     """
 
-    def __init__(self, locations, location, mute=False):
-        super().__init__(mute)
+    def __init__(self, locations, location, ui):
+        super().__init__(ui)
+
         self.inventory = [Fist()]
         self.score = 0
         self.visited_places = {}
@@ -85,7 +94,7 @@ class Player(GameObject):
             self.print('What do you want to do?')
             # Enumerate strings
             utils.number_strings("Attack", "Retreat")
-            choice = input('#')
+            choice = self.input('#')
             if choice not in ['1', '2']:
                 self._typing_error()
                 return 'retreat', baddie.hp
@@ -102,7 +111,7 @@ class Player(GameObject):
                         i for i in self.inventory if isinstance(i, Weapon)]
                     for i in weapons:
                         self.print(f'{i.name}: {i.power} power')
-                    choice = input('Weapon: ')
+                    choice = self.input('Weapon: ')
                     for i in weapons:
                         if choice == i.name:
                             weapon = i
@@ -303,7 +312,7 @@ class Player(GameObject):
                 self.visited_places[self.location] = True
             else:
                 self.location.give_info(False, self.has_light)
-            if not mute and  (not self.location.dark) or self.has_light:
+            if (not self.location.dark) or self.has_light:
                 self._fight_check()
         else:
             self.print('Something went wrong.')
@@ -344,7 +353,7 @@ class Player(GameObject):
 
     def quit(self, action, noun):
         """Save progress and exit the game. Run on KeyboardInterrupt."""
-        resp = input('Are you sure you want to quit? Your progress '
+        resp = self.input('Are you sure you want to quit? Your progress '
                      'will be saved. [Y/n] ')
         if resp.lower().startswith('y') or resp.strip() == '':
             self.save()
@@ -371,7 +380,7 @@ class Player(GameObject):
                     os.remove(f'{cwd}/{i}')
 
         if not force:
-            resp = input('Are you sure you want to restart the game? [y/N] ')
+            resp = self.input('Are you sure you want to restart the game? [y/N] ')
             if resp.lower().startswith('y'):
                 reset()
                 self.print('The save file has been deleted.')
@@ -726,11 +735,11 @@ class Location(GameObject):
             return
         elif full_info:
             self.print(self.description)
-            self.print()
+            self.print("")
             self.display_exits()
         else:
             self.print(f'You are in {self.name}.')
-        self.print()
+        self.print("")
 
         Entity_Stack = []
         # TODO: Refactor
