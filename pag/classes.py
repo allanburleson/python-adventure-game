@@ -95,6 +95,8 @@ class Player(GameObject):
                 return 'retreat', baddie.hp
             elif choice.startswith('1'):
                 if weapon is None:
+
+                    ####
                     self.print('Choose your weapon.')
                     weapons = [
                         i for i in self.inventory if isinstance(i, Weapon)]

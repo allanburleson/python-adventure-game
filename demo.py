@@ -2,11 +2,11 @@
 import random
 
 from pag import GameWorld
-from pag import Cli
+from pag import CommandLineInterface
 from pag import classes
 
 gameworld = GameWorld(classes.location_list)
-cli = Cli(gameworld)
+cli = CommandLineInterface(gameworld)
 
 
 class Snail(classes.Creature):

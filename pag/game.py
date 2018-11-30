@@ -9,22 +9,10 @@ if os.name != "nt":
 from pag import cwd
 from pag import sf_name
 from pag.classes import Player
-from pag import parser
 
-class Cli(object):
-    def __init__(self, world):
-        self._world = world
+from pag.interfaces import CommandLineInterface
 
-    def play(self):
-        self._world.load_player()
 
-        # Main game loop
-        while True:
-            try:
-                command = parser.parse_command(input('> '))
-                self._world.game_turn(command)
-            except KeyboardInterrupt:
-                self._world.quit()
 
 
 class GameWorld(object):

@@ -7,4 +7,4 @@ sf_name = '.pag-save'
 
 
 from pag.game import GameWorld
-from pag.game import Cli
+from pag.interfaces import CommandLineInterface

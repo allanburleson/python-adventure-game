@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from pag import GameWorld
-from pag import Cli
+from pag import CommandLineInterface
 from pag import classes
 
 # This gives the Game the list of all locations that is updated every time a
@@ -8,7 +8,7 @@ from pag import classes
 # list points to the one list's memory address, the list in the game class also
 # updates.
 gameworld = GameWorld(locations=classes.location_list)
-cli = Cli(gameworld)
+cli = CommandLineInterface(gameworld)
 
 class ToiletPaper(classes.Item):
     def __init__(self):
