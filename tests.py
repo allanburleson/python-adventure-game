@@ -1,5 +1,6 @@
 import unittest
 import os
+import re
 
 import pag
 
@@ -74,23 +75,51 @@ class MockOrc(pag.classes.Baddie):
 
 class TestGameworld(unittest.TestCase):
 
-    @classmethod
-    def setUpClass(self):
-        self.l = pag.classes.Location('Test')
-        self.l.description = 'Test description'
-        #self.l2 = pag.classes.Location('Test 2', [],  [MockOrc(), MockOrc(), MockOrc(), MockOrc()], description='t2 description')
-        self.l2 = pag.classes.Location('Test 2', [],  [], description='t2 description')
-        self.l.exits = {'north': self.l2}
-        self.l2.exits = {'south': self.l}
+
+    def setUp(self):
+        self.l_start = pag.classes.Location('TestGameworld start')
+        self.l_start.description = 'Test description'
+
+        self.l_north = pag.classes.Location('Test north', [],  [], description='North description')
+        self.l_east  = pag.classes.Location('Test east', [],  [MockOrc(), MockOrc(), MockOrc(), MockOrc()], description='East description')
+
+        self.l_start.exits = {'north': self.l_north, 'east' : self.l_east}
+        self.l_north.exits = {'south': self.l_start}
+        self.l_east.exits = {'west': self.l_start}
+
         self._world = pag.GameWorld(locations=pag.classes.location_list)
-        self.player = pag.classes.Player(pag.classes.location_list, self.l, ui=SilentUI())
+        self._ui = SilentUI()
+        self.player = pag.classes.Player(pag.classes.location_list, self.l_start, self._ui)
         self._world._player = self.player
 
     def test_go(self):
-        self.assertEqual(self.player.location, self.l)
+        self.assertEqual(self.player.location, self.l_start)
         command = pag.parser.parse_command('go north')
         self._world.game_turn(command)
-        self.assertEqual(self.player.location, self.l2)
+        self.assertEqual(self.player.location, self.l_north)
+
+    def test_combat(self):
+        """
+        Using a simple prompt/response mock UI, simulate a fight with 4 orcs.
+        """
+        self.assertEqual(self.player.location, self.l_start)
+
+        # Enter a room with orcs, with a UI set to retreat.
+        self._ui.set_reply(re.compile('.*Attack.*', re.MULTILINE), '2')
+        self._ui.set_reply(re.compile('#'), '2')
+        
+        command = pag.parser.parse_command('go east')
+        self._world.game_turn(command)
+        self.assertEqual(self.player.location, self.l_start)
+
+        # Try again, but this time UI is set to fight.
+        self._ui.set_reply(re.compile('.*Attack.*', re.MULTILINE), '1')
+        self._ui.set_reply(re.compile('#'), '1')
+        self._ui.set_reply(re.compile('.*Weapo.*'), 'fist')
+
+        command = pag.parser.parse_command('go east')
+        self._world.game_turn(command)
+        self.assertEqual(self.player.location, self.l_east)
 
 
 class TestWords(unittest.TestCase):

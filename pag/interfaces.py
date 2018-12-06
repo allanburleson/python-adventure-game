@@ -8,7 +8,17 @@ class SilentUI(object):
         """
         Silent UI for testing.
         """
+        self._prompts = {}
         pass
+
+    def set_reply(self, re_prompt, reply):
+        """
+        Hard-code prompts and replies.
+
+        Prompt matcher should be a pre-compiled regexp.
+        """
+        self._prompts[re_prompt] = reply
+
 
     def print(self, output):
         """
@@ -17,6 +27,17 @@ class SilentUI(object):
         pass
 
     def input(self, prompt):
+        """
+        Prompt silent UI for a input response.
+        """
+        for regexp in self._prompts:
+            try:
+                res = regexp.match(prompt)
+                if res:
+                    return self._prompts[regexp]
+            except Exception:
+                pass
+
         raise Exception("Silent prompt can not return input.")
 
 class CommandLineInterface(object):
