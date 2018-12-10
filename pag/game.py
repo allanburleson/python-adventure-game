@@ -1,9 +1,10 @@
 """The main game script."""
 
 import os
+machine = os.uname().machine
 import shelve
 import traceback
-if os.name != "nt":
+if os.name != "nt" and not 'iPhone' in machine and not 'iPad' in machine:
     import readline
 
 
