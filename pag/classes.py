@@ -3,7 +3,7 @@ Contains most classes used in the game.
 """
 ### This file deserves a better name
 
-import randoms
+import random
 import os
 import shelve
 import sys
