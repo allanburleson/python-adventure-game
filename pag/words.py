@@ -2,6 +2,7 @@
 
 import os
 
+### Replace with Word class and objects and stuff.
 def get_word_list(filepath):
     """
     Get a list of words from a file.

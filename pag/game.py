@@ -19,7 +19,7 @@ from pag.interfaces import CommandLineInterface
 
 class GameWorld(object):
     def __init__(self, locations=[], words=None):
-        if words:
+        if words: ### Should use Word objects instead, or something. Needs to be extensible.
             for i in words:
                 assert i == 'nouns' or i == 'verbs' or i == 'directions' or i == 'extras', 'Bad word input.'
         self._locations = locations
@@ -91,6 +91,8 @@ class GameWorld(object):
         # Where game executes result.
         # Player stuff happens here
         # Ex: getattr(self._player, "go")(action, noun) -> self._player.go(action, noun)
+        ### Need a better way of making commands. Maybe each Word has a .action
+        ### Using getattr isn't a very good method
         result = False
         try:
             result = getattr(self._player, action)(action, noun)
@@ -105,6 +107,8 @@ class GameWorld(object):
             self._previous_noun = noun
         else:
             self._previous_noun = ''
+        ### All code for lantern should be in Lantern class. Each Item, Creature, etc. needs to be able to define
+        ### what it does.
         if self._player.location.dark and not self._player.has_light:
             if self._dark_turn < self._turns:
                 print('A grue magically appeared. However, since '
@@ -123,10 +127,13 @@ class GameWorld(object):
         """
         Return map start location.
         """
+        ### Multiple locations could be marked as start, which is problematic.
+        ### We need a single map that defines all exits so this isn't an issue.
         for loc in self._locations:
             if loc.start:
                 return loc
         assert False, 'No location is marked as the start location.'
 
     def quit(self):
+        ### Ew.
         self._player.quit('', '')

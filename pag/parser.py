@@ -1,5 +1,5 @@
 """A rather messy way of parsing commands."""
-
+### This is better than what I made but I still probably want to redo it
 from pag import words as pag_words
 
 class Token:

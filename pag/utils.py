@@ -12,6 +12,7 @@ def in_inventory(item_class, player):
 
 def get_item_from_name(item_name, item_list):
     """Retrieve an item's object from its name."""
+    ### Potential issue if multiple items share a name
     for item in item_list:
         if item_name == item.name:
             return item
@@ -20,6 +21,7 @@ def get_item_from_name(item_name, item_list):
 
 def get_indef_article(noun):
     """Get the indefinite article that precedes a noun."""
+    ### You can use strings library
     vowels = [i for i in 'aeiou']
     consonants = [i for i in 'bcdfghjklmnpqrstvwxyz1234567890']
     if noun[0] in vowels:

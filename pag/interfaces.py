@@ -2,6 +2,7 @@
 
 from pag import parser
 
+### These should both be Interface subclasses or something
 class SilentUI(object):
 
     def __init__(self):

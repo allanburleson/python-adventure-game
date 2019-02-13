@@ -226,6 +226,7 @@ dts = DarkTunnel()
 deadend = classes.Location(
     'Dead End', [], [], show_name_when_exit=True)
 deadend.description = 'You are at a dead end.'
+### All this exit stuff is nasty. Need a map.
 home.exits = {'north': bathroom, 'south': closet, 'east': backyard,
               'west': frontyard, 'up': attic}
 bathroom.exits = {'south': home}

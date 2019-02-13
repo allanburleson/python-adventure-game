@@ -1,8 +1,9 @@
 """
 Contains most classes used in the game.
 """
+### This file deserves a better name
 
-import random
+import randoms
 import os
 import shelve
 import sys
@@ -11,6 +12,7 @@ from pag import cwd
 from pag import sf_name
 from pag import utils
 
+### Why do we need lists like this again?
 Creatures = []
 Items = []
 
@@ -23,6 +25,7 @@ class GameObject:
         if ui is not None:
             GameObject.__ui = ui
 
+    ### What is this for? Why a setter method? Not a big fan of the way of changing interfaces or whatever this is
     def set_ui(self, ui):
         if ui is not None:
             GameObject.__ui = ui
@@ -48,6 +51,7 @@ class Player(GameObject):
 
         self.inventory = [Fist()]
         self.score = 0
+        ### These variables should be replaced with a Map object or something that keeps track
         self.visited_places = {}
         self.location_stack = []
         self.location = location
@@ -72,6 +76,7 @@ class Player(GameObject):
         self.print(f'Your score was {self.score}.')
         self.print(f'You used {self.moves} moves.')
         if restart:
+            ### Bleah again
             self.restart('', '', True)
         sys.exit(0)
 
@@ -89,6 +94,7 @@ class Player(GameObject):
         self._change_score(-1)
 
     def _fight(self, baddie):
+        ### Fighting mechanics are no bueno
         weapon = None
         while True:
             self.print('What do you want to do?')
@@ -164,7 +170,7 @@ class Player(GameObject):
 
     def clrscn(self, action, noun):
         utils.clrscn()
-        return False
+        return False ### Why does this always return False
 
     def take(self, action, noun):
         def take_item(i):
@@ -225,6 +231,7 @@ class Player(GameObject):
     def look(self, action, noun):
         """Display information about the current location or an item."""
         # Disable light if a lantern is not in the inventory
+        ### Should be defined in the Lantern class, not here. This will require changing how items work
         if self.has_light and not utils.in_inventory(Lantern, self):
             self.has_light = False
         if noun == '' or noun == 'around':
@@ -234,6 +241,8 @@ class Player(GameObject):
             if item:
                 if item.name == 'sword':
                     # Make sword glow if an enemy is in an adjacent room
+                    ### Cute. Again should be defined in the sword class. This is leftover from before I decided
+                    ### to make this a library instead of a single game.
                     glowing = False
                     for i in self.location.creatures:
                         if isinstance(i, Baddie):
@@ -266,6 +275,7 @@ class Player(GameObject):
                 destination = self.location.exits[noun]
             except KeyError:
                 pass
+            ### List of directions should not be necessary. Another problem Map should fix
             for direction in ['north', 'south', 'east', 'west', 'up',
                               'down', 'northwest', 'northeast',
                               'southwest', 'southeast']:
@@ -281,6 +291,9 @@ class Player(GameObject):
                 return
             elif action == 'say':
                 # Get right Location from list called locations
+                ### I think this is a weird addition to make the Mirror thing work.
+                ### Again this should all be defined in the Mirror class; it is ridiculous
+                ### for it to be here
                 for i in self.locations:
                     if i.name == 'Home':
                         destination = i
@@ -304,6 +317,7 @@ class Player(GameObject):
                 self.print('There is no exit in that direction.')
                 return False
         if destination is not None:
+            ### MAP!
             if self.location.history and history:
                 self.location_stack.append(self.location)
             self.location = destination
@@ -321,6 +335,7 @@ class Player(GameObject):
 
     def back(self, action, noun):
         try:
+            ### MAP!
             self.go('', '', Location=self.location_stack[-1])
             self.location_stack.pop()
         except IndexError:
@@ -333,10 +348,12 @@ class Player(GameObject):
                 and then a noun (if necessary). My vocabulary is limited. If \
                 one word doesn\'t work, try a synonym. If you get stuck, check\
                  the documentation.')
-        return False
+        return False ### Why dost thou return False
 
     def say(self, action, noun):
         if noun == 'xyzzy':
+            ### Again, this needs to go into Mirror. And Mirror should be a part of the demo, not
+            ### a part of the actual library.
             if utils.in_inventory(Mirror, self):
                 if self.location.name == 'Start':
                     self._change_score(1)
@@ -427,6 +444,8 @@ class Player(GameObject):
 
     def use(self, action, noun):
         if noun == 'magic mirror':
+        ### Again...mirror.
+        ### Item should have an action method. That would do stuff like this
             has_mirror = False
             for item in self.inventory:
                 if isinstance(item, Mirror):
@@ -439,6 +458,7 @@ class Player(GameObject):
         return True
 
     def open(self, action, noun):
+        ### AGAIN this is the wrong place for this
         chest = None
         for i in self.location.items:
             if isinstance(i, Chest):
@@ -451,6 +471,7 @@ class Player(GameObject):
         return False
 
     def hit(self, action, noun):
+        ### ...and AGAIN
         chest = None
         for i in self.location.items:
             if isinstance(i, Chest):
@@ -494,6 +515,7 @@ class Player(GameObject):
         return False
 
     def light(self, action, noun):
+        ### AGAIN
         if utils.in_inventory(Lantern, self) and not self.has_light:
             self.print('Your lantern bursts in green flame that illuminates'
                   ' the room.')
@@ -516,7 +538,9 @@ class Creature(GameObject):
     the items it drops. Set dropItems to a dict with the
     format {item: drop chance percentage}
     """
-
+    
+    ### drop_items needs to be clearer
+    ### Need Creature.action
     def __init__(self, name, hp, description, drop_items={}):
         super().__init__()
         self.name = name
@@ -568,7 +592,8 @@ class Item(GameObject):
         - player.examine()
           - Prints the description of object
     """
-
+    
+    ### Item actions needed.
     def __init__(self, name, description, loc_description, weight):
         super().__init__()
         self.name = name
@@ -581,6 +606,7 @@ class Item(GameObject):
         self.print(self.description)
 
 
+### Why is this even a class
 class Mirror(Item):
 
     def __init__(self):
@@ -593,6 +619,7 @@ class Mirror(Item):
                          weight=2)
 
 
+### Not an ideal way of doing this
 class InteractableItem(Item):
     """ Class used to instantiate an Item a player can
         interact with (like kicking)
@@ -609,6 +636,7 @@ class InteractableItem(Item):
         super().__init__(name, description, loc_description, weight)
 
 
+### Remove?
 class Chest(InteractableItem):
 
     def __init__(self, items, locked):
@@ -676,6 +704,7 @@ class Food(Item):
         return f"{self.name}: Restores {self.health} health,"
 
 
+### MAP
 location_list = []
 
 
