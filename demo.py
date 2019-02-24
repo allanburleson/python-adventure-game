@@ -245,5 +245,4 @@ blackpit.exits = {'north': dtn, 'south': dts}
 dtn.exits = {'south': blackpit}
 dts.exits = {'north': blackpit, 'south': deadend}
 deadend.exits = {'north': dts}
-
 cli.play()

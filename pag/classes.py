@@ -62,6 +62,12 @@ class Player(GameObject):
         self.has_light = False
         self.location.give_info(True, self.has_light)
         self.moves = 0
+    
+    def __contains__(self, item_class):
+        for item in self.inventory:
+            if isinstance(item, item_class):
+                return True
+        return False
 
     def __str__(self):
         inventory = '\n'.join(['\t' + item.name for item in self.inventory])
@@ -173,6 +179,7 @@ class Player(GameObject):
         return False ### Why does this always return False
 
     def take(self, action, noun):
+        ### Bleah nested function
         def take_item(i):
             self.location.items.remove(i)
             self.inventory.append(i)
@@ -232,7 +239,7 @@ class Player(GameObject):
         """Display information about the current location or an item."""
         # Disable light if a lantern is not in the inventory
         ### Should be defined in the Lantern class, not here. This will require changing how items work
-        if self.has_light and not utils.in_inventory(Lantern, self):
+        if self.has_light and not Lantern in self:
             self.has_light = False
         if noun == '' or noun == 'around':
             self.location.give_info(True, self.has_light)
@@ -263,7 +270,7 @@ class Player(GameObject):
         return True
 
     def go(self, action, noun='', Location=None, history=True):
-        if self.has_light and not utils.in_inventory(Lantern, self):
+        if self.has_light and not Lantern in self:
             self.has_light = False
         if Location is not None:
             destination = Location
@@ -354,7 +361,7 @@ class Player(GameObject):
         if noun == 'xyzzy':
             ### Again, this needs to go into Mirror. And Mirror should be a part of the demo, not
             ### a part of the actual library.
-            if utils.in_inventory(Mirror, self):
+            if Mirror in self:
                 if self.location.name == 'Start':
                     self._change_score(1)
                 self.print('You vanished and reappeared in your house.\n')
@@ -495,9 +502,7 @@ class Player(GameObject):
 
     def eat(self, action, noun):
         item = None
-        for i in self.inventory:
-            if i.name == noun:
-                item = i
+        item = utils.get_item_from_name(noun, self.inventory)
         if item:
             if isinstance(item, Food):
                 # Ensure that health can't go above 100
@@ -516,7 +521,7 @@ class Player(GameObject):
 
     def light(self, action, noun):
         ### AGAIN
-        if utils.in_inventory(Lantern, self) and not self.has_light:
+        if Lantern in self and not self.has_light:
             self.print('Your lantern bursts in green flame that illuminates'
                   ' the room.')
             self.has_light = True
@@ -525,7 +530,7 @@ class Player(GameObject):
                 # self.locationStack
                 self.go('go', Location=self.location, history=False)
             return True
-        elif utils.in_inventory(Lantern, self):
+        elif Lantern in self:
             self.print('Your light is already lit.')
         else:
             self.print('You need a light source!')
@@ -755,6 +760,15 @@ class Location(GameObject):
                 if loc.start and loc.name != self.name:
                     assert False, f'Locations {self.name} and {loc.name} are both marked as being the start location.'
 
+    def __contains__(self, goal_class):
+        for item in self.items:
+            if isinstance(item, goal_class):
+                return True
+        for creature in self.creatures:
+            if isinstance(creature, goal_class):
+                return True
+        return False
+    
     def give_info(self, full_info, light):
         assert self.description != '', 'There must be a description.'
         if self.dark and not light:

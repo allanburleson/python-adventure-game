@@ -3,20 +3,13 @@
 import os
 
 
-def in_inventory(item_class, player):
-    for item in player.inventory:
-        if isinstance(item, item_class):
-            return True
-    return False
-
-
 def get_item_from_name(item_name, item_list):
     """Retrieve an item's object from its name."""
     ### Potential issue if multiple items share a name
     for item in item_list:
         if item_name == item.name:
             return item
-    return False
+    return None
 
 
 def get_indef_article(noun):
